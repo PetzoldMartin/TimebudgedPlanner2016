@@ -52,12 +52,12 @@ public class ScrumUser {
     }
 
     @OneToMany(mappedBy = "scrumUser",cascade = CascadeType.PERSIST)
-    private Set<Roles> roles =new HashSet<>();
+    private Set<ScrumRole> roles =new HashSet<>();
     @Transient
-    private ToMany<ScrumUser,Roles> toRoles=
-            new ToMany<>(()->roles,this,Roles::getScrumUser);
+    private ToMany<ScrumUser,ScrumRole> toRoles=
+            new ToMany<>(()->roles,this, ScrumRole::getScrumUser);
 
-    public IToAny<Roles> getRoles() {return toRoles;}
+    public IToAny<ScrumRole> getRoles() {return toRoles;}
 
 
 }
