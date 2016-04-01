@@ -1,4 +1,4 @@
-//rootProject.name = 'spring-vaadin-groovy'
+rootProject.name = 'swt-master-2016-g5'
 include 'associations'
 include 'vaadin-builder'
 include 'scrum'
