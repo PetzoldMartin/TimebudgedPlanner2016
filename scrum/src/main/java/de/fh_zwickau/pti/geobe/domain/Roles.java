@@ -16,6 +16,10 @@ public class Roles {
         this.type = type;
     }
 
+    public ROLETYPE getType() {
+        return type;
+    }
+
     @Id
     private ROLETYPE type;
     @ManyToOne
