@@ -5,6 +5,7 @@ import de.geobe.util.association.ToMany;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,6 +24,25 @@ public class Project {
 
     private String name;
     private BigDecimal budget;
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    private Date startDate;
+    private String description;
 
     public String getName() {
         return name;
@@ -59,4 +79,14 @@ public class Project {
     public IToAny<Sprint> getSprint() {
         return toSprint;
     }
+
+    @OneToMany(mappedBy = "project",cascade = CascadeType.PERSIST)
+    private Set<Roles> roles =new HashSet<>();
+    @Transient
+    private ToMany<Project,Roles> toRoles=
+            new ToMany<>(()->roles,this,Roles::getProject);
+
+    public IToAny<Roles> getRoles() {return toRoles;}
+
+
 }
