@@ -90,6 +90,31 @@ class TestAssoziationsOfRoles extends Specification{
         scrumRoleRepository.count() == 0
     }
 
+    def "save entities and load and save" () {
+        when:
+        projectRepository.save(project);
+        projectRepository.save(project1);
+        scrumUserRepository.save(scrumUser);
+
+        scrumRole1.setType(ROLETYPE.Developer)
+        project.getRoles().add(scrumRole1)
+        scrumUser.getRoles().add(scrumRole1)
+        scrumRoleRepository.save(scrumRole1)
+        scrumRoleRepository.save(scrumRole1)
+
+        then:
+        scrumRoleRepository.count() == 1
+
+
+    }
+    def "is cleanup really called2" () {
+        when:
+        scrumRoleRepository.deleteAll()
+        // nothing happened
+        def x = 0
+        then:
+        scrumRoleRepository.count() == 0
+    }
     def "save entities and clear Same" () {
         when:
         projectRepository.save(project);

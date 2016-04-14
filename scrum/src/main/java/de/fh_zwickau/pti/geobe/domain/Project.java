@@ -4,6 +4,7 @@ import de.geobe.util.association.IToAny;
 import de.geobe.util.association.ToMany;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
@@ -13,8 +14,9 @@ import java.util.Set;
  * @author georg beier
  */
 @Entity
-public class Project {
+public class Project implements Serializable {
     @Id
+    @Column(name = "project_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 

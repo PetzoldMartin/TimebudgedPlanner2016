@@ -4,6 +4,7 @@ import de.geobe.util.association.IToAny;
 import de.geobe.util.association.ToMany;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,8 +13,9 @@ import java.util.Set;
  * Created by aisma on 01.04.2016.
  */
 @Entity
-public class ScrumUser {
+public class ScrumUser implements Serializable{
     @Id
+    @Column(name="scrumUser_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
