@@ -15,6 +15,7 @@ public class ScrumRole  {
     ScrumRoleID scrumRoleID = new ScrumRoleID();
 
 
+
     public void setType(ROLETYPE userRole) {
         this.scrumRoleID.setUserRole(userRole);
     }
@@ -53,5 +54,9 @@ public class ScrumRole  {
     private void setScrumUser(ScrumUser scrumUser) {
         this.scrumUser = scrumUser;
         this.scrumRoleID.scrumUser_id=scrumUser.getId();
+    }
+
+    public String toString() {
+        return scrumRoleID.toString();
     }
 }

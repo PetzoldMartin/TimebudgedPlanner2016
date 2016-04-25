@@ -21,22 +21,24 @@ class TestAssoziationsOfRoles extends Specification{
     @Autowired
     ScrumUserRepository scrumUserRepository
 
-    private Project project,project1
+    private Project project, project2
     //@Autowired
     private ScrumRole scrumRole1, scrumRole2
     //@Autowired
-    private ScrumUser scrumUser
+    private ScrumUser scrumUser1
 
     public setup() {
         project = new Project()
         project.name = "ein Projekt"
-        project1 = new Project()
-        project1.name = "auch ein Projekt"
-        scrumUser=new ScrumUser()
+        project2 = new Project()
+        project2.name = "auch ein Projekt"
+        scrumUser1=new ScrumUser()
 
         scrumRole1=new ScrumRole();
         scrumRole2=new ScrumRole();
     }
+
+    public
     def "test independence of Roles"(){
         when:
         scrumRole1.setType(ROLETYPE.Developer)
@@ -44,7 +46,7 @@ class TestAssoziationsOfRoles extends Specification{
         then:
         println(scrumRole1.toString())
         println(scrumRole2.toString())
-        scrumRole1.toString()!=scrumRole2.toString()
+        !scrumRole1.equals(scrumRole2)
     }
 
     def "test Datastructure wire"(){
@@ -64,17 +66,17 @@ class TestAssoziationsOfRoles extends Specification{
     def "save entities and clear two" () {
         when:
         projectRepository.save(project);
-        projectRepository.save(project1);
-        scrumUserRepository.save(scrumUser);
+        projectRepository.save(project2);
+        scrumUserRepository.save(scrumUser1);
 
         scrumRole1.setType(ROLETYPE.Developer)
         project.getRoles().add(scrumRole1)
-        scrumUser.getRoles().add(scrumRole1)
+        scrumUser1.getRoles().add(scrumRole1)
         scrumRoleRepository.save(scrumRole1)
 
         scrumRole2.setType(ROLETYPE.Developer)
-        project1.getRoles().add(scrumRole2)
-        scrumUser.getRoles().add(scrumRole2)
+        project2.getRoles().add(scrumRole2)
+        scrumUser1.getRoles().add(scrumRole2)
         scrumRoleRepository.save(scrumRole2)
 
         then:
@@ -93,12 +95,12 @@ class TestAssoziationsOfRoles extends Specification{
     def "save entities and load and save" () {
         when:
         projectRepository.save(project);
-        projectRepository.save(project1);
-        scrumUserRepository.save(scrumUser);
+        projectRepository.save(project2);
+        scrumUserRepository.save(scrumUser1);
 
         scrumRole1.setType(ROLETYPE.Developer)
         project.getRoles().add(scrumRole1)
-        scrumUser.getRoles().add(scrumRole1)
+        scrumUser1.getRoles().add(scrumRole1)
         scrumRoleRepository.save(scrumRole1)
         scrumRoleRepository.save(scrumRole1)
 
@@ -115,25 +117,53 @@ class TestAssoziationsOfRoles extends Specification{
         then:
         scrumRoleRepository.count() == 0
     }
-    def "save entities and clear Same" () {
+
+    def "save two scrum roles with same role type" () {
         when:
         projectRepository.save(project);
-        projectRepository.save(project1);
-        scrumUserRepository.save(scrumUser);
+        projectRepository.save(project2);
+        scrumUserRepository.save(scrumUser1);
 
         scrumRole1.setType(ROLETYPE.Developer)
         project.getRoles().add(scrumRole1)
-        scrumUser.getRoles().add(scrumRole1)
+        scrumUser1.getRoles().add(scrumRole1)
         scrumRoleRepository.save(scrumRole1)
 
         scrumRole2.setType(ROLETYPE.Developer)
         project.getRoles().add(scrumRole2)
-        scrumUser.getRoles().add(scrumRole2)
+        scrumUser1.getRoles().add(scrumRole2)
         scrumRoleRepository.save(scrumRole2)
-
+        scrumRoleRepository.flush()
         then:
         scrumRoleRepository.count() == 1
     }
 
+    def "save two scrum roles with different role types" () {
+        when:
+        scrumRole2 = scrumRoleRepository.findOne(scrumRole1.scrumRoleID)
+        scrumRole2 = scrumRoleRepository.findAll().first()
+        println(scrumRole2) // data in DB first role
+        scrumRole1.setType(ROLETYPE.ScrumMaster)
+
+        project = scrumRole2.getProject().getOne()
+        scrumUser1 = scrumRole2.getScrumUser().getOne()
+
+        ScrumRole role = new ScrumRole()
+
+        role.scrumRoleID = new ScrumRoleID(project.getId(), scrumUser1.getId(), ROLETYPE.ScrumMaster)
+
+        scrumRoleRepository.save(role) // second role in DB
+
+        then:
+        scrumRoleRepository.count() == 2
+    }
+
+
+    def "test deleting DB" () {
+        when:
+        scrumRoleRepository.deleteAll()
+        then:
+        scrumRoleRepository.count() == 0
+    }
 
 }

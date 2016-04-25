@@ -50,4 +50,8 @@ public class ScrumRoleID implements Serializable {
     public void setUserRole(ROLETYPE userRole) {
         this.userRole = userRole;
     }
+
+    public String toString() {
+        return "roleID: " + project_id + "\t" + scrumUser_id + "\t" + userRole;
+    }
 }
