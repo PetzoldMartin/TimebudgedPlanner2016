@@ -1,5 +1,6 @@
-package de.fh_zwickau.pti.geobe.domain;
+package de.fh_zwickau.pti.geobe.domain
 
+import de.geobe.util.association.IGetOther;
 import de.geobe.util.association.IToAny;
 import de.geobe.util.association.ToOne;
 
@@ -25,15 +26,14 @@ public class ScrumRole  {
     @JoinColumn(name = "project_id", referencedColumnName = "project_id",insertable=false, updatable=false)
     private Project project;
 
-
-
     @Transient
     private ToOne<ScrumRole,Project> toProject=  new ToOne<>(
-            () -> project,(Project p) -> setProject(p),
-            this,Project::getRoles);
+            { this.@project } as IToAny.IGet,
+            { Project p -> this.setProject(p) } as IToAny.ISet,
+            this, { o -> o.roles } as IGetOther
+    )
 
     public IToAny<Project> getProject(){return toProject;}
-
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "scrumUser_id", referencedColumnName = "scrumUser_id",insertable=false, updatable=false)
@@ -41,8 +41,10 @@ public class ScrumRole  {
 
     @Transient
     private ToOne<ScrumRole,ScrumUser> toScrumUser=  new ToOne<>(
-            () -> scrumUser,(ScrumUser su) -> setScrumUser(su),
-            this,ScrumUser::getRoles);
+            { this.@scrumUser } as IToAny.IGet,
+            { ScrumUser su -> this.setScrumUser(su) } as IToAny.ISet,
+            this, { o -> o.roles } as IGetOther
+    )
 
     public IToAny<ScrumUser> getScrumUser(){return toScrumUser;}
 
