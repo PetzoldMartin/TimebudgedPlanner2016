@@ -23,37 +23,7 @@ public class ScrumUser implements Serializable{
     public Long getId() {
         return id;
     }
-
-    private String name;
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public String getNick() {
-        return nick;
-    }
-
-    public void setNick(String nick) {
-        this.nick = nick;
-    }
-
-    private Date date;
-    private String nick;
-    //TODO add DATAVALUES
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
+    // references
     @OneToMany(mappedBy = "scrumUser",cascade = CascadeType.PERSIST)
     private Set<ScrumRole> roles =new HashSet<>();
     @Transient
@@ -63,8 +33,13 @@ public class ScrumUser implements Serializable{
             { ScrumRole o -> o.scrumUser } as IGetOther
 
     )
-
     public IToAny<ScrumRole> getRoles() {return toRoles;}
+
+    // domain values
+    private String firstName;
+    private String lastName;
+    private String nick;
+    private Date birthdate;
 
 
 }

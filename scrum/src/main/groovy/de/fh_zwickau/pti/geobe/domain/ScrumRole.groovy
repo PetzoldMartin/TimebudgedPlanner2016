@@ -15,13 +15,12 @@ public class ScrumRole  {
     @EmbeddedId
     ScrumRoleID scrumRoleID = new ScrumRoleID();
 
-
-
     public void setType(ROLETYPE userRole) {
         this.scrumRoleID.setUserRole(userRole);
     }
 
 
+    // references
     @ManyToOne(optional = false)
     @JoinColumn(name = "project_id", referencedColumnName = "project_id",insertable=false, updatable=false)
     private Project project;
@@ -48,6 +47,7 @@ public class ScrumRole  {
 
     public IToAny<ScrumUser> getScrumUser(){return toScrumUser;}
 
+    // setter (needed!)
     private void setProject(Project project) {
         this.project = project;
         this.scrumRoleID.project_id=project.getId();

@@ -9,6 +9,16 @@ import javax.persistence.Id
 
 @Entity
 class EffortValue {
+
+    //TODO implementation between ScrumUser and Task
+
+    // references
+    //private ScrumUser user
+    //private Task task
+
     @Id
     private long id
+
+    //domain values
+    private BigDecimal value
 }

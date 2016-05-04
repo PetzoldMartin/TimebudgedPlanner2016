@@ -10,9 +10,16 @@ import javax.persistence.Id
 @Entity
 class UserStory {
 
+    //TODO implementation between Project and Task
+
     @Id
     private long id
 
+    // references
+    //private Project project
+    //private List<Tasks> tasks
+
+    // domain values
     String name
     String description
 

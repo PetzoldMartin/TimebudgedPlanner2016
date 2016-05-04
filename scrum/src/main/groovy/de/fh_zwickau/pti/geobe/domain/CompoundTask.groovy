@@ -16,6 +16,7 @@ import javax.persistence.Transient
 @Entity
 public class CompoundTask extends Task {
 
+    // domain values
     long estimate
 
     public CompoundTask() {}
@@ -54,6 +55,7 @@ public class CompoundTask extends Task {
                 false
     }
 
+    // references
     @OneToMany(mappedBy = "supertask", cascade = CascadeType.PERSIST)
     private Set<Task> subtasks = new HashSet<>();
     @Transient

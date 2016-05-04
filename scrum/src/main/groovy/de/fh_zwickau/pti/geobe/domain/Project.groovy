@@ -25,8 +25,11 @@ public class Project implements Serializable {
         return id;
     }
 
+    // domain values
     private String name;
+    private String description;
     private BigDecimal budget;
+    private Date startDate;
 
     public Date getStartDate() {
         return startDate;
@@ -43,9 +46,6 @@ public class Project implements Serializable {
     public void setDescription(String description) {
         this.description = description;
     }
-
-    private Date startDate;
-    private String description;
 
     public String getName() {
         return name;
@@ -96,6 +96,4 @@ public class Project implements Serializable {
     )
 
     public IToAny<ScrumRole> getRoles() {return toRoles;}
-
-
 }

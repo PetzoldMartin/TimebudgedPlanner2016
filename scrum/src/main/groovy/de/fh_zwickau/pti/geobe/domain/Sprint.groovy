@@ -21,10 +21,12 @@ class Sprint {
         id
     }
 
-    String name
-    Date start = new Date()
-    Date end = new Date() + 7
+    // domain values
+    private String name
+    private Date start = new Date()
+    private Date end = new Date() + 7
 
+    // references
     @ManyToOne
     @JoinColumn(name = "project_id")
     private Project project

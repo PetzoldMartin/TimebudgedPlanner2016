@@ -19,6 +19,8 @@ public abstract class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     protected Long id;
+
+    // domain values
     protected String tag = "";
     protected String description = "Task ist noch nicht beschrieben";
 
@@ -42,6 +44,7 @@ public abstract class Task {
         this.description = description;
     }
 
+    // abstract task methods
     public abstract long getEstimate();
 
     public abstract long getSummedEstimate();
@@ -50,6 +53,7 @@ public abstract class Task {
 
     public abstract boolean isCompleted();
 
+    // references
     @ManyToOne
     @JoinColumn(name = "project_id")
     protected Project project;
@@ -72,21 +76,10 @@ public abstract class Task {
             { Sprint o -> o.backlog} as IGetOther
     )
 
-
     public IToAny<Sprint> getSprint() {
         return toSprint;
     }
 
-//    @OneToMany(mappedBy = "supertask", cascade = CascadeType.PERSIST)
-//    private Set<Task> subtasks = new HashSet<>();
-//    @Transient
-//    private ToMany<Task, Task> toSubtask = new ToMany<Task, Task>(
-//            () -> subtasks, this, Task::getSupertask);
-//
-//    public IToAny<Task> getSubtask() {
-//        return toSubtask;
-//    }
-//
     @ManyToOne
     @JoinColumn(name = "supertask_id")
     protected CompoundTask supertask;
@@ -96,8 +89,6 @@ public abstract class Task {
             { CompoundTask p -> this.@supertask = p } as IToAny.ISet,
             this, { o -> o.subtask } as IGetOther
     )
-
-
 
     public IToAny<CompoundTask> getSupertask() {
         return toSupertask;
