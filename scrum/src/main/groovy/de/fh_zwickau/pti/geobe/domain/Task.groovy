@@ -1,5 +1,6 @@
-package de.fh_zwickau.pti.geobe.domain;
+package de.fh_zwickau.pti.geobe.domain
 
+import de.geobe.util.association.IGetOther;
 import de.geobe.util.association.IToAny;
 import de.geobe.util.association.ToMany;
 import de.geobe.util.association.ToOne;
@@ -17,9 +18,9 @@ import java.util.Set;
 public abstract class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-    private String tag = "";
-    private String description = "Task ist noch nicht beschrieben";
+    protected Long id;
+    protected String tag = "";
+    protected String description = "Task ist noch nicht beschrieben";
 
     public Long getId() {
         return id;
@@ -51,21 +52,26 @@ public abstract class Task {
 
     @ManyToOne
     @JoinColumn(name = "project_id")
-    private Project project;
+    protected Project project;
     @Transient
     private ToOne<Task, Project> toProject = new ToOne<>(
-            () -> project, (Project p) -> project = p,
-            this, Project::getBacklog);
+            {this.@project } as IToAny.IGet,
+            { Project p -> this.@project = p } as IToAny.ISet,
+            this, { o -> o.backlog } as IGetOther
+    )
 
     public IToAny<Project> getProject() {
         return toProject;
     }
 
     @ManyToMany(mappedBy = "backlog")
-    private Set<Sprint> sprints = new HashSet<>();
+    protected Set<Sprint> sprints = new HashSet<>();
     @Transient
     private ToMany<Task, Sprint> toSprint = new ToMany<>(
-            () -> sprints, this, Sprint::getBacklog);
+            { this.@sprints } as IToAny.IGet, this,
+            { Sprint o -> o.backlog} as IGetOther
+    )
+
 
     public IToAny<Sprint> getSprint() {
         return toSprint;
@@ -83,11 +89,15 @@ public abstract class Task {
 //
     @ManyToOne
     @JoinColumn(name = "supertask_id")
-    private CompoundTask supertask;
+    protected CompoundTask supertask;
     @Transient
     private ToOne<Task, CompoundTask> toSupertask = new ToOne<>(
-            () -> supertask, (CompoundTask t) -> supertask = t,
-            this, CompoundTask::getSubtask);
+            { this.@supertask } as IToAny.IGet,
+            { CompoundTask p -> this.@supertask = p } as IToAny.ISet,
+            this, { o -> o.subtask } as IGetOther
+    )
+
+
 
     public IToAny<CompoundTask> getSupertask() {
         return toSupertask;
