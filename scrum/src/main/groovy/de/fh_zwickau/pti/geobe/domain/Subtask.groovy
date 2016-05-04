@@ -8,6 +8,8 @@ import javax.persistence.Entity
  */
 @Entity
 class Subtask extends Task {
+
+    // abstract task implementation
     long estimate
     long spent
     boolean completed
