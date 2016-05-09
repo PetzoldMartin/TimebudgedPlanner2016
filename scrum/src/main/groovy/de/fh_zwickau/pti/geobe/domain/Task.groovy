@@ -24,49 +24,23 @@ public abstract class Task {
     protected String tag = "";
     protected String description = "Task ist noch nicht beschrieben";
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getTag() {
-        return tag;
-    }
-
-    public void setTag(String tag) {
-        this.tag = tag;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     // abstract task methods
-    public abstract long getEstimate();
-
-    public abstract long getSummedEstimate();
-
-    public abstract long getSpent();
 
     public abstract boolean isCompleted();
 
     // references
     @ManyToOne
-    @JoinColumn(name = "project_id")
-    protected Project project;
+    @JoinColumn(name = "userStory_id")
+    private UserStory userStory
     @Transient
-    private ToOne<Task, Project> toProject = new ToOne<>(
-            {this.@project } as IToAny.IGet,
-            { Project p -> this.@project = p } as IToAny.ISet,
-            this, { o -> o.backlog } as IGetOther
+    private ToOne<Task, UserStory> toUserStory = new ToOne<>(
+            { this.@userStory } as IToAny.IGet,
+            { UserStory u -> this.@userStory = u } as IToAny.ISet,
+            this, { o -> o.task } as IGetOther
     )
+    public IToAny<UserStory> getUserStory() { toUserStory }
 
-    public IToAny<Project> getProject() {
-        return toProject;
-    }
+
 
     @ManyToMany(mappedBy = "backlog")
     protected Set<Sprint> sprints = new HashSet<>();

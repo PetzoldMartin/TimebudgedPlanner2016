@@ -28,51 +28,51 @@ class StartupService implements IStartupService {
     private SprintRepository sprintRepository
     @Autowired
     private TaskService taskService
-
+//TODO write new
     @Override
     void initApplicationData() {
-        if(!projectRepository.findAll() && !taskRepository.findAll() && ! sprintRepository.findAll()) {
-            int cpl = 0
-            log.info("initializing data at ${LocalDateTime.now()}")
-            Project p = new Project([name: 'Projekt Küche', budget: 1000])
-            p.backlog.add(new Subtask(tag: 'Tee kochen', description: 'Kanne zum Wasser!', estimate: 42))
-            CompoundTask hausarbeit = new CompoundTask(tag: 'Hausarbeit', description: 'Immer viel zu tun', estimate: 4711)
-            hausarbeit.project.add(p)
-            p.backlog.add(hausarbeit)
-            ['backen', 'kochen', 'abwaschen'].forEach {
-                Task t = new CompoundTask([description: "Wir sollen $it", tag: it])
-                t.supertask.add(hausarbeit)
+//        if(!projectRepository.findAll() && !taskRepository.findAll() && ! sprintRepository.findAll()) {
+//            int cpl = 0
+//            log.info("initializing data at ${LocalDateTime.now()}")
+//            Project p = new Project([name: 'Projekt Küche', budget: 1000])
+//            p.backlog.add(new Subtask(tag: 'Tee kochen', description: 'Kanne zum Wasser!', estimate: 42))
+//            CompoundTask hausarbeit = new CompoundTask(tag: 'Hausarbeit', description: 'Immer viel zu tun', estimate: 4711)
+//            hausarbeit.project.add(p)
+//            p.backlog.add(hausarbeit)
+//            ['backen', 'kochen', 'abwaschen'].forEach {
+//                Task t = new CompoundTask([description: "Wir sollen $it", tag: it])
+//                t.supertask.add(hausarbeit)
+////                t.project.add(p)
+//                cpl++
+//                ['dies', 'das', 'etwas anderes', 'nichts davon'].each { tag ->
+//                    def sub = new Subtask([description: "und dann noch $tag",
+//                                           tag        : tag, estimate: 250,
+//                                           completed  : (cpl % 2 == 0)])
+//                    t.subtask.add(sub)
+//                }
+//            }
+//            ['früh', 'mittag', 'abend'].each {
+//                new Sprint([name: it]).project.add(p)
+//            }
+//            projectRepository.saveAndFlush(p)
+//            p = new Project([name: 'Projekt Garten', budget: 2000])
+//            def tl = []
+//            ['umgraben', 'Rasen mähen', 'Äpfel pflücken', 'ernten'].forEach {
+//                Task t = new CompoundTask([description: "Wir sollen $it", tag: it])
 //                t.project.add(p)
-                cpl++
-                ['dies', 'das', 'etwas anderes', 'nichts davon'].each { tag ->
-                    def sub = new Subtask([description: "und dann noch $tag",
-                                           tag        : tag, estimate: 250,
-                                           completed  : (cpl % 2 == 0)])
-                    t.subtask.add(sub)
-                }
-            }
-            ['früh', 'mittag', 'abend'].each {
-                new Sprint([name: it]).project.add(p)
-            }
-            projectRepository.saveAndFlush(p)
-            p = new Project([name: 'Projekt Garten', budget: 2000])
-            def tl = []
-            ['umgraben', 'Rasen mähen', 'Äpfel pflücken', 'ernten'].forEach {
-                Task t = new CompoundTask([description: "Wir sollen $it", tag: it])
-                t.project.add(p)
-                tl << t
-            }
-            int i = 0
-            ['Frühling', 'Sommer', 'Herbst', 'Winter'].each {
-                Sprint s = new Sprint([name: it])
-                s.project.add(p)
-                s.backlog.add(tl[(++i) % tl.size()])
-                s.backlog.add(tl[(++i) % tl.size()])
-            }
-            projectRepository.saveAndFlush(p)
-            def tasks = taskRepository.findAll()
-            tasks.forEach({ log.info("task (${it.id}): $it.description") })
-        }
+//                tl << t
+//            }
+//            int i = 0
+//            ['Frühling', 'Sommer', 'Herbst', 'Winter'].each {
+//                Sprint s = new Sprint([name: it])
+//                s.project.add(p)
+//                s.backlog.add(tl[(++i) % tl.size()])
+//                s.backlog.add(tl[(++i) % tl.size()])
+//            }
+//            projectRepository.saveAndFlush(p)
+//            def tasks = taskRepository.findAll()
+//            tasks.forEach({ log.info("task (${it.id}): $it.description") })
+//        }
     }
 
     @Override
@@ -82,7 +82,7 @@ class StartupService implements IStartupService {
         def tasks = taskRepository.findAll()
         tasks.each { Task t ->
             t.supertask.removeAll()
-            t.project.removeAll()
+            t.userStory.removeAll()
             t.sprint.removeAll()
         }
         taskRepository.save(tasks)

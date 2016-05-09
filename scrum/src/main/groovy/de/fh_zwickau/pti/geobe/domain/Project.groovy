@@ -31,48 +31,16 @@ public class Project implements Serializable {
     private BigDecimal budget;
     private Date startDate;
 
-    public Date getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public BigDecimal getBudget() {
-        return budget;
-    }
-
-    public void setBudget(BigDecimal budget) {
-        this.budget = budget;
-    }
-
-    @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST)
-    private Set<Task> backlog = new HashSet<>();
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+    private Set<UserStory> storys = new HashSet<>();
     @Transient
-    private ToMany<Project, Task> toBacklog = new ToMany<>(
-            { this.@backlog } as IToAny.IGet, this,
-            { Task o -> o.project } as IGetOther
+    private ToMany<Project, UserStory> toStory = new ToMany<>(
+            { this.@storys } as IToAny.IGet, this,
+            { UserStory o -> o.project } as IGetOther
     )
 
-    public IToAny<Task> getBacklog() {
-        return toBacklog;
+    public IToAny<UserStory> getUserStorys() {
+        return toStory;
     }
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST)
@@ -86,6 +54,8 @@ public class Project implements Serializable {
     public IToAny<Sprint> getSprint() {
         return toSprint;
     }
+
+
 
     @OneToMany(mappedBy = "project",cascade = CascadeType.PERSIST)
     private Set<ScrumRole> roles =new HashSet<>();

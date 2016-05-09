@@ -43,7 +43,6 @@ public class CompoundTask extends Task {
         subtask.all.empty ? this.@estimate : subtask.all.sum { it.summedEstimate }
     }
 
-    @Override
     public long getSpent() {
         subtask.all.sum(0) { it.spent }
     }
