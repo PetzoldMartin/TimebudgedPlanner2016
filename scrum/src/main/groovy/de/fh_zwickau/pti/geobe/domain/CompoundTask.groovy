@@ -31,11 +31,18 @@ public class CompoundTask extends Task {
         estimate = stask.estimate
         description = stask.description
         stask.description = ''
-        if (stask.project.one)
-            project.add(stask.project.one)
+        if (stask.sprint.one)
+            sprint.add(stask.sprint.one)
         if (stask.supertask.one) {
             supertask.add(stask.supertask.one)
         }
+        if (stask.userStory.one) {
+            userStory.add(stask.userStory.one)
+        }
+        //TODO extend by other references
+//        if (stask.scrumUser.one) {
+//            scrumuser.add(stask.scrumUser.one)
+//        }
         subtask.add(stask)
     }
 
