@@ -48,12 +48,12 @@ class SprintService {
     public List<TaskDto.QNode> getProjectBacklog(Long pid) {
         List<TaskDto.QNode> nodes = []
         Project p = projectRepository.findOne(pid)
-        p.userStorys.all.sort{it.id}.each {
+        p.userStorys.all.sort { it.id }.each {
             UserStory us ->
-            us.task.all.sort { it.tag.toLowerCase() }.each { Task t ->
-                if (!t.completed)
-                    nodes << taskService.taskTree(t)
-            }
+                us.task.all.sort { it.tag.toLowerCase() }.each { Task t ->
+                    if (!t.completed)
+                        nodes << taskService.taskTree(t)
+                }
         }
         //p.backlog.all.sort { it.tag.toLowerCase() }.each { Task t ->
         //  if (!t.completed)

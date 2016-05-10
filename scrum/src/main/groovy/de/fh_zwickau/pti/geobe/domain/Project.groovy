@@ -1,21 +1,16 @@
 package de.fh_zwickau.pti.geobe.domain
 
-import de.geobe.util.association.IGetOther;
-import de.geobe.util.association.IToAny;
-import de.geobe.util.association.ToMany;
+import de.geobe.util.association.IGetOther
+import de.geobe.util.association.IToAny
+import de.geobe.util.association.ToMany
 
-import javax.persistence.*;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import javax.persistence.*
 
 /**
  * @author georg beier
  */
 @Entity
-public class Project implements Serializable {
+public class Project {
     @Id
     @Column(name = "project_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -43,7 +38,7 @@ public class Project implements Serializable {
         return toStory;
     }
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private Set<Sprint> sprints = new HashSet<>();
     @Transient
     private ToMany<Project, Sprint> toSprint = new ToMany<>(
@@ -56,14 +51,13 @@ public class Project implements Serializable {
     }
 
 
-
-    @OneToMany(mappedBy = "project",cascade = CascadeType.PERSIST)
-    private Set<ScrumRole> roles =new HashSet<>();
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+    private Set<ScrumRole> roles = new HashSet<>();
     @Transient
-    private ToMany<Project,ScrumRole> toRoles = new ToMany<>(
+    private ToMany<Project, ScrumRole> toRoles = new ToMany<>(
             { this.@roles } as IToAny.IGet, this,
             { ScrumRole o -> o.project } as IGetOther
     )
 
-    public IToAny<ScrumRole> getRoles() {return toRoles;}
+    public IToAny<ScrumRole> getRoles() { return toRoles; }
 }

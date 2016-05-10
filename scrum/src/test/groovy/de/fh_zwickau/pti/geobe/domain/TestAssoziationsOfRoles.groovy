@@ -14,7 +14,7 @@ import spock.lang.Specification
 //TODO Test rewrite
 
 @SpringApplicationConfiguration(classes = GroovaaApplication)
-class TestAssoziationsOfRoles extends Specification{
+class TestAssoziationsOfRoles extends Specification {
 
     @Autowired
     ProjectRepository projectRepository
@@ -34,10 +34,10 @@ class TestAssoziationsOfRoles extends Specification{
         project.name = "ein Projekt"
         project2 = new Project()
         project2.name = "auch ein Projekt"
-        scrumUser1=new ScrumUser()
+        scrumUser1 = new ScrumUser()
 
-        scrumRole1=new ScrumRole();
-        scrumRole2=new ScrumRole();
+        scrumRole1 = new ScrumRole();
+        scrumRole2 = new ScrumRole();
     }
 
 //    public

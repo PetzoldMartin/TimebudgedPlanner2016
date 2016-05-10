@@ -1,6 +1,5 @@
 package de.fh_zwickau.pti.geobe.domain
 
-import de.geobe.util.vaadin.DialogStateMachine
 import groovy.util.logging.Slf4j
 import spock.lang.Specification
 

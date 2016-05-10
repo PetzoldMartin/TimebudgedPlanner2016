@@ -4,13 +4,10 @@ import de.fh_zwickau.pti.geobe.GroovaaApplication
 import de.fh_zwickau.pti.geobe.repository.ProjectRepository
 import de.fh_zwickau.pti.geobe.repository.SprintRepository
 import de.fh_zwickau.pti.geobe.repository.TaskRepository
-import de.fh_zwickau.pti.geobe.service.StartupService
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationConfiguration
 import spock.lang.Specification
-
-import javax.transaction.Transactional
 
 /**
  *

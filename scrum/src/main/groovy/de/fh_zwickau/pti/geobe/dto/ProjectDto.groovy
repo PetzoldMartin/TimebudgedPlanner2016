@@ -38,7 +38,7 @@ class ProjectDto {
         String name
         //List<TaskDto.QNode> backlog = []
         List<SprintDto.QNode> sprint = []
-        List<UserStoryDto.QNode> userStory =[]
+        List<UserStoryDto.QNode> userStory = []
 
         @Override
         String toString() {

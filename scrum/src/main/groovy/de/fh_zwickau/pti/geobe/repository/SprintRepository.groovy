@@ -1,9 +1,7 @@
-package de.fh_zwickau.pti.geobe.repository;
+package de.fh_zwickau.pti.geobe.repository
 
-import de.fh_zwickau.pti.geobe.domain.Sprint;
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.List;
+import de.fh_zwickau.pti.geobe.domain.Sprint
+import org.springframework.data.jpa.repository.JpaRepository
 
 /**
  * The standard Spring repository interface

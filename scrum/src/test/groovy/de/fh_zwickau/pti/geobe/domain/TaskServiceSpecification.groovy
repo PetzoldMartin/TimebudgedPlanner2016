@@ -1,17 +1,13 @@
 package de.fh_zwickau.pti.geobe.domain
 
 import de.fh_zwickau.pti.geobe.GroovaaApplication
-import de.fh_zwickau.pti.geobe.dto.TaskDto
 import de.fh_zwickau.pti.geobe.repository.ProjectRepository
 import de.fh_zwickau.pti.geobe.repository.TaskRepository
-import de.fh_zwickau.pti.geobe.service.StartupService
 import de.fh_zwickau.pti.geobe.service.TaskService
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationConfiguration
 import spock.lang.Specification
-
-import javax.transaction.Transactional
 
 /**
  *

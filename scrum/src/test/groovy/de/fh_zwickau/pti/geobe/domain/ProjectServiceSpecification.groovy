@@ -1,18 +1,13 @@
 package de.fh_zwickau.pti.geobe.domain
 
 import de.fh_zwickau.pti.geobe.GroovaaApplication
-import de.fh_zwickau.pti.geobe.dto.ProjectDto
 import de.fh_zwickau.pti.geobe.repository.ProjectRepository
 import de.fh_zwickau.pti.geobe.repository.SprintRepository
 import de.fh_zwickau.pti.geobe.repository.TaskRepository
 import de.fh_zwickau.pti.geobe.service.ProjectService
-import de.fh_zwickau.pti.geobe.service.StartupService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationConfiguration
-import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException
 import spock.lang.Specification
-
-import javax.transaction.Transactional
 
 /**
  *
@@ -85,8 +80,7 @@ class ProjectServiceSpecification extends Specification {
 //        ProjectDto.QFull qFull = projectService.createOrUpdateProject(cSet)
 //        then: 'an exception is thrown due to missing authorization'
 //        thrown(AuthenticationCredentialsNotFoundException)
-        // did not yet manage to authenticate with vaadin in a test case
-
+    // did not yet manage to authenticate with vaadin in a test case
 
 //        then: 'Project should be saved and QFull populated'
 //        assert projectRepository.findAll().size() == 1

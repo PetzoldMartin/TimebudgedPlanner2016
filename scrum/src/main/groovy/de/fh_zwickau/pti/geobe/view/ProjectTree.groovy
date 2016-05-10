@@ -56,8 +56,8 @@ class ProjectTree extends SubTree
             }
             "$C.panel"('Projekte', [spacing: true, margin: true]) {
                 "$F.tree"('Projekte, Backlogs und Sprints',
-                        [uikey: PTREE, caption: 'MenuTree',
-                         valueChangeListener: {treeValueChanged(it)}])
+                        [uikey              : PTREE, caption: 'MenuTree',
+                         valueChangeListener: { treeValueChanged(it) }])
             }
         }
     }

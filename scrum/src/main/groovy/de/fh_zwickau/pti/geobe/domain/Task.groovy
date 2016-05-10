@@ -1,18 +1,17 @@
 package de.fh_zwickau.pti.geobe.domain
 
-import de.geobe.util.association.IGetOther;
-import de.geobe.util.association.IToAny;
-import de.geobe.util.association.ToMany;
-import de.geobe.util.association.ToOne;
+import de.geobe.util.association.IGetOther
+import de.geobe.util.association.IToAny
+import de.geobe.util.association.ToMany
+import de.geobe.util.association.ToOne
 
-import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+import javax.persistence.*
 
 /**
  * An abstract superclass for tasks
  * @author georg beier
  */
+
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Task {
@@ -21,7 +20,7 @@ public abstract class Task {
     protected Long id;
 
     // domain values
-    protected String tag = "";
+    protected String tag = ""
     protected String description = "Task ist noch nicht beschrieben";
 
     // abstract task methods
@@ -37,8 +36,8 @@ public abstract class Task {
             { UserStory u -> this.@userStory = u } as IToAny.ISet,
             this, { o -> o.task } as IGetOther
     )
-    public IToAny<UserStory> getUserStory() { toUserStory }
 
+    public IToAny<UserStory> getUserStory() { toUserStory }
 
 
     @ManyToMany(mappedBy = "backlog")
@@ -46,7 +45,7 @@ public abstract class Task {
     @Transient
     private ToMany<Task, Sprint> toSprint = new ToMany<>(
             { this.@sprints } as IToAny.IGet, this,
-            { Sprint o -> o.backlog} as IGetOther
+            { Sprint o -> o.backlog } as IGetOther
     )
 
     public IToAny<Sprint> getSprint() {

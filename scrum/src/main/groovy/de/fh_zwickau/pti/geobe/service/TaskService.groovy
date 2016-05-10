@@ -127,7 +127,7 @@ class TaskService {
             qFull.sprints = new SprintDto.QList()
             t.project.all.each { qFull.project.all[it.id] = it.name }
             t.supertask.all.each { qFull.supertask.all[it.id] = it.tag }
-            t.sprint.all.sort {it.start}.each { qFull.sprints.all[it.id] = it.name }
+            t.sprint.all.sort { it.start }.each { qFull.sprints.all[it.id] = it.name }
             qFull.subtasks = taskSubtree(t)
             qFull
         } else {
@@ -137,7 +137,7 @@ class TaskService {
 
     private List<TaskDto.QNode> taskSubtree(Task t, boolean notCompleted = false) {
         List<TaskDto.QNode> subtree = new LinkedList<>()
-        if(t instanceof CompoundTask) {
+        if (t instanceof CompoundTask) {
             t.subtask.all.sort { it.tag.toLowerCase() }.each { Task subtask ->
                 if (!(subtask.completed && notCompleted)) {
                     TaskDto.QNode node = new TaskDto.QNode([id: subtask.id, tag: subtask.tag])

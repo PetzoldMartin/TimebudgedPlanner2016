@@ -1,10 +1,7 @@
 package de.fh_zwickau.pti.geobe.service
 
 import de.fh_zwickau.pti.geobe.domain.*
-import de.fh_zwickau.pti.geobe.repository.ProjectRepository
-import de.fh_zwickau.pti.geobe.repository.SprintRepository
-import de.fh_zwickau.pti.geobe.repository.TaskRepository
-import de.fh_zwickau.pti.geobe.repository.UserStoryRepository
+import de.fh_zwickau.pti.geobe.repository.*
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -29,11 +26,20 @@ class StartupService implements IStartupService {
     private SprintRepository sprintRepository
     @Autowired
     private UserStoryRepository userStoryRepository
+    @Autowired
+    private ScrumUserRepository scrumUserRepository
 
     @Override
     void initApplicationData() {
-        if(!projectRepository.findAll() && !taskRepository.findAll() && ! sprintRepository.findAll()) { //TODO write new
-            def tasksforUserStory =[]
+
+        // users
+        if (!scrumUserRepository.findAll()) {
+            ScrumUser user = new ScrumUser()
+        }
+
+        // project structure
+        if (!projectRepository.findAll() && !taskRepository.findAll() && !sprintRepository.findAll()) { //TODO write new
+            def tasksforUserStory = []
             int cpl = 0
             log.info("initializing data at ${LocalDateTime.now()}")
             Project p = new Project([name: 'Projekt Küche', budget: 1000])
@@ -73,7 +79,7 @@ class StartupService implements IStartupService {
                 new Sprint([name: it]).project.add(p)
             }
             // add to one userStory
-            tasksforUserStory.forEach({us.task.add(it)})
+            tasksforUserStory.forEach({ us.task.add(it) })
 
             // finally persist project
             projectRepository.saveAndFlush(p)
@@ -99,7 +105,7 @@ class StartupService implements IStartupService {
                 s.backlog.add(tl[(++i) % tl.size()])
             }
             // add to userStory
-            tl.forEach({us.task.add(it)})
+            tl.forEach({ us.task.add(it) })
 
             //persist
             projectRepository.saveAndFlush(p)
@@ -128,7 +134,6 @@ class StartupService implements IStartupService {
         projectRepository.deleteAll()
         taskRepository.deleteAll()
         sprintRepository.deleteAll()
-
 
         // check cleanup
 //        assert projectRepository.findAll().isEmpty()

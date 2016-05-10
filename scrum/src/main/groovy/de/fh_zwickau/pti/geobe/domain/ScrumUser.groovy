@@ -1,45 +1,39 @@
 package de.fh_zwickau.pti.geobe.domain
 
-import de.geobe.util.association.IGetOther;
-import de.geobe.util.association.IToAny;
-import de.geobe.util.association.ToMany;
+import de.geobe.util.association.IGetOther
+import de.geobe.util.association.IToAny
+import de.geobe.util.association.ToMany
 
-import javax.persistence.*;
-import java.io.Serializable;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import javax.persistence.*
 
 /**
  * Created by aisma on 01.04.2016.
  */
 @Entity
-public class ScrumUser implements Serializable{
+public class ScrumUser {
     @Id
-    @Column(name="scrumUser_id")
+    @Column(name = "scrumUser_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    Long id;
 
-    public Long getId() {
-        return id;
-    }
+    // domain values
+    String nick
+    String password
+    String firstName
+    String lastName
+    Date birthdate
+
     // references
-    @OneToMany(mappedBy = "scrumUser",cascade = CascadeType.PERSIST)
-    private Set<ScrumRole> roles =new HashSet<>();
+    @OneToMany(mappedBy = "scrumUser", cascade = CascadeType.ALL)
+    private Set<ScrumRole> roles = new HashSet<>();
     @Transient
-    private ToMany<ScrumUser,ScrumRole> toRoles = new ToMany<>(
+    private ToMany<ScrumUser, ScrumRole> toRoles = new ToMany<>(
 
             { this.@roles } as IToAny.IGet, this,
             { ScrumRole o -> o.scrumUser } as IGetOther
 
     )
-    public IToAny<ScrumRole> getRoles() {return toRoles;}
 
-    // domain values
-    private String firstName;
-    private String lastName;
-    private String nick;
-    private Date birthdate;
-
-
+    public IToAny<ScrumRole> getRoles() { return toRoles; }
+    //TODO reference to Task
 }

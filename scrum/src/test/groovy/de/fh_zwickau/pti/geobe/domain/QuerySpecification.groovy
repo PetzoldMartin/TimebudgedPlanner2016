@@ -10,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationConfiguration
 import spock.lang.Specification
 
-import javax.transaction.Transactional
-
 /**
  *
  * @author georg beier
@@ -28,7 +26,8 @@ class QuerySpecification extends Specification {
     private TaskRepository taskRepository
     @Autowired
     private SprintRepository sprintRepository
-    @Autowired StartupService startupService
+    @Autowired
+    StartupService startupService
 
     Project project
     CompoundTask task

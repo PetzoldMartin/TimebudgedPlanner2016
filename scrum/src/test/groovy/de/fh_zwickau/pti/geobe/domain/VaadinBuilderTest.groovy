@@ -1,10 +1,6 @@
 package de.fh_zwickau.pti.geobe.domain
 
-import com.vaadin.ui.Component
-import com.vaadin.ui.Field
 import de.fh_zwickau.pti.geobe.GroovaaApplication
-import de.geobe.util.vaadin.VaadinBuilder
-import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.boot.test.SpringApplicationConfiguration
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner

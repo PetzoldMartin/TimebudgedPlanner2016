@@ -48,19 +48,19 @@ abstract class TabBase extends SubTree {
         }
         sm.onTransition[sm.trix(TabViewStateMachine.State.EDIT, TabViewStateMachine.Event.Save)] = {
             saveItem(currentDomainId)
-            projectTree.onEditItemDone(currentItemId,  currentCaption)
+            projectTree.onEditItemDone(currentItemId, currentCaption)
         }
         sm.onTransition[sm.trix(TabViewStateMachine.State.EDIT, TabViewStateMachine.Event.Cancel)] = {
             setFieldValues()
-            projectTree.onEditItemDone(currentItemId,  currentCaption)
+            projectTree.onEditItemDone(currentItemId, currentCaption)
         }
         sm.onTransition[sm.trix(TabViewStateMachine.State.CREATE, TabViewStateMachine.Event.Save)] = {
             saveItem(0)
-            projectTree.onEditItemDone(matchForNewItem,  currentCaption, true)
+            projectTree.onEditItemDone(matchForNewItem, currentCaption, true)
         }
         sm.onTransition[sm.trix(TabViewStateMachine.State.CREATE, TabViewStateMachine.Event.Cancel)] = {
             setFieldValues()
-            projectTree.onEditItemDone(currentItemId,  currentCaption)
+            projectTree.onEditItemDone(currentItemId, currentCaption)
         }
         sm.onTransition[sm.trix(TabViewStateMachine.State.DIALOG, TabViewStateMachine.Event.Save)] = {
             saveDialog()

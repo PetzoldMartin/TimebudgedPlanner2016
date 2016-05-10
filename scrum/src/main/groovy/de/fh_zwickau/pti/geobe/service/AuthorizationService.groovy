@@ -8,11 +8,11 @@ import org.springframework.stereotype.Service
  * @author georg beier
  */
 @Service
-class AuthorizationService implements IAuthorizationService{
+class AuthorizationService implements IAuthorizationService {
     @Override
     boolean hasRole(String role) {
         Collection authorities = SecurityContextHolder.context.authentication.authorities
-        authorities.any {GrantedAuthority au ->
+        authorities.any { GrantedAuthority au ->
             au.authority == role
         }
     }

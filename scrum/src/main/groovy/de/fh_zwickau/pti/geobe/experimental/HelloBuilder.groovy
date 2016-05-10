@@ -26,7 +26,7 @@ class HelloBuilder extends UI {
     // Variablen müssen vor der Verwendung deklariert sein, daher müssen listener closures
     // vor initBuilder definiert werden
 
-    def treeClick = {ItemClickEvent e ->
+    def treeClick = { ItemClickEvent e ->
         Component c = (Component) widgets[e.itemId]
         widgets['label'].value = e.itemId
         c.focus()
@@ -35,7 +35,7 @@ class HelloBuilder extends UI {
     Component initBuilder() {
         vaadin = new VaadinBuilder()
 
-        Component root = vaadin.hsplit (splitPosition: 25.0 ){
+        Component root = vaadin.hsplit(splitPosition: 25.0) {
             panel([uikey: 'treepanel']) {
                 tree('Komponentenbaum', [itemClickListener: treeClick])
             }

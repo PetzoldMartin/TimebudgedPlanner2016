@@ -109,13 +109,13 @@ class SprintTab extends TabBase
     protected getCurrentItemId() { currentSprintItemId }
 
     @Override
-    protected Long getCurrentDomainId() {(Long) currentSprintItemId['id']}
+    protected Long getCurrentDomainId() { (Long) currentSprintItemId['id'] }
 
     @Override
     protected String getCurrentCaption() { currentDto.name }
 
     @Override
-    protected getMatchForNewItem() {[type: ProjectTree.SPRINT_TYPE, id: currentDto.id]}
+    protected getMatchForNewItem() { [type: ProjectTree.SPRINT_TYPE, id: currentDto.id] }
 
     /** prepare INIT state */
     @Override

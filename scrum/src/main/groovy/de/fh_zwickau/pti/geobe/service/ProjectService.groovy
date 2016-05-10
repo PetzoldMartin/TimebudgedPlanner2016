@@ -7,7 +7,6 @@ import de.fh_zwickau.pti.geobe.domain.UserStory
 import de.fh_zwickau.pti.geobe.dto.ProjectDto
 import de.fh_zwickau.pti.geobe.dto.ProjectDto.CSet
 import de.fh_zwickau.pti.geobe.dto.SprintDto
-import de.fh_zwickau.pti.geobe.dto.TaskDto
 import de.fh_zwickau.pti.geobe.dto.UserStoryDto
 import de.fh_zwickau.pti.geobe.repository.ProjectRepository
 import de.fh_zwickau.pti.geobe.repository.SprintRepository
@@ -41,9 +40,9 @@ class ProjectService {
 
     public ProjectDto.QList getProjects() {
         ProjectDto.QList qList = new ProjectDto.QList()
-        projectRepository.findAll().sort {it.name.toLowerCase()}.each { Project p ->
-            def node = new ProjectDto.QNode( [name: p.name])
-            p.userStorys.all.sort {it.id}.each { UserStory us ->
+        projectRepository.findAll().sort { it.name.toLowerCase() }.each { Project p ->
+            def node = new ProjectDto.QNode([name: p.name])
+            p.userStorys.all.sort { it.id }.each { UserStory us ->
                 node.userStory.add(new UserStoryDto.QNode([id: us.id, name: us.name, description: us.description]))
                 us.task.all.sort { it.tag.toLowerCase() }.each { Task t ->
                     node.userStory.add(taskService.taskTree(t))
@@ -52,7 +51,7 @@ class ProjectService {
             //p.backlog.all.sort {it.tag.toLowerCase()}.each { Task t ->
             //    node.backlog.add(taskService.taskTree(t))
             //}
-            p.sprint.all.sort {it.start}.each { Sprint sp ->
+            p.sprint.all.sort { it.start }.each { Sprint sp ->
                 node.sprint.add(new SprintDto.QNode([id: sp.id, name: sp.name]))
             }
             qList.all[p.id] = node
@@ -62,7 +61,7 @@ class ProjectService {
 
     public String getProjectCaption(Long pid) {
         Project project = projectRepository.findOne(pid)
-        if(project) {
+        if (project) {
             project.name
         } else {
             '--?--'
@@ -98,9 +97,10 @@ class ProjectService {
             ProjectDto.QFull qFull = new ProjectDto.QFull(id: p.id, name: p.name, budget: p.budget)
             qFull.userStorys = new UserStoryDto.QList()
             qFull.sprints = new SprintDto.QList()
-            p.userStorys.all.sort {it.id}.forEach { UserStory userStory ->
-                qFull.userStorys.all[userStory.id] = userStory.name }
-            p.sprint.all.sort {it.start}.forEach { Sprint s -> qFull.sprints.all[s.id] = s.name }
+            p.userStorys.all.sort { it.id }.forEach { UserStory userStory ->
+                qFull.userStorys.all[userStory.id] = userStory.name
+            }
+            p.sprint.all.sort { it.start }.forEach { Sprint s -> qFull.sprints.all[s.id] = s.name }
             qFull
         } else {
             new ProjectDto.QFull()

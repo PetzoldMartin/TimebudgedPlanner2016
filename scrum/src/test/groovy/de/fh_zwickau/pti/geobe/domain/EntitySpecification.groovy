@@ -2,7 +2,6 @@ package de.fh_zwickau.pti.geobe.domain
 
 import de.fh_zwickau.pti.geobe.GroovaaApplication
 import de.fh_zwickau.pti.geobe.repository.ProjectRepository
-import de.fh_zwickau.pti.geobe.repository.SprintRepository
 import de.fh_zwickau.pti.geobe.repository.TaskRepository
 import de.fh_zwickau.pti.geobe.repository.UserStoryRepository
 import de.fh_zwickau.pti.geobe.service.StartupService
@@ -32,10 +31,10 @@ class EntitySpecification extends Specification {
 
     public setup() {
         project = new Project()
-        project.name ="ein Projekt"
+        project.name = "ein Projekt"
         userStory = new UserStory()
-        userStory.name="a Story with two Boobs"
-        userStory.description="Boobs don't need any Description"
+        userStory.name = "a Story with two Boobs"
+        userStory.description = "Boobs don't need any Description"
         task = new CompoundTask()
         task.description = "eine neue Aufgabe"
         println("setup called")
@@ -44,7 +43,7 @@ class EntitySpecification extends Specification {
     private StartupService startupService
 
     public cleanup() {
-       startupService.cleanupAll()
+        startupService.cleanupAll()
     }
 
     def "association of a userStory to a project"() {
@@ -55,14 +54,14 @@ class EntitySpecification extends Specification {
         userStory.getProject().one == project
     }
 
-    def "save entities and clear " () {
+    def "save entities and clear "() {
         when:
         projectRepository.save(project)
         then:
         projectRepository.count() == 1
     }
 
-    def "is cleanup really called" () {
+    def "is cleanup really called"() {
         when:
         // nothing happened
         def x = 0

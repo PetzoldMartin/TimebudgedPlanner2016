@@ -23,9 +23,9 @@ import org.vaadin.spring.security.web.authentication.VaadinUrlAuthenticationSucc
 
 /**
  * Configure Spring Security. Adapted from Vaadin4Spring security sample
+ *
  * @author Petter Holmström (petter@vaadin.com)
  * @author Georg Beier
- *
  */
 @Configuration
 @EnableWebSecurity

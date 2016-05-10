@@ -1,11 +1,7 @@
 package de.fh_zwickau.pti.geobe.repository
 
-import de.fh_zwickau.pti.geobe.domain.CompoundTask
-import de.fh_zwickau.pti.geobe.domain.Subtask
-import de.fh_zwickau.pti.geobe.domain.Task
 import de.fh_zwickau.pti.geobe.domain.UserStory
 import org.springframework.data.jpa.repository.JpaRepository
-import org.springframework.data.jpa.repository.Query
 
 /**
  * Created by aisma on 09.05.2016.

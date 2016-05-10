@@ -36,6 +36,7 @@ class Sprint {
             { Project p -> this.@project = p } as IToAny.ISet,
             this, { o -> o.sprint } as IGetOther
     )
+
     public IToAny<Project> getProject() { toProject }
 
     @ManyToMany
