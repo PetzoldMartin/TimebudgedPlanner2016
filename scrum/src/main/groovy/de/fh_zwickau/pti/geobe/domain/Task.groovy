@@ -25,13 +25,12 @@ public abstract class Task {
     protected String description = "Task ist noch nicht beschrieben";
 
     // abstract task methods
-
     public abstract boolean isCompleted();
 
     // references
     @ManyToOne
     @JoinColumn(name = "userStory_id")
-    private UserStory userStory
+    protected UserStory userStory
     @Transient
     private ToOne<Task, UserStory> toUserStory = new ToOne<>(
             { this.@userStory } as IToAny.IGet,

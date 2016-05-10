@@ -3,9 +3,9 @@ package de.fh_zwickau.pti.geobe.service
 import de.fh_zwickau.pti.geobe.domain.Project
 import de.fh_zwickau.pti.geobe.domain.Sprint
 import de.fh_zwickau.pti.geobe.domain.Task
+import de.fh_zwickau.pti.geobe.domain.UserStory
 import de.fh_zwickau.pti.geobe.dto.ProjectDto
 import de.fh_zwickau.pti.geobe.dto.SprintDto
-import de.fh_zwickau.pti.geobe.dto.SprintDto.CSet
 import de.fh_zwickau.pti.geobe.dto.TaskDto
 import de.fh_zwickau.pti.geobe.repository.ProjectRepository
 import de.fh_zwickau.pti.geobe.repository.SprintRepository
@@ -48,10 +48,17 @@ class SprintService {
     public List<TaskDto.QNode> getProjectBacklog(Long pid) {
         List<TaskDto.QNode> nodes = []
         Project p = projectRepository.findOne(pid)
-        p.backlog.all.sort { it.tag.toLowerCase() }.each { Task t ->
-            if (!t.completed)
-                nodes << taskService.taskTree(t)
+        p.userStorys.all.sort{it.id}.each {
+            UserStory us ->
+            us.task.all.sort { it.tag.toLowerCase() }.each { Task t ->
+                if (!t.completed)
+                    nodes << taskService.taskTree(t)
+            }
         }
+        //p.backlog.all.sort { it.tag.toLowerCase() }.each { Task t ->
+        //  if (!t.completed)
+        //      nodes << taskService.taskTree(t)
+        //}
         nodes
     }
 
@@ -60,7 +67,7 @@ class SprintService {
         makeQFull(sp)
     }
 
-    public SprintDto.QFull createOrUpdateSprint(CSet command) {
+    public SprintDto.QFull createOrUpdateSprint(SprintDto.CSet command) {
         Sprint sp
         if (command.id) {
             sp = sprintRepository.findOne(command.id)

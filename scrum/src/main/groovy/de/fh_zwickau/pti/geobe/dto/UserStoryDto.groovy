@@ -1,8 +1,11 @@
 package de.fh_zwickau.pti.geobe.dto
+
 /**
- * @author georg beier
+ * @author Heliosana
+ * @date 10.05.2016.
+ *
  */
-class ProjectDto {
+class UserStoryDto {
     public static class QList {
         LinkedHashMap<Long, QNode> all = [:]
 
@@ -18,27 +21,25 @@ class ProjectDto {
     public static class QFull {
         Long id = 0
         String name = ''
-        BigDecimal budget = 0
-        //TaskDto.QList backlog = new TaskDto.QList()
-        SprintDto.QList sprints = new SprintDto.QList()
-        UserStoryDto.QList userStorys = new UserStoryDto.QList()
+        String description = ''
+        ProjectDto.QNode project = new ProjectDto.QNode()
+        def backlog = new TaskDto.QList()
+//        def available = new TaskDto.QList()
     }
 
     public static class CSet {
         Long id = 0
+        Long projectId = 0
         String name = ''
-        BigDecimal budget = 0
-        //List<Long> taskIds = []
-        List<Long> sprintIds = []
-        List<Long> userStoryIds = []
-
+        String description = ''
+        List<Long> taskIds = []
     }
 
     public static class QNode {
+        Long id
         String name
-        //List<TaskDto.QNode> backlog = []
-        List<SprintDto.QNode> sprint = []
-        List<UserStoryDto.QNode> userStory =[]
+        def backlog = new TaskDto.QList()
+//        def available = new TaskDto.QList()
 
         @Override
         String toString() {

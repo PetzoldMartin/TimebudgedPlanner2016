@@ -7,6 +7,8 @@ import de.geobe.util.association.ToOne
 
 import javax.persistence.CascadeType
 import javax.persistence.Entity
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
 import javax.persistence.Id
 import javax.persistence.JoinColumn
 import javax.persistence.ManyToOne
@@ -14,16 +16,16 @@ import javax.persistence.OneToMany
 import javax.persistence.Transient
 
 /**
- * Created by Heliosana on 04.05.2016.
+ * @author Heliosana
+ * @date 04.05.2016.
  */
 
 @Entity
 class UserStory {
 
-    //TODO implementation between Project and Task
-
     @Id
-    private long id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    long id
     // domain values
     String name
     String description
