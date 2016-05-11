@@ -43,9 +43,10 @@ class ProjectService {
         projectRepository.findAll().sort { it.name.toLowerCase() }.each { Project p ->
             def node = new ProjectDto.QNode([name: p.name])
             p.userStorys.all.sort { it.id }.each { UserStory us ->
-                node.userStory.add(new UserStoryDto.QNode([id: us.id, name: us.name, description: us.description]))
+                UserStoryDto.QNode usDto = new UserStoryDto.QNode([id: us.id, name: us.name])
+                node.userStory.add(usDto)
                 us.task.all.sort { it.tag.toLowerCase() }.each { Task t ->
-                    node.userStory.add(taskService.taskTree(t))
+                    usDto.backlog.add(taskService.taskTree(t))
                 }
             }
             //p.backlog.all.sort {it.tag.toLowerCase()}.each { Task t ->

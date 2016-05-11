@@ -23,7 +23,7 @@ class UserStoryDto {
         String name = ''
         String description = ''
         ProjectDto.QNode project = new ProjectDto.QNode()
-        def backlog = new TaskDto.QList()
+        TaskDto.QList backlog = new TaskDto.QList()
 //        def available = new TaskDto.QList()
     }
 
@@ -38,7 +38,7 @@ class UserStoryDto {
     public static class QNode {
         Long id
         String name
-        def backlog = new TaskDto.QList()
+        List<TaskDto.QNode> backlog = []
 //        def available = new TaskDto.QList()
 
         @Override

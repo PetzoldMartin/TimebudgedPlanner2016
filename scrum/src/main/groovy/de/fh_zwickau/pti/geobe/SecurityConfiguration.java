@@ -1,5 +1,8 @@
 package de.fh_zwickau.pti.geobe;
 
+import de.fh_zwickau.pti.geobe.domain.ScrumUser;
+import de.fh_zwickau.pti.geobe.repository.ScrumUserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -13,6 +16,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
+import org.springframework.stereotype.Component;
 import org.vaadin.spring.config.VaadinExtensionsConfiguration;
 import org.vaadin.spring.http.HttpService;
 import org.vaadin.spring.security.annotation.EnableVaadinSharedSecurity;
@@ -27,6 +31,7 @@ import org.vaadin.spring.security.web.authentication.VaadinUrlAuthenticationSucc
  * @author Petter Holmström (petter@vaadin.com)
  * @author Georg Beier
  */
+
 @Configuration
 @EnableWebSecurity
 @Import({VaadinExtensionsConfiguration.class, VaadinSharedSecurityConfiguration.class})
@@ -34,12 +39,19 @@ import org.vaadin.spring.security.web.authentication.VaadinUrlAuthenticationSucc
 @EnableVaadinSharedSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
+
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
+
+        auth.inMemoryAuthentication() //TODO make user in DB
                 .withUser("user").password("user").roles("USER")
                 .and()
                 .withUser("admin").password("admin").roles("ADMIN");
+//        auth.jdbcAuthentication().dataSource(dataSource)
+//                .usersByUsernameQuery(
+//                        "select username,password, enabled from users where username=?")
+//                .authoritiesByUsernameQuery(
+//                        "select username, role from user_roles where username=?");
     }
 
     @Override
