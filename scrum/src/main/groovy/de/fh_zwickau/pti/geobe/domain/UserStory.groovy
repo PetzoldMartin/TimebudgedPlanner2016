@@ -21,6 +21,7 @@ class UserStory {
     // domain values
     String name
     String description
+    int priority
 
     // references
     @ManyToOne

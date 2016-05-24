@@ -5,10 +5,10 @@ import com.vaadin.spring.annotation.SpringComponent
 import com.vaadin.spring.annotation.UIScope
 import com.vaadin.ui.*
 import com.vaadin.ui.themes.Reindeer
-import de.fh_zwickau.pti.geobe.dto.SprintDto
 import de.fh_zwickau.pti.geobe.dto.TaskDto.QNode
+import de.fh_zwickau.pti.geobe.dto.UserStoryDto
 import de.fh_zwickau.pti.geobe.service.ProjectService
-import de.fh_zwickau.pti.geobe.service.SprintService
+import de.fh_zwickau.pti.geobe.service.UserstoryService
 import de.fh_zwickau.pti.geobe.util.view.VaadinSelectionListener
 import de.fh_zwickau.pti.geobe.util.view.VaadinTreeRootChangeListener
 import de.geobe.util.vaadin.TabViewStateMachine
@@ -19,24 +19,24 @@ import static de.geobe.util.vaadin.VaadinBuilder.C
 import static de.geobe.util.vaadin.VaadinBuilder.F
 
 /**
- * show a sprint on its own tab
+ * show a userstory on its own tab
  * @author georg beier
  */
 @SpringComponent
 @UIScope
 class UserstoryTab extends TabBase
         implements VaadinSelectionListener, VaadinTreeRootChangeListener, Serializable {
-    private TextField name, project
-    private DateField start, end
+    private TextField name, project, description //TODO add priority
+   // private DateField start, end
     private TwinColSelect backlog
     private Button newButton, editButton, saveButton, cancelButton
-    private Map<String, Serializable> currentSprintItemId
+    private Map<String, Serializable> currentUserstoryItemId
     private Map<String, Serializable> currentProjectItemId
-    private SprintDto.QFull currentDto
+    private UserStoryDto.QFull currentDto
 
 
     @Autowired
-    private SprintService sprintService
+    private UserstoryService userstoryService
     @Autowired
     private ProjectService projectService
 
@@ -46,10 +46,9 @@ class UserstoryTab extends TabBase
                 [uikey  : 'grid', columns: 2, rows: 4,
                  margin : new MarginInfo(false, false, false, true),
                  spacing: true]) {
-            "$F.text"('<b>Sprint</b>', [uikey: 'name', captionAsHtml: true, enabled: false])
+            "$F.text"('<b>Userstory</b>', [uikey: 'name', captionAsHtml: true, enabled: false])
             "$F.text"('Project', [uikey: 'project', enabled: false])
-            "$F.date"('Start', [uikey: 'start', enabled: false, gridPosition: [0, 1]])
-            "$F.date"('End', [uikey: 'end', enabled: false, gridPosition: [1, 1]])
+            "$F.text"('Description', [uikey: 'description', enabled: false])
             "$F.twincol"('Backlog', [uikey             : 'backlog', rows: 8, width: '100%',
                                      leftColumnCaption : 'available', enabled: false,
                                      rightColumnCaption: 'selected', gridPosition: [0, 2, 1, 2]])
@@ -77,26 +76,25 @@ class UserstoryTab extends TabBase
         uiComponents = vaadin.uiComponents
         name = uiComponents."${subkeyPrefix}name"
         project = uiComponents."${subkeyPrefix}project"
-        start = uiComponents."${subkeyPrefix}start"
-        end = uiComponents."${subkeyPrefix}end"
+        description = uiComponents."${subkeyPrefix}description"
         backlog = uiComponents."${subkeyPrefix}backlog"
         newButton = uiComponents."${subkeyPrefix}newbutton"
         editButton = uiComponents."${subkeyPrefix}editbutton"
         saveButton = uiComponents."${subkeyPrefix}savebutton"
         cancelButton = uiComponents."${subkeyPrefix}cancelbutton"
-        projectTree.selectionModel.addListenerForKey(this, 'Sprint')
+        projectTree.selectionModel.addListenerForKey(this, 'Userstory')
         projectTree.selectionModel.addRootChangeListener(this)
         // build state machine
-        sm = new TabViewStateMachine(TabViewStateMachine.State.SUBTAB, 'SprTab')
+        sm = new TabViewStateMachine(TabViewStateMachine.State.SUBTAB, 'UsTab')
         configureSm()
         sm.execute(Event.Init)
     }
 
     @Override
-    void onItemSelected(Map<String, Serializable> sprintItemId) {
-        currentSprintItemId = sprintItemId
-        initItem((Long) sprintItemId['id'])
-        sm.execute(Event.Select, sprintItemId['id'])
+    void onItemSelected(Map<String, Serializable> userstoryItemId) {
+        currentUserstoryItemId = userstoryItemId
+        initItem((Long) userstoryItemId['id'])
+        sm.execute(Event.Select, userstoryItemId['id'])
     }
 
     @Override
@@ -106,28 +104,28 @@ class UserstoryTab extends TabBase
     }
 
     @Override
-    protected getCurrentItemId() { currentSprintItemId }
+    protected getCurrentItemId() { currentUserstoryItemId }
 
     @Override
-    protected Long getCurrentDomainId() { (Long) currentSprintItemId['id'] }
+    protected Long getCurrentDomainId() { (Long) currentUserstoryItemId['id'] }
 
     @Override
     protected String getCurrentCaption() { currentDto.name }
 
     @Override
-    protected getMatchForNewItem() { [type: ProjectTree.SPRINT_TYPE, id: currentDto.id] }
+    protected getMatchForNewItem() { [type: ProjectTree.USERSTORY_TYPE, id: currentDto.id] }
 
     /** prepare INIT state */
     @Override
     protected initmode() {
-        [name, start, end, backlog, saveButton, cancelButton, editButton, newButton].each { it.enabled = false }
+        [name, description, backlog, saveButton, cancelButton, editButton, newButton].each { it.enabled = false }
     }
 
     /** prepare EMPTY state */
     @Override
     protected emptymode() {
         clearFields()
-        [name, start, end, backlog, saveButton, cancelButton, editButton].each { it.enabled = false }
+        [name, description, backlog, saveButton, cancelButton, editButton].each { it.enabled = false }
         project.value = projectService.getProjectCaption((Long) currentProjectItemId['id'])
         setAvailableList()
         [newButton].each { it.enabled = true }
@@ -136,7 +134,7 @@ class UserstoryTab extends TabBase
     /** prepare SHOW state */
     @Override
     protected showmode() {
-        [name, start, end, backlog, saveButton, cancelButton].each { it.enabled = false }
+        [name, description, backlog, saveButton, cancelButton].each { it.enabled = false }
         [editButton, newButton].each { it.enabled = true }
     }
 
@@ -144,19 +142,19 @@ class UserstoryTab extends TabBase
     @Override
     protected editmode() {
         projectTree.onEditItem()
-        [name, start, end, backlog, saveButton, cancelButton].each { it.enabled = true }
+        [name, description, backlog, saveButton, cancelButton].each { it.enabled = true }
         [editButton, newButton].each { it.enabled = false }
     }
 
     /** clear all editable fields */
     @Override
     protected clearFields() {
-        [name, start, end, backlog].each { it.clear() }
+        [name, description, backlog].each { it.clear() }
     }
 
     private void setAvailableList() {
         backlog.removeAllItems()
-        sprintService.getProjectBacklog((Long) currentProjectItemId['id']).each {
+        userstoryService.getProjectBacklog((Long) currentProjectItemId['id']).each {
             makeAvailableList(it)
         }
     }
@@ -173,7 +171,7 @@ class UserstoryTab extends TabBase
      */
     @Override
     protected void initItem(Long itemId) {
-        currentDto = sprintService.getSprintDetails(itemId)
+        currentDto = userstoryService.getUserstoryDetails(itemId)
         setFieldValues()
     }
 
@@ -184,8 +182,7 @@ class UserstoryTab extends TabBase
     protected void setFieldValues() {
         name.value = currentDto.name
         project.value = currentDto.project.name
-        start.value = currentDto.start
-        end.value = currentDto.end
+        description.value = currentDto.description
         setAvailableList()
         def select = []
         currentDto.backlog.all.each { k, v ->
@@ -205,18 +202,17 @@ class UserstoryTab extends TabBase
      */
     @Override
     protected saveItem(Long id) {
-        SprintDto.CSet command = new SprintDto.CSet()
+        UserStoryDto.CSet command = new UserStoryDto().CSet()
         command.id = id
         command.projectId = (Long) currentProjectItemId['id']
         command.name = name.getValue()
-        command.start = start.getValue()
-        command.end = end.value
+        command.description = description.getValue()
         def v = []
         backlog.value.each {
             v << it
         }
         command.taskIds = v
-        currentDto = sprintService.createOrUpdateSprint(command)
+        currentDto = userstoryService.createOrUpdateUserstory(command)
     }
 
 }

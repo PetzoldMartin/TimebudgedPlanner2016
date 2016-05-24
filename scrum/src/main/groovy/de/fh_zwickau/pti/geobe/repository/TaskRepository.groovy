@@ -17,6 +17,8 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     //List<Task> findByProjectIdAndIdNotIn(Long pid, Collection<Long> taskIds);
     List<Task> findBySprintsIdAndIdNotIn(Long spid, Collection<Long> taskIds);
 
+    List<Task> findByUserStoryIdAndIdNotIn(Long usid, Collection<Long> taskIds);
+
     List<Task> findBySprintsId(Long spid);
 
     List<Task> findAllByOrderByTagAsc();

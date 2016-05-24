@@ -22,6 +22,7 @@ class UserStoryDto {
         Long id = 0
         String name = ''
         String description = ''
+        int priority = 1
         ProjectDto.QNode project = new ProjectDto.QNode()
         TaskDto.QList backlog = new TaskDto.QList()
 //        def available = new TaskDto.QList()
@@ -30,6 +31,7 @@ class UserStoryDto {
     public static class CSet {
         Long id = 0
         Long projectId = 0
+        int priority = 1
         String name = ''
         String description = ''
         List<Long> taskIds = []
