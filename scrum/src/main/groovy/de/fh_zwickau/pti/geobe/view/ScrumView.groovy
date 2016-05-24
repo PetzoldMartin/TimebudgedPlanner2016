@@ -30,12 +30,14 @@ class ScrumView extends UI implements VaadinSelectionListener {
     @Autowired
     private TaskTab taskTab
     @Autowired
+    private UserstoryTab userstoryTab
+    @Autowired
     private SprintTab sprintTab
     @Autowired
     ProjectTree projectTree
 
     private Component root, projectSelectTree,
-                      projectSubtree, sprintSubtree, taskSubtree
+                      projectSubtree, sprintSubtree, taskSubtree, userstorySubtree
 
     @Override
     protected void init(VaadinRequest request) {
@@ -56,6 +58,7 @@ class ScrumView extends UI implements VaadinSelectionListener {
         projectSubtree = projectTab.buildSubtree(vaadin, 'project.')
         sprintSubtree = sprintTab.buildSubtree(vaadin, 'sprint.')
         taskSubtree = taskTab.buildSubtree(vaadin, 'task.')
+        userstorySubtree = userstoryTab.buildSubtree(vaadin, 'userstory.')
 
         root = vaadin."$C.hsplit"([uikey: 'topsplit', splitPosition: 20.0f]) {
             "$F.subtree"(projectSelectTree, [uikey: 'menu'])
@@ -63,6 +66,7 @@ class ScrumView extends UI implements VaadinSelectionListener {
                 "$F.subtree"(projectSubtree, [uikey: 'projectpanel'])
                 "$F.subtree"(sprintSubtree, [uikey: 'sprintpanel'])
                 "$F.subtree"(taskSubtree, [uikey: 'taskpanel'])
+                "$F.subtree"(userstorySubtree, [uikey: 'userstorypanel'])
             }
         }
         widgets = vaadin.uiComponents
@@ -77,6 +81,7 @@ class ScrumView extends UI implements VaadinSelectionListener {
         projectTab.init()
         sprintTab.init()
         taskTab.init()
+        userstoryTab.init()
         projectTree.selectionModel.addAnyKeyListener(this)
     }
 
@@ -107,6 +112,10 @@ class ScrumView extends UI implements VaadinSelectionListener {
             case 'Sprint':
             case 'sprint':
                 tabs.selectedTab = sprintSubtree
+                break
+            case 'Userstory':
+            case 'userstory':
+                tabs.selectedTab = userstorySubtree
                 break
         }
     }

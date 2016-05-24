@@ -101,7 +101,7 @@ class ProjectTree extends SubTree
                     null, projNode.name, true)
             if (projNode.userStory) {
                 def userstoryTagId = treeHelper.addNode('Userstory:' + projId, projectId,
-                        'Userstory', !projNode.userStory.isEmpty())
+                        'Userstorys', !projNode.userStory.isEmpty())
                 projNode.userStory.each { userstoryNode ->
                     def userstory = treeHelper.addNode([type: USERSTORY_TYPE, id: userstoryNode.id],
                             userstoryTagId, userstoryNode.name, !userstoryNode.backlog.isEmpty())
@@ -114,9 +114,8 @@ class ProjectTree extends SubTree
                     }
                 }
             }
-
             def sprintsTagId = treeHelper.addNode('sprints:' + projId, projectId,
-                    'sprints', !projNode.sprint.isEmpty())
+                    'Sprints', !projNode.sprint.isEmpty())
             if (projNode.sprint) {
                 projNode.sprint.each { sprintNode ->
                     treeHelper.addNode([type: SPRINT_TYPE, id: sprintNode.id],
