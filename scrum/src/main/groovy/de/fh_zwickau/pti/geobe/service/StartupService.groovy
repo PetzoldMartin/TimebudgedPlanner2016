@@ -61,9 +61,13 @@ class StartupService implements IStartupService {
             Project p = new Project([name: 'Projekt Küche', budget: 1000])
             Sprint s = new Sprint([name: 'erster Sprint'])
             UserStory us = new UserStory([name: 'Sauber machen', description: 'alles muss sauber sein'])
+            UserStory us2 = new UserStory([name: 'mache nix', description: 'nichts!'])
+
             p.sprint.add(s)
 
             p.userStorys.add(us)
+            p.userStorys.add(us2)
+
             Task t = new Subtask(tag: 'Tee kochen', description: 'Kanne zum Wasser!', estimate: 42)
             s.backlog.add(t)
 

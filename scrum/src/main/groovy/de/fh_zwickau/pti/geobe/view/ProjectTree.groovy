@@ -28,6 +28,7 @@ class ProjectTree extends SubTree
     public static final String PROJECT_TYPE = 'Project'
     public static final String SPRINT_TYPE = 'Sprint'
     public static final String TASK_TYPE = 'Task'
+    public static final String USERSTORY_TYPE = 'Userstory'
 
     private static final String PTREE = 'ptree'
     private static final String MENU = 'logoutmenu'
@@ -98,32 +99,22 @@ class ProjectTree extends SubTree
         projects.all.each { projId, projNode ->
             def projectId = treeHelper.addNode([type: PROJECT_TYPE, id: projId],
                     null, projNode.name, true)
-            //TODO display userstory istead of tasks
             if (projNode.userStory) {
-                projNode.userStory.each { userstoryId ->
-                    def userstoryTagId = treeHelper.addNode('userstory:' + projId, projectId,
-                            'userstory', !projNode.userStory.isEmpty())
+                def userstoryTagId = treeHelper.addNode('Userstory:' + projId, projectId,
+                        'Userstory', !projNode.userStory.isEmpty())
+                projNode.userStory.each { userstoryNode ->
+                    def userstory = treeHelper.addNode([type: USERSTORY_TYPE, id: userstoryNode.id],
+                            userstoryTagId, userstoryNode.name, !userstoryNode.backlog.isEmpty())
                     // build a subtree for every backlog task
-                    projNode.userStory.each { userstoryNode ->
-                        if (userstoryNode.backlog) {
-                            userstoryNode.backlog.each { taskNode ->
-                                treeHelper.descend(taskNode, userstoryTagId, TASK_TYPE, 'id',
-                                        'tag', 'children')
-                            }
+                    if (userstoryNode.backlog) {
+                        userstoryNode.backlog.each { taskNode ->
+                            treeHelper.descend(taskNode, userstory, TASK_TYPE, 'id',
+                                    'tag', 'children')
                         }
                     }
                 }
             }
-//            // an intermediate node 'backlog'
-//            def backlogTagId = treeHelper.addNode('backlog:' + projId, projectId,
-//                    'backlog', !projNode.backlog.isEmpty())
-//            if (projNode.backlog) {
-//                // build a subtree for every backlog task
-//                projNode.backlog.each { taskNode ->
-//                    treeHelper.descend(taskNode, backlogTagId, TASK_TYPE, 'id',
-//                            'tag', 'children')
-//                }
-//            }
+
             def sprintsTagId = treeHelper.addNode('sprints:' + projId, projectId,
                     'sprints', !projNode.sprint.isEmpty())
             if (projNode.sprint) {
