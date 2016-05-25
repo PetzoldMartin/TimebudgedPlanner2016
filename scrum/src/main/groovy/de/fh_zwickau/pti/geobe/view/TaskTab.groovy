@@ -57,7 +57,7 @@ class TaskTab extends TabBase
 
     @Override
     Component build() {
-        topComponent = vaadin."$C.vlayout"('Backlog',
+        topComponent = vaadin."$C.vlayout"('Tasks',
                 [spacing: true, margin: true]) {
             "$F.text"('Aufgabe', [uikey: TAG])
             "$C.hlayout"('Status', [spacing: true, margin: false]) {

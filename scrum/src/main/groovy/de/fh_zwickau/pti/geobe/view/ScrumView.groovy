@@ -56,17 +56,18 @@ class ScrumView extends UI implements VaadinSelectionListener {
         vaadin = new VaadinBuilder()
         projectSelectTree = projectTree.buildSubtree(vaadin, 'menutree.')
         projectSubtree = projectTab.buildSubtree(vaadin, 'project.')
+        userstorySubtree = userstoryTab.buildSubtree(vaadin, 'userstory.')
         sprintSubtree = sprintTab.buildSubtree(vaadin, 'sprint.')
         taskSubtree = taskTab.buildSubtree(vaadin, 'task.')
-        userstorySubtree = userstoryTab.buildSubtree(vaadin, 'userstory.')
+
 
         root = vaadin."$C.hsplit"([uikey: 'topsplit', splitPosition: 20.0f]) {
             "$F.subtree"(projectSelectTree, [uikey: 'menu'])
             "$C.tabsheet"([uikey: 'tabs']) {
                 "$F.subtree"(projectSubtree, [uikey: 'projectpanel'])
+                "$F.subtree"(userstorySubtree, [uikey: 'userstorypanel'])
                 "$F.subtree"(sprintSubtree, [uikey: 'sprintpanel'])
                 "$F.subtree"(taskSubtree, [uikey: 'taskpanel'])
-                "$F.subtree"(userstorySubtree, [uikey: 'userstorypanel'])
             }
         }
         widgets = vaadin.uiComponents

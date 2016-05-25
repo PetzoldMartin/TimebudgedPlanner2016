@@ -108,7 +108,7 @@ class StartupService implements IStartupService {
 
             // new project
             p = new Project([name: 'Projekt Garten', budget: 2000])
-            us = new UserStory([name: 'Garten pflegen', description: 'alles muss schöm sein'])
+            us = new UserStory([name: 'Garten pflegen', description: 'alles muss schön sein'])
             p.userStorys.add(us)
 
 
