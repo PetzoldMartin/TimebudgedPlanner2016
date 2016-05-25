@@ -35,5 +35,16 @@ public class ScrumUser {
     )
 
     public IToAny<ScrumRole> getRoles() { return toRoles; }
-    //TODO reference to Task
+
+    @ManyToMany(mappedBy = "developers")
+    protected Set<Task> tasks = new HashSet<>();
+    @Transient
+    private ToMany<ScrumUser, Task> toTask = new ToMany<>(
+            { this.@tasks } as IToAny.IGet, this,
+            { Task o -> o.developers } as IGetOther
+    )
+
+    public IToAny<Sprint> getSprint() {
+        return toTask;
+    }
 }

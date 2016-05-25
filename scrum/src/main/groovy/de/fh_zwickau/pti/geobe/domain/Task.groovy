@@ -65,4 +65,17 @@ public abstract class Task {
     public IToAny<CompoundTask> getSupertask() {
         return toSupertask;
     }
+
+    @ManyToMany
+    @JoinTable(name = 'join_task_developer',
+            joinColumns = @JoinColumn(name = 'task_id'),
+            inverseJoinColumns = @JoinColumn(name = 'developer_id'))
+    private Set<ScrumUser> developers = new HashSet<>()
+    @Transient
+    private ToMany<Task, ScrumUser> toDeveloper = new ToMany<>(
+            { this.@developers } as IToAny.IGet, this,
+            { ScrumUser o -> o.tasks} as IGetOther
+    )
+
+    public IToAny<Task> getBacklog() { toDeveloper }
 }

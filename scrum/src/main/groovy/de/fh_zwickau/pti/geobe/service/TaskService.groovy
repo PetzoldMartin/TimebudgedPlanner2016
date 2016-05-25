@@ -25,6 +25,7 @@ import javax.transaction.Transactional
 @Service
 @Transactional
 class TaskService {
+    //TODO Scrumuser implementation
     @Autowired
     private UserStoryRepository userStoryRepository
     @Autowired
