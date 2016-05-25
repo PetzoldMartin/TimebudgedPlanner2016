@@ -21,14 +21,14 @@ class ScrumRoleDto {
 
     public static class QFull {
         Long id
-        ROLETYPE userRole=new ROLETYPE()
+        ROLETYPE userRole
         ProjectDto.QNode project = new ProjectDto.QNode()
         ScrumUserDto.QNode developer=new ScrumUserDto.QNode()
     }
 
     public static class CSet {
         Long id
-        ROLETYPE userRole=new ROLETYPE()
+        ROLETYPE userRole
         Long ProjectId
         Long DeveloperId
 
