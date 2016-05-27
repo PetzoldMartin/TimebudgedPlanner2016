@@ -3,7 +3,7 @@ package de.fh_zwickau.pti.geobe.service
 import de.fh_zwickau.pti.geobe.domain.Project
 import de.fh_zwickau.pti.geobe.domain.Sprint
 import de.fh_zwickau.pti.geobe.domain.Task
-import de.fh_zwickau.pti.geobe.domain.UserStory
+import de.fh_zwickau.pti.geobe.domain.Userstory
 import de.fh_zwickau.pti.geobe.dto.ProjectDto
 import de.fh_zwickau.pti.geobe.dto.SprintDto
 import de.fh_zwickau.pti.geobe.dto.TaskDto
@@ -48,8 +48,8 @@ class SprintService {
     public List<TaskDto.QNode> getProjectBacklog(Long pid) {
         List<TaskDto.QNode> nodes = []
         Project p = projectRepository.findOne(pid)
-        p.userStorys.all.sort { it.id }.each {
-            UserStory us ->
+        p.userstorys.all.sort { it.id }.each {
+            Userstory us ->
                 us.task.all.sort { it.tag.toLowerCase() }.each { Task t ->
                     if (!t.completed)
                         nodes << taskService.taskTree(t)

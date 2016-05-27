@@ -36,8 +36,8 @@ public class CompoundTask extends Task {
         if (stask.supertask.one) {
             supertask.add(stask.supertask.one)
         }
-        if (stask.userStory.one) {
-            userStory.add(stask.userStory.one)
+        if (stask.userstory.one) {
+            userstory.add(stask.userstory.one)
         }
         //TODO extend by other references
 //        if (stask.scrumUser.one) {

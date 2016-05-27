@@ -27,14 +27,14 @@ public class Project {
     private Date startDate;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
-    private Set<UserStory> storys = new HashSet<>();
+    private Set<Userstory> storys = new HashSet<>();
     @Transient
-    private ToMany<Project, UserStory> toStory = new ToMany<>(
+    private ToMany<Project, Userstory> toStory = new ToMany<>(
             { this.@storys } as IToAny.IGet, this,
-            { UserStory o -> o.project } as IGetOther
+            { Userstory o -> o.project } as IGetOther
     )
 
-    public IToAny<UserStory> getUserStorys() {
+    public IToAny<Userstory> getUserstorys() {
         return toStory;
     }
 

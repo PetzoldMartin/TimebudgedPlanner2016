@@ -28,16 +28,16 @@ public abstract class Task {
 
     // references
     @ManyToOne
-    @JoinColumn(name = "userStory_id")
-    protected UserStory userStory
+    @JoinColumn(name = "userstory_id")
+    protected Userstory userstory
     @Transient
-    private ToOne<Task, UserStory> toUserStory = new ToOne<>(
-            { this.@userStory } as IToAny.IGet,
-            { UserStory u -> this.@userStory = u } as IToAny.ISet,
+    private ToOne<Task, Userstory> toUserStory = new ToOne<>(
+            { this.@userstory } as IToAny.IGet,
+            { Userstory u -> this.@userstory = u } as IToAny.ISet,
             this, { o -> o.task } as IGetOther
     )
 
-    public IToAny<UserStory> getUserStory() { toUserStory }
+    public IToAny<Userstory> getUserstory() { toUserStory }
 
 
     @ManyToMany(mappedBy = "backlog")

@@ -25,7 +25,7 @@ class StartupService implements IStartupService {
     @Autowired
     private SprintRepository sprintRepository
     @Autowired
-    private UserStoryRepository userStoryRepository
+    private UserstoryRepository userstoryRepository
     @Autowired
     private ScrumUserRepository scrumUserRepository
     @Autowired
@@ -60,13 +60,13 @@ class StartupService implements IStartupService {
             log.info("initializing data at ${LocalDateTime.now()}")
             Project p = new Project([name: 'Projekt Küche', budget: 1000])
             Sprint s = new Sprint([name: 'erster Sprint'])
-            UserStory us = new UserStory([name: 'Sauber machen', description: 'alles muss sauber sein'])
-            UserStory us2 = new UserStory([name: 'mache nix', description: 'nichts!'])
+            Userstory us = new Userstory([name: 'Sauber machen', description: 'alles muss sauber sein'])
+            Userstory us2 = new Userstory([name: 'mache nix', description: 'nichts!'])
 
             p.sprint.add(s)
 
-            p.userStorys.add(us)
-            p.userStorys.add(us2)
+            p.userstorys.add(us)
+            p.userstorys.add(us2)
 
             Task t = new Subtask(tag: 'Tee kochen', description: 'Kanne zum Wasser!', estimate: 42)
             s.backlog.add(t)
@@ -98,7 +98,7 @@ class StartupService implements IStartupService {
             ['früh', 'mittag', 'abend'].each {
                 new Sprint([name: it]).project.add(p)
             }
-            // add to one userStory
+            // add to one userstory
             tasksforUserStory.forEach({ us.task.add(it) })
 
             // finally persist project
@@ -108,8 +108,8 @@ class StartupService implements IStartupService {
 
             // new project
             p = new Project([name: 'Projekt Garten', budget: 2000])
-            us = new UserStory([name: 'Garten pflegen', description: 'alles muss schön sein'])
-            p.userStorys.add(us)
+            us = new Userstory([name: 'Garten pflegen', description: 'alles muss schön sein'])
+            p.userstorys.add(us)
 
 
             def tl = []
@@ -126,7 +126,7 @@ class StartupService implements IStartupService {
                 s.backlog.add(tl[(++i) % tl.size()])
                 s.backlog.add(tl[(++i) % tl.size()])
             }
-            // add to userStory
+            // add to userstory
             tl.forEach({ us.task.add(it) })
 
             //persist
@@ -134,7 +134,7 @@ class StartupService implements IStartupService {
 
             def tasks = taskRepository.findAll()
             tasks.forEach({ log.info("task (${it.id}): $it.description") })
-            userStoryRepository.findAll().forEach({ log.info("userStory (${it.id}): $it.description") })
+            userstoryRepository.findAll().forEach({ log.info("userstory (${it.id}): $it.description") })
         }
     }
 
@@ -145,7 +145,7 @@ class StartupService implements IStartupService {
         def tasks = taskRepository.findAll()
         tasks.each { Task t ->
             t.supertask.removeAll()
-            t.userStory.removeAll()
+            t.userstory.removeAll()
             t.sprint.removeAll()
         }
         taskRepository.save(tasks)
@@ -159,7 +159,7 @@ class StartupService implements IStartupService {
 
         // check cleanup
 //        assert projectRepository.findAll().isEmpty()
-//        assert userStoryRepository.findAll().isEmpty()
+//        assert userstoryRepository.findAll().isEmpty()
 //        assert sprintRepository.findAll().isEmpty()
 //        assert taskRepository.findAll().isEmpty()
     }

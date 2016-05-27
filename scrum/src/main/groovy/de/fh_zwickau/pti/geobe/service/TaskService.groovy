@@ -7,10 +7,10 @@ import de.fh_zwickau.pti.geobe.domain.Task
 import de.fh_zwickau.pti.geobe.dto.SprintDto
 import de.fh_zwickau.pti.geobe.dto.TaskDto
 import de.fh_zwickau.pti.geobe.dto.TaskDto.CSet
-import de.fh_zwickau.pti.geobe.dto.UserStoryDto
+import de.fh_zwickau.pti.geobe.dto.UserstoryDto
 import de.fh_zwickau.pti.geobe.repository.SprintRepository
 import de.fh_zwickau.pti.geobe.repository.TaskRepository
-import de.fh_zwickau.pti.geobe.repository.UserStoryRepository
+import de.fh_zwickau.pti.geobe.repository.UserstoryRepository
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -27,7 +27,7 @@ import javax.transaction.Transactional
 class TaskService {
     //TODO Scrumuser implementation
     @Autowired
-    private UserStoryRepository userStoryRepository
+    private UserstoryRepository userstoryRepository
     @Autowired
     private TaskRepository taskRepository
     @Autowired
@@ -55,7 +55,7 @@ class TaskService {
             }
             t.supertask.removeAll()
             t.sprint.removeAll()
-            t.userStory.removeAll()
+            t.userstory.removeAll()
             taskRepository.delete(t)
             cmd.supertaskId = ct.id
         }
@@ -77,7 +77,7 @@ class TaskService {
                 task.spent = cmd.spent
                 task.completed = cmd.completed
             }
-        } else if (cmd.userStoryId || cmd.supertaskId) {
+        } else if (cmd.userstoryId || cmd.supertaskId) {
             if (cmd.classname.endsWith('Subtask')) {
                 task = new Subtask()
                 task.tag = cmd.tag ?: 'tagless'
@@ -91,12 +91,12 @@ class TaskService {
                 task.description = cmd.description ?: ''
                 task.estimate = cmd.estimate ?: 0
             }
-            if (cmd.userStoryId) {
-                Project p = userStoryRepository.findOne(cmd.userStoryId)
+            if (cmd.userstoryId) {
+                Project p = userstoryRepository.findOne(cmd.userstoryId)
                 if (p) {
-                    task.userStory.add(p)
+                    task.userstory.add(p)
                 } else {
-                    log.error("no project found for $cmd.userStoryId")
+                    log.error("no project found for $cmd.userstoryId")
                     return new TaskDto.QFull()
                 }
             }
@@ -124,10 +124,10 @@ class TaskService {
                     estimate : t.estimate, spent: t.spent,
                     completed: t.completed])
             qFull.classname = t.class.canonicalName.replaceAll(/.*\./, '')
-            qFull.userStorys = new UserStoryDto.QList()
+            qFull.userstorys = new UserstoryDto.QList()
             qFull.supertask = new TaskDto.QList()
             qFull.sprints = new SprintDto.QList()
-            t.userStory.all.each { qFull.userStorys.all[it.id] = it.name }
+            t.userstory.all.each { qFull.userstorys.all[it.id] = it.name }
             t.supertask.all.each { qFull.supertask.all[it.id] = it.tag }
             t.sprint.all.sort { it.start }.each { qFull.sprints.all[it.id] = it.name }
             qFull.subtasks = taskSubtree(t)

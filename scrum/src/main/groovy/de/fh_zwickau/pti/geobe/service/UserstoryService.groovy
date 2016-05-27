@@ -2,13 +2,13 @@ package de.fh_zwickau.pti.geobe.service
 
 import de.fh_zwickau.pti.geobe.domain.Project
 import de.fh_zwickau.pti.geobe.domain.Task
-import de.fh_zwickau.pti.geobe.domain.UserStory
+import de.fh_zwickau.pti.geobe.domain.Userstory
 import de.fh_zwickau.pti.geobe.dto.ProjectDto
 import de.fh_zwickau.pti.geobe.dto.TaskDto
-import de.fh_zwickau.pti.geobe.dto.UserStoryDto
+import de.fh_zwickau.pti.geobe.dto.UserstoryDto
 import de.fh_zwickau.pti.geobe.repository.ProjectRepository
 import de.fh_zwickau.pti.geobe.repository.TaskRepository
-import de.fh_zwickau.pti.geobe.repository.UserStoryRepository
+import de.fh_zwickau.pti.geobe.repository.UserstoryRepository
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -28,29 +28,29 @@ class UserstoryService {
     @Autowired
     private TaskRepository taskRepository
     @Autowired
-    private UserStoryRepository userstoryRepository
+    private UserstoryRepository userstoryRepository
     @Autowired
     private TaskService taskService
 
-    public UserStoryDto.QFull getUserstoryDetails(Long pid) {
-        UserStory us = userstoryRepository.findOne(pid)
+    public UserstoryDto.QFull getUserstoryDetails(Long pid) {
+        Userstory us = userstoryRepository.findOne(pid)
         makeQFull(us)
     }
 
-    public UserStoryDto.QFull createOrUpdateUserstory(UserStoryDto.CSet command) {
-        UserStory us
+    public UserstoryDto.QFull createOrUpdateUserstory(UserstoryDto.CSet command) {
+        Userstory us
         if (command.id) {
             us = userstoryRepository.findOne(command.id)
             if (!us) {
                 log.error("cannot find sprint for id $command.id")
-                return new UserStoryDto.QFull()
+                return new UserstoryDto.QFull()
             }
         } else {
-            us = new UserStory()
+            us = new Userstory()
             Project p = projectRepository.findOne(command.projectId)
             if (!p) {
                 log.error("cannot find project for id $command.projectId")
-                return new UserStoryDto.QFull()
+                return new UserstoryDto.QFull()
             }
             us.project.add(p)
         }
@@ -60,7 +60,7 @@ class UserstoryService {
         taskRepository.findAll(command.taskIds)
                 .sort { it.tag.toLowerCase() }.each { Task t -> us.task.add(t) }
         // findByUserstoryIdAndIdNotIn does not work with an empty list of ids, so add an invalid id 0
-        taskRepository.findByUserStoryIdAndIdNotIn(us.id, command.taskIds ?: [0L]) //TODO Beierei
+        taskRepository.findByUserstoryIdAndIdNotIn(us.id, command.taskIds ?: [0L]) //TODO Beierei
                 .sort { it.tag.toLowerCase() }.each { Task t ->
             us.task.remove(t)
         }
@@ -70,8 +70,8 @@ class UserstoryService {
     public List<TaskDto.QNode> getProjectBacklog(Long pid) {
         List<TaskDto.QNode> nodes = []
         Project p = projectRepository.findOne(pid)
-        p.userStorys.all.sort { it.id }.each {
-            UserStory us ->
+        p.userstorys.all.sort { it.id }.each {
+            Userstory us ->
                 us.task.all.sort { it.tag.toLowerCase() }.each { Task t ->
                     if (!t.completed)
                         nodes << taskService.taskTree(t)
@@ -84,10 +84,10 @@ class UserstoryService {
         nodes
     }
 
-    private makeQFull(UserStory us) {
+    private makeQFull(Userstory us) {
         if (us) {
-            UserStoryDto.QFull qFull =
-                    new UserStoryDto.QFull(id: us.id, name: us.name, description: us.description)
+            UserstoryDto.QFull qFull =
+                    new UserstoryDto.QFull(id: us.id, name: us.name, description: us.description)
             Project p = us.project.one
             qFull.project = new ProjectDto.QNode(name: p.name)
             def assigned = []
@@ -101,7 +101,7 @@ class UserstoryService {
 //            }
             qFull
         } else {
-            new UserStoryDto().QFull()
+            new UserstoryDto().QFull()
         }
     }
 }

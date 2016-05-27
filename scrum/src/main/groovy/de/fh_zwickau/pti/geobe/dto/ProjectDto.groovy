@@ -21,7 +21,7 @@ class ProjectDto {
         BigDecimal budget = 0
         //TaskDto.QList backlog = new TaskDto.QList()
         SprintDto.QList sprints = new SprintDto.QList()
-        UserStoryDto.QList userStorys = new UserStoryDto.QList()
+        UserstoryDto.QList userstorys = new UserstoryDto.QList()
         ScrumRoleDto.QList developers = new ScrumRoleDto.QList()
     }
 
@@ -31,7 +31,7 @@ class ProjectDto {
         BigDecimal budget = 0
         //List<Long> taskIds = []
         List<Long> sprintIds = []
-        List<Long> userStoryIds = []
+        List<Long> userstoryIds = []
 
     }
 
@@ -39,7 +39,7 @@ class ProjectDto {
         String name
         //List<TaskDto.QNode> backlog = []
         List<SprintDto.QNode> sprint = []
-        List<UserStoryDto.QNode> userStory = []
+        List<UserstoryDto.QNode> userstory = []
         List<ScrumRoleDto.QNode> developers =[]
         @Override
         String toString() {

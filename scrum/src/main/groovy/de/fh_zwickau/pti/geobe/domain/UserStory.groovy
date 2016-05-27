@@ -13,7 +13,7 @@ import javax.persistence.*
  */
 
 @Entity
-class UserStory {
+class Userstory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -28,22 +28,22 @@ class UserStory {
     @JoinColumn(name = "project_id")
     protected Project project;
     @Transient
-    private ToOne<UserStory, Project> toProject = new ToOne<>(
+    private ToOne<Userstory, Project> toProject = new ToOne<>(
             { this.@project } as IToAny.IGet,
             { Project p -> this.@project = p } as IToAny.ISet,
-            this, { o -> o.userStorys } as IGetOther
+            this, { o -> o.userstorys } as IGetOther
     )
 
     public IToAny<Project> getProject() {
         return toProject;
     }
 
-    @OneToMany(mappedBy = "userStory", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "userstory", cascade = CascadeType.PERSIST)
     private Set<Task> tasks = new HashSet<>();
     @Transient
-    private ToMany<UserStory, Task> toTask = new ToMany<>(
+    private ToMany<Userstory, Task> toTask = new ToMany<>(
             { this.@tasks } as IToAny.IGet, this,
-            { Task o -> o.userStory } as IGetOther
+            { Task o -> o.userstory } as IGetOther
     )
 
     public IToAny<Task> getTask() {

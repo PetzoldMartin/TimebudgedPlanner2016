@@ -3,15 +3,15 @@ package de.fh_zwickau.pti.geobe.service
 import de.fh_zwickau.pti.geobe.domain.Project
 import de.fh_zwickau.pti.geobe.domain.Sprint
 import de.fh_zwickau.pti.geobe.domain.Task
-import de.fh_zwickau.pti.geobe.domain.UserStory
+import de.fh_zwickau.pti.geobe.domain.Userstory
 import de.fh_zwickau.pti.geobe.dto.ProjectDto
 import de.fh_zwickau.pti.geobe.dto.ProjectDto.CSet
 import de.fh_zwickau.pti.geobe.dto.SprintDto
-import de.fh_zwickau.pti.geobe.dto.UserStoryDto
+import de.fh_zwickau.pti.geobe.dto.UserstoryDto
 import de.fh_zwickau.pti.geobe.repository.ProjectRepository
 import de.fh_zwickau.pti.geobe.repository.SprintRepository
 import de.fh_zwickau.pti.geobe.repository.TaskRepository
-import de.fh_zwickau.pti.geobe.repository.UserStoryRepository
+import de.fh_zwickau.pti.geobe.repository.UserstoryRepository
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.access.prepost.PreAuthorize
@@ -44,9 +44,9 @@ class ProjectService {
         ProjectDto.QList qList = new ProjectDto.QList()
         projectRepository.findAll().sort { it.name.toLowerCase() }.each { Project p ->
             def node = new ProjectDto.QNode([name: p.name])
-            p.userStorys.all.sort { it.id }.each { UserStory us ->
-                UserStoryDto.QNode usDto = new UserStoryDto.QNode([id: us.id, name: us.name])
-                node.userStory.add(usDto)
+            p.userstorys.all.sort { it.id }.each { Userstory us ->
+                UserstoryDto.QNode usDto = new UserstoryDto.QNode([id: us.id, name: us.name])
+                node.userstory.add(usDto)
                 us.task.all.sort { it.tag.toLowerCase() }.each { Task t ->
                     usDto.backlog.add(taskService.taskTree(t))
                 }
@@ -88,8 +88,8 @@ class ProjectService {
         }
         project.name = command.name
         project.budget = command.budget
-        if (command.userStoryIds)
-            UserStoryRepository.findAll(command.userStoryIds).forEach { UserStory us -> project.userStorys.add(us) }
+        if (command.userstoryIds)
+            UserstoryRepository.findAll(command.userstoryIds).forEach { Userstory us -> project.userstorys.add(us) }
         if (command.sprintIds)
             sprintRepository.findAll(command.sprintIds).forEach { Sprint s -> project.sprint.add(s) }
         makeQFull(projectRepository.saveAndFlush(project))
@@ -98,10 +98,10 @@ class ProjectService {
     private makeQFull(Project p) {
         if (p) {
             ProjectDto.QFull qFull = new ProjectDto.QFull(id: p.id, name: p.name, budget: p.budget)
-            qFull.userStorys = new UserStoryDto.QList()
+            qFull.userstorys = new UserstoryDto.QList()
             qFull.sprints = new SprintDto.QList()
-            p.userStorys.all.sort { it.id }.forEach { UserStory userStory ->
-                qFull.userStorys.all[userStory.id] = userStory.name
+            p.userstorys.all.sort { it.id }.forEach { Userstory userstory ->
+                qFull.userstorys.all[userstory.id] = userstory.name
             }
             p.sprint.all.sort { it.start }.forEach { Sprint s -> qFull.sprints.all[s.id] = s.name }
             qFull

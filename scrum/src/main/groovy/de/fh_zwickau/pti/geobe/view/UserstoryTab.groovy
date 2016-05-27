@@ -3,10 +3,13 @@ package de.fh_zwickau.pti.geobe.view
 import com.vaadin.shared.ui.MarginInfo
 import com.vaadin.spring.annotation.SpringComponent
 import com.vaadin.spring.annotation.UIScope
-import com.vaadin.ui.*
+import com.vaadin.ui.Button
+import com.vaadin.ui.Component
+import com.vaadin.ui.TextField
+import com.vaadin.ui.TwinColSelect
 import com.vaadin.ui.themes.Reindeer
 import de.fh_zwickau.pti.geobe.dto.TaskDto.QNode
-import de.fh_zwickau.pti.geobe.dto.UserStoryDto
+import de.fh_zwickau.pti.geobe.dto.UserstoryDto
 import de.fh_zwickau.pti.geobe.service.ProjectService
 import de.fh_zwickau.pti.geobe.service.UserstoryService
 import de.fh_zwickau.pti.geobe.util.view.VaadinSelectionListener
@@ -32,7 +35,7 @@ class UserstoryTab extends TabBase
     private Button newButton, editButton, saveButton, cancelButton
     private Map<String, Serializable> currentUserstoryItemId
     private Map<String, Serializable> currentProjectItemId
-    private UserStoryDto.QFull currentDto
+    private UserstoryDto.QFull currentDto
 
 
     @Autowired
@@ -202,7 +205,7 @@ class UserstoryTab extends TabBase
      */
     @Override
     protected saveItem(Long id) {
-        UserStoryDto.CSet command = new UserStoryDto().CSet()
+        UserstoryDto.CSet command = new UserstoryDto().CSet()
         command.id = id
         command.projectId = (Long) currentProjectItemId['id']
         command.name = name.getValue()
