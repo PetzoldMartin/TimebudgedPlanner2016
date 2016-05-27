@@ -70,11 +70,11 @@ public abstract class Task {
     @JoinTable(name = 'join_task_developer',
             joinColumns = @JoinColumn(name = 'task_id'),
             inverseJoinColumns = @JoinColumn(name = 'developer_id'))
-    private Set<ScrumUser> developers = new HashSet<>()
+    private Set<User> developers = new HashSet<>()
     @Transient
-    private ToMany<Task, ScrumUser> toDeveloper = new ToMany<>(
+    private ToMany<Task, User> toDeveloper = new ToMany<>(
             { this.@developers } as IToAny.IGet, this,
-            { ScrumUser o -> o.tasks} as IGetOther
+            { User o -> o.tasks } as IGetOther
     )
 
     public IToAny<Task> getBacklog() { toDeveloper }

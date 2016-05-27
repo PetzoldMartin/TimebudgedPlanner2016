@@ -2,8 +2,8 @@ package de.fh_zwickau.pti.geobe.domain
 
 import de.fh_zwickau.pti.geobe.GroovaaApplication
 import de.fh_zwickau.pti.geobe.repository.ProjectRepository
-import de.fh_zwickau.pti.geobe.repository.ScrumRoleRepository
-import de.fh_zwickau.pti.geobe.repository.ScrumUserRepository
+import de.fh_zwickau.pti.geobe.repository.RoleRepository
+import de.fh_zwickau.pti.geobe.repository.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationConfiguration
 import spock.lang.Ignore
@@ -20,22 +20,22 @@ class TestAssoziationsOfRoles extends Specification {
     @Autowired
     ProjectRepository projectRepository
     @Autowired
-    ScrumRoleRepository scrumRoleRepository
+    RoleRepository scrumRoleRepository
     @Autowired
-    ScrumUserRepository scrumUserRepository
+    UserRepository scrumUserRepository
 
     private Project project, project2
     //@Autowired
     private ScrumRole scrumRole1, scrumRole2
     //@Autowired
-    private ScrumUser scrumUser1
+    private User scrumUser1
 
     public setup() {
         project = new Project()
         project.name = "ein Projekt"
         project2 = new Project()
         project2.name = "auch ein Projekt"
-        scrumUser1 = new ScrumUser()
+        scrumUser1 = new User()
 
         scrumRole1 = new ScrumRole();
         scrumRole2 = new ScrumRole();

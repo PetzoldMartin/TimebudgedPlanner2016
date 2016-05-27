@@ -22,7 +22,7 @@ class ProjectDto {
         //TaskDto.QList backlog = new TaskDto.QList()
         SprintDto.QList sprints = new SprintDto.QList()
         UserstoryDto.QList userstorys = new UserstoryDto.QList()
-        ScrumRoleDto.QList developers = new ScrumRoleDto.QList()
+        RoleDto.QList developers = new RoleDto.QList()
     }
 
     public static class CSet {
@@ -40,7 +40,7 @@ class ProjectDto {
         //List<TaskDto.QNode> backlog = []
         List<SprintDto.QNode> sprint = []
         List<UserstoryDto.QNode> userstory = []
-        List<ScrumRoleDto.QNode> developers =[]
+        List<RoleDto.QNode> developers = []
         @Override
         String toString() {
             this.@name

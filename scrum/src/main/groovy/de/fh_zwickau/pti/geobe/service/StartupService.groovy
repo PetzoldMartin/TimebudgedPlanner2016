@@ -27,9 +27,9 @@ class StartupService implements IStartupService {
     @Autowired
     private UserstoryRepository userstoryRepository
     @Autowired
-    private ScrumUserRepository scrumUserRepository
+    private UserRepository scrumUserRepository
     @Autowired
-    private ScrumRoleRepository scrumRoleRepository
+    private RoleRepository scrumRoleRepository
 
     @Override
     void initApplicationData() {
@@ -37,13 +37,13 @@ class StartupService implements IStartupService {
         // users
         if (!scrumUserRepository.findAll()) {
 //            Project p = new Project([name: 'Projekt User', budget: 1000])
-//            ScrumUser user = new ScrumUser([nick: 'user', password: 'user'])
+//            User user = new User([nick: 'user', password: 'user'])
 //            ScrumRole userRoletype = new ScrumRole([userRole: ROLETYPE.Developer])
 //            userRoletype.project.add(p)
 //            userRoletype.scrumUser.add(user)
-//            ScrumUser master = new ScrumUser([nick: 'master', password: 'master'])
+//            User master = new User([nick: 'master', password: 'master'])
 //            ScrumRole masterRoletype = new ScrumRole([userRole: ROLETYPE.ScrumMaster])
-//            ScrumUser owner = new ScrumUser([nick: 'owner', password: 'owner'])
+//            User owner = new User([nick: 'owner', password: 'owner'])
 //            ScrumRole ownerRoletype = new ScrumRole([userRole: ROLETYPE.ProjectOwner])
             //projectRepository.save(p)
             //scrumUserRepository.save([user, master, owner])

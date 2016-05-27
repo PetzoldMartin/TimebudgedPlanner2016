@@ -1,13 +1,8 @@
 package de.fh_zwickau.pti.geobe.dto
-
-import de.fh_zwickau.pti.geobe.domain.ScrumRole
-import de.fh_zwickau.pti.geobe.domain.ScrumUser
-import de.geobe.util.association.ToMany
-
 /**
  * Created by aisma on 24.05.2016.
  */
-class ScrumUserDto {
+class UserDto {
     public static class QList {
         LinkedHashMap<Long, QNode> all = [:]
 
@@ -28,7 +23,7 @@ class ScrumUserDto {
         String firstName=''
         String lastName=''
         Date birthdate=new Date()
-        ScrumRoleDto.QList roles= new ScrumRoleDto.QList();
+        RoleDto.QList roles = new RoleDto.QList();
         TaskDto.QList tasks= new TaskDto.QList();
     }
 
@@ -48,7 +43,7 @@ class ScrumUserDto {
         String nick
         String firstName=''
         String lastName=''
-        List<ScrumRoleDto.QNode> roles = []
+        List<RoleDto.QNode> roles = []
         List<TaskDto.QNode> tasks = []
         @Override
         String toString() {

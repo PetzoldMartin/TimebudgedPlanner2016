@@ -1,8 +1,5 @@
 package de.fh_zwickau.pti.geobe;
 
-import de.fh_zwickau.pti.geobe.domain.ScrumUser;
-import de.fh_zwickau.pti.geobe.repository.ScrumUserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -16,7 +13,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
-import org.springframework.stereotype.Component;
 import org.vaadin.spring.config.VaadinExtensionsConfiguration;
 import org.vaadin.spring.http.HttpService;
 import org.vaadin.spring.security.annotation.EnableVaadinSharedSecurity;

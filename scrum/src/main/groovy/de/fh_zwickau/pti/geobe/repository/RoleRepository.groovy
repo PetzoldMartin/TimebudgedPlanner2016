@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository
 /**
  * @author georg beier
  */
-public interface ScrumRoleRepository extends JpaRepository<ScrumRole, Long> {
+public interface RoleRepository extends JpaRepository<ScrumRole, Long> {
 }

@@ -5,7 +5,7 @@ package de.fh_zwickau.pti.geobe.dto
  * @date 10.05.2016.
  *
  */
-class UserStoryDto {
+class UserstoryDto {
     public static class QList {
         LinkedHashMap<Long, QNode> all = [:]
 

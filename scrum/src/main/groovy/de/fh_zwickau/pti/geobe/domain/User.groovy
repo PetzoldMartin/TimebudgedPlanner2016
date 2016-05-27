@@ -10,7 +10,7 @@ import javax.persistence.*
  * Created by aisma on 01.04.2016.
  */
 @Entity
-public class ScrumUser {
+public class User {
     @Id
     @Column(name = "scrumUser_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -27,7 +27,7 @@ public class ScrumUser {
     @OneToMany(mappedBy = "scrumUser", cascade = CascadeType.ALL)
     private Set<ScrumRole> roles = new HashSet<>();
     @Transient
-    private ToMany<ScrumUser, ScrumRole> toRoles = new ToMany<>(
+    private ToMany<User, ScrumRole> toRoles = new ToMany<>(
 
             { this.@roles } as IToAny.IGet, this,
             { ScrumRole o -> o.scrumUser } as IGetOther
@@ -39,7 +39,7 @@ public class ScrumUser {
     @ManyToMany(mappedBy = "developers")
     protected Set<Task> tasks = new HashSet<>();
     @Transient
-    private ToMany<ScrumUser, Task> toTask = new ToMany<>(
+    private ToMany<User, Task> toTask = new ToMany<>(
             { this.@tasks } as IToAny.IGet, this,
             { Task o -> o.developers } as IGetOther
     )

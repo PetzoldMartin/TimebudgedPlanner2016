@@ -41,16 +41,16 @@ public class ScrumRole {
     @ManyToOne(optional = false)
     @JoinColumn(name = "scrumUser_id")
     //, referencedColumnName = "scrumUser_id",insertable=false, updatable=false)
-    private ScrumUser scrumUser;
+    private User scrumUser;
 
     @Transient
-    private ToOne<ScrumRole, ScrumUser> toScrumUser = new ToOne<>(
+    private ToOne<ScrumRole, User> toScrumUser = new ToOne<>(
             { this.@scrumUser } as IToAny.IGet,
-            { ScrumUser su -> this.setScrumUser(su) } as IToAny.ISet,
+            { User su -> this.setScrumUser(su) } as IToAny.ISet,
             this, { o -> o.roles } as IGetOther
     )
 
-    public IToAny<ScrumUser> getScrumUser() { return toScrumUser; }
+    public IToAny<User> getScrumUser() { return toScrumUser; }
 
     // setter (needed!)
     private void setProject(Project project) {
@@ -58,7 +58,7 @@ public class ScrumRole {
         //this.scrumRoleID.project_id=project.getId();
     }
 
-    private void setScrumUser(ScrumUser scrumUser) {
+    private void setScrumUser(User scrumUser) {
         this.scrumUser = scrumUser;
         //this.scrumRoleID.scrumUser_id=scrumUser.getId();
     }

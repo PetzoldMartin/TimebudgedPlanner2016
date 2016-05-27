@@ -29,14 +29,14 @@ class TaskDto {
         SprintDto.QList sprints = new SprintDto.QList()
         QList supertask = new QList()
         List<QNode> subtasks = []
-        ScrumUserDto.QList developers=new ScrumUserDto.QList()
+        UserDto.QList developers = new UserDto.QList()
     }
 
     public static class QNode {
         Long id
         String tag
         List<QNode> children = []
-        List<ScrumUserDto.QNode> developers=[]
+        List<UserDto.QNode> developers = []
     }
 
     public static class CSet {
