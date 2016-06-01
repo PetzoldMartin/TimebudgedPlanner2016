@@ -44,7 +44,7 @@ class ProjectService {
         ProjectDto.QList qList = new ProjectDto.QList()
         projectRepository.findAll().sort { it.name.toLowerCase() }.each { Project p ->
             def node = new ProjectDto.QNode([name: p.name])
-            p.userstorys.all.sort { it.id }.each { Userstory us ->
+            p.userstorys.all.sort { it.priority }.each { Userstory us ->
                 UserstoryDto.QNode usDto = new UserstoryDto.QNode([id: us.id, name: us.name])
                 node.userstory.add(usDto)
                 us.task.all.sort { it.tag.toLowerCase() }.each { Task t ->

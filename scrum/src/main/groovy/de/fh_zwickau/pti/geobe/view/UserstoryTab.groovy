@@ -3,10 +3,7 @@ package de.fh_zwickau.pti.geobe.view
 import com.vaadin.shared.ui.MarginInfo
 import com.vaadin.spring.annotation.SpringComponent
 import com.vaadin.spring.annotation.UIScope
-import com.vaadin.ui.Button
-import com.vaadin.ui.Component
-import com.vaadin.ui.TextField
-import com.vaadin.ui.TwinColSelect
+import com.vaadin.ui.*
 import com.vaadin.ui.themes.Reindeer
 import de.fh_zwickau.pti.geobe.dto.TaskDto.QNode
 import de.fh_zwickau.pti.geobe.dto.UserstoryDto
@@ -29,8 +26,9 @@ import static de.geobe.util.vaadin.VaadinBuilder.F
 @UIScope
 class UserstoryTab extends TabBase
         implements VaadinSelectionListener, VaadinTreeRootChangeListener, Serializable {
-    private TextField name, project, description //TODO add priority
-   // private DateField start, end
+    private TextField name, project, priority
+    private TextArea description
+
     private TwinColSelect backlog
     private Button newButton, editButton, saveButton, cancelButton
     private Map<String, Serializable> currentUserstoryItemId
@@ -51,7 +49,8 @@ class UserstoryTab extends TabBase
                  spacing: true]) {
             "$F.text"('<b>Userstory</b>', [uikey: 'name', captionAsHtml: true, enabled: false])
             "$F.text"('Projekt', [uikey: 'project', enabled: false])
-            "$F.text"('Beschreibung', [uikey: 'description', enabled: false])
+            "$F.text"('Priorität', [uikey: 'priority', enabled: false])
+            "$F.textarea"('Beschreibung', [uikey: 'description', enabled: false])
             "$F.twincol"('Backlog', [uikey             : 'backlog', rows: 8, width: '100%',
                                      leftColumnCaption : 'available', enabled: false,
                                      rightColumnCaption: 'selected', gridPosition: [0, 2, 1, 2]])
@@ -78,6 +77,7 @@ class UserstoryTab extends TabBase
     void init(Object... value) {
         uiComponents = vaadin.uiComponents
         name = uiComponents."${subkeyPrefix}name"
+        priority = uiComponents."${subkeyPrefix}priority"
         project = uiComponents."${subkeyPrefix}project"
         description = uiComponents."${subkeyPrefix}description"
         backlog = uiComponents."${subkeyPrefix}backlog"
@@ -121,14 +121,16 @@ class UserstoryTab extends TabBase
     /** prepare INIT state */
     @Override
     protected initmode() {
-        [name, description, backlog, saveButton, cancelButton, editButton, newButton].each { it.enabled = false }
+        [name, description, priority, backlog, saveButton, cancelButton, editButton, newButton].each {
+            it.enabled = false
+        }
     }
 
     /** prepare EMPTY state */
     @Override
     protected emptymode() {
         clearFields()
-        [name, description, backlog, saveButton, cancelButton, editButton].each { it.enabled = false }
+        [name, description, priority, backlog, saveButton, cancelButton, editButton].each { it.enabled = false }
         project.value = projectService.getProjectCaption((Long) currentProjectItemId['id'])
         setAvailableList()
         [newButton].each { it.enabled = true }
@@ -137,7 +139,7 @@ class UserstoryTab extends TabBase
     /** prepare SHOW state */
     @Override
     protected showmode() {
-        [name, description, backlog, saveButton, cancelButton].each { it.enabled = false }
+        [name, description, priority, backlog, saveButton, cancelButton].each { it.enabled = false }
         [editButton, newButton].each { it.enabled = true }
     }
 
@@ -145,14 +147,14 @@ class UserstoryTab extends TabBase
     @Override
     protected editmode() {
         projectTree.onEditItem()
-        [name, description, backlog, saveButton, cancelButton].each { it.enabled = true }
+        [name, description, priority, backlog, saveButton, cancelButton].each { it.enabled = true }
         [editButton, newButton].each { it.enabled = false }
     }
 
     /** clear all editable fields */
     @Override
     protected clearFields() {
-        [name, description, backlog].each { it.clear() }
+        [name, description, priority, backlog].each { it.clear() }
     }
 
     private void setAvailableList() {
@@ -185,6 +187,7 @@ class UserstoryTab extends TabBase
     protected void setFieldValues() {
         name.value = currentDto.name
         project.value = currentDto.project.name
+        priority.value = currentDto.priority.toString()
         description.value = currentDto.description
         setAvailableList()
         def select = []

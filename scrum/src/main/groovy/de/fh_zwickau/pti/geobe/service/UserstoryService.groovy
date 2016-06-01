@@ -87,7 +87,7 @@ class UserstoryService {
     private makeQFull(Userstory us) {
         if (us) {
             UserstoryDto.QFull qFull =
-                    new UserstoryDto.QFull(id: us.id, name: us.name, description: us.description)
+                    new UserstoryDto.QFull(id: us.id, name: us.name, description: us.description, priority: us.priority)
             Project p = us.project.one
             qFull.project = new ProjectDto.QNode(name: p.name)
             def assigned = []
@@ -101,7 +101,7 @@ class UserstoryService {
 //            }
             qFull
         } else {
-            new UserstoryDto().QFull()
+            new UserstoryDto.QFull()
         }
     }
 }

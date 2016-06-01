@@ -60,8 +60,8 @@ class StartupService implements IStartupService {
             log.info("initializing data at ${LocalDateTime.now()}")
             Project p = new Project([name: 'Projekt Küche', budget: 1000])
             Sprint s = new Sprint([name: 'erster Sprint'])
-            Userstory us = new Userstory([name: 'Sauber machen', description: 'alles muss sauber sein'])
-            Userstory us2 = new Userstory([name: 'mache nix', description: 'nichts!'])
+            Userstory us = new Userstory(name: 'Sauber machen', description: 'alles muss sauber sein', priority: 1)
+            Userstory us2 = new Userstory(name: 'mache nix', description: 'nichts!', priority: 0)
 
             p.sprint.add(s)
 
