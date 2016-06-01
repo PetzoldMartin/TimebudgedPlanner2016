@@ -62,7 +62,7 @@ public class CompoundTask extends Task {
     }
 
     // references
-    @OneToMany(mappedBy = "supertask", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "supertask", cascade = CascadeType.ALL)
     private Set<Task> subtasks = new HashSet<>();
     @Transient
     private ToMany<CompoundTask, Task> toSubtask = new ToMany<>(

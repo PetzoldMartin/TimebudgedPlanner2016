@@ -135,6 +135,7 @@ class StartupService implements IStartupService {
             def tasks = taskRepository.findAll()
             tasks.forEach({ log.info("task (${it.id}): $it.description") })
             userstoryRepository.findAll().forEach({ log.info("userstory (${it.id}): $it.description") })
+//            projectRepository.delete(p.id)
         }
     }
 
@@ -142,25 +143,29 @@ class StartupService implements IStartupService {
     @Transactional
     void cleanupAll() {
         def projects = projectRepository.findAll()
+        projects.each {projectRepository.delete(it)}
         def tasks = taskRepository.findAll()
         tasks.each { Task t ->
             t.supertask.removeAll()
             t.userstory.removeAll()
             t.sprint.removeAll()
         }
-        taskRepository.save(tasks)
-        projects.each { Project p ->
-            p.sprint.removeAll()
-        }
-        projectRepository.save(projects)
-        projectRepository.deleteAll()
+//        taskRepository.save(tasks)
+//        projects.each { Project p ->
+//            p.sprint.removeAll()
+//        }
+//        projectRepository.save(projects)
+        userstoryRepository.deleteAll()
+//        projectRepository.deleteAll()
+
         taskRepository.deleteAll()
         sprintRepository.deleteAll()
 
         // check cleanup
-//        assert projectRepository.findAll().isEmpty()
-//        assert userstoryRepository.findAll().isEmpty()
-//        assert sprintRepository.findAll().isEmpty()
-//        assert taskRepository.findAll().isEmpty()
+        assert projectRepository.findAll().isEmpty()
+        assert userstoryRepository.findAll().isEmpty()
+        assert sprintRepository.findAll().isEmpty()
+//        taskRepository.findAll().each {println "Task[ tag:$it.tag, desc: $it.description]"}
+        assert taskRepository.findAll().isEmpty()
     }
 }

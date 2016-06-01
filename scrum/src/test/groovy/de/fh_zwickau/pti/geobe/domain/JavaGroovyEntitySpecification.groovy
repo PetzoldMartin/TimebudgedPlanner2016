@@ -35,8 +35,8 @@ class JavaGroovyEntitySpecification extends Specification {
 
     public setup() {
         project1 = new Project([name: 'Projekt 1', budget: 10000])
-        task1 = new CompoundTask([description: "eine neue Aufgabe"])
-        task2 = new Subtask([description: 'nee das mach ich nich', tag: 'bäääh'])
+        task1 = new CompoundTask(tag: 'bla',description: "eine neue Aufgabe")
+        task2 = new Subtask(tag: 'blub', description: 'nee das mach ich nich')
         sprint1 = new Sprint([name: 'sprint 1'])
         sprint2 = new Sprint([name: 'sprint 2'])
         sprint3 = new Sprint([name: 'sprint 3'])

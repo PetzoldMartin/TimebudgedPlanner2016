@@ -98,8 +98,7 @@ class ProjectService {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public deleteProject(CDelete command) {
-        //TODO delete project functionality
-//        projectRepository.delete(command.id)
+            projectRepository.delete(command.id)
 //        Project project
 //        if (command.id) {
 //            project = projectRepository.findOne(command.id)
