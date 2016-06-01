@@ -21,26 +21,28 @@ import groovy.util.logging.Slf4j
  *               |                  |
  *           +---v---+           +--v------+
  *           | INIT  |---root--->|  EMPTY  |
- *           +-v-----+           +|-^-v--^-+
- *             |                  | | |  |
- *             |    +---select----+ | |  |
- *        select    |  +----root----+ |  |
- *             |    |  |              |  |
- *     +----+  |    |  |         create cancel
- *    select|  |    |  |              |  |
- *     |  +-v--v----v--^-+       +----v--^-----+
- *     +-<|   SHOW       |<-save-| CREATEEMPTY |
- *        +v--^--^-v---v-+       +-------------+
- *         |  |  | |   +-------------------------+
- *         |  |  +-|-------cancel------+---------|------+
- *         |  +--|-|-------save----+---|---------|---+  |
- *         |  |  | +-------------+  |  |         |   |  |
- *         |  |  |               |  |  |         |   |  |
- *    create  |  |            edit  |  |    dialog   |  |
- *         |  |  |               |  |  |         |   |  |
- *        +v--^--^--+          +-v--^--^-+     +-v---^--^-+
- *        |  CREATE |          |  EDIT   |     |  DIALOG  |
- *        +---------+          +---------+     +----------+
+ *           +-v-----+           +|-^-v--^^+
+ *             |                  | | |  ||
+ *             |    +---select----+ | |  ||
+ *        select    |  +----root----+ |  |+-----------root-------------+
+ *             |    |  |              |  |                             |
+ *     +----+  |    |  |         create cancel                         |
+ *    select|  |    |  |              |  |                             |
+ *     |  +-v--v----v--^-+       +----v--^-----+                       |
+ *     +-<|   SHOW       |<-save-| CREATEEMPTY |                       |
+ *        +v--^--^-vv--v-+       +-------------+                       |
+ *         |  |  | ||  |                                               |
+ *         |  |  | |+--|------------------delete---------------------+ |
+ *         |  |  | |   +-------------------------+                   | |
+ *         |  |  +-|-------cancel------+---------|------+----------+ | |
+ *         |  +--|-|-------save----+---|---------|---+  |          | | |
+ *         |  |  | +-------------+  |  |         |   |  |          | | |
+ *         |  |  |               |  |  |         |   |  |          | | |
+ *    create  |  |            edit  |  |    dialog   |  |          | | |
+ *         |  |  |               |  |  |         |   |  |          | | |
+ *        +v--^--^--+          +-v--^--^-+     +-v---^--^-+     +--^-v-^---+
+ *        |  CREATE |          |  EDIT   |     |  DIALOG  |     |  DELETE  |
+ *        +---------+          +---------+     +----------+     +----------+
  *
  * </code>
  * @author georg beier
@@ -58,6 +60,7 @@ class TabViewStateMachine {
         CREATE,         // starting from SHOW (important for Cancel events!), a new Object is created
         EDIT,           // selected object is being edited
         DIALOG,         // we are in a modal dialog
+        DELETE,
     }
 
     public static enum Event {
@@ -69,6 +72,7 @@ class TabViewStateMachine {
         Cancel,   // cancel edit or create
         Save,     // save newly edited or created object
         Dialog,   // enter a modal dialog
+        Delete,   // TODO add delete functionality for Sprint, Task, Userstory,...
     }
 
     private DialogStateMachine sm
@@ -148,5 +152,9 @@ class TabViewStateMachine {
         addTransition(State.SHOW, State.DIALOG, Event.Dialog)
         addTransition(State.DIALOG, State.SHOW, Event.Save)
         addTransition(State.DIALOG, State.SHOW, Event.Cancel)
+        // new states
+        addTransition(State.SHOW, State.DELETE, Event.Delete)
+        addTransition(State.DELETE,State.SHOW, Event.Cancel)
+        addTransition(State.DELETE,State.EMPTY, Event.Root)
     }
 }
