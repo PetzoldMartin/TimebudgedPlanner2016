@@ -40,6 +40,7 @@ class ProjectDto {
         //List<TaskDto.QNode> backlog = []
         List<SprintDto.QNode> sprint = []
         List<UserstoryDto.QNode> userstory = []
+        List<UserstoryDto.QNode> userStory = []
         List<RoleDto.QNode> developers = []
         @Override
         String toString() {
