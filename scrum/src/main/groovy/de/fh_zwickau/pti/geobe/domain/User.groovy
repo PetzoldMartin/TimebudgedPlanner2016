@@ -36,7 +36,7 @@ public class User {
 
     public IToAny<ScrumRole> getRoles() { return toRoles; }
 
-    @ManyToMany(mappedBy = "developers")
+    @ManyToMany(mappedBy = "developers",cascade = CascadeType.PERSIST)
     protected Set<Task> tasks = new HashSet<>();
     @Transient
     private ToMany<User, Task> toTask = new ToMany<>(

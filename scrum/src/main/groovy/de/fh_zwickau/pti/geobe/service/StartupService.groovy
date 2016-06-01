@@ -27,15 +27,15 @@ class StartupService implements IStartupService {
     @Autowired
     private UserstoryRepository userstoryRepository
     @Autowired
-    private UserRepository scrumUserRepository
+    private UserRepository userRepository
     @Autowired
-    private RoleRepository scrumRoleRepository
+    private RoleRepository roleRepository
 
     @Override
     void initApplicationData() {
 
         // users
-        if (!scrumUserRepository.findAll()) {
+        if (!userRepository.findAll()) {
 //            Project p = new Project([name: 'Projekt User', budget: 1000])
 //            User user = new User([nick: 'user', password: 'user'])
 //            ScrumRole userRoletype = new ScrumRole([userRole: ROLETYPE.Developer])
@@ -156,7 +156,7 @@ class StartupService implements IStartupService {
 //        }
 //        projectRepository.save(projects)
         userstoryRepository.deleteAll()
-//        projectRepository.deleteAll()
+       projectRepository.deleteAll()
 
         taskRepository.deleteAll()
         sprintRepository.deleteAll()

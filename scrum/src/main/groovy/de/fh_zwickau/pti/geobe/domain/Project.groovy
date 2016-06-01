@@ -21,10 +21,10 @@ public class Project {
     }
 
     // domain values
-    private String name;
-    private String description;
-    private BigDecimal budget;
-    private Date startDate;
+     String name;
+     String description;
+     BigDecimal budget;
+     Date startDate;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private Set<Userstory> storys = new HashSet<>();

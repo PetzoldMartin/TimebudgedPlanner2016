@@ -21,10 +21,13 @@ public class ScrumRole {
     long id
 
     //domain values
+    @Enumerated(EnumType.ORDINAL)
+    @Column(name = "Roletype", columnDefinition = "int default 1")
     ROLETYPE userRole;
 
+
     // references
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = true,cascade = CascadeType.PERSIST)
     @JoinColumn(name = "project_id")
     //, referencedColumnName = "project_id",insertable=false, updatable=false)
     private Project project;
@@ -38,7 +41,7 @@ public class ScrumRole {
 
     public IToAny<Project> getProject() { return toProject; }
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = true,cascade = CascadeType.PERSIST)
     @JoinColumn(name = "scrumUser_id")
     //, referencedColumnName = "scrumUser_id",insertable=false, updatable=false)
     private User scrumUser;
