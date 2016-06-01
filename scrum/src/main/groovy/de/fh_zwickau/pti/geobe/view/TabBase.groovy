@@ -68,9 +68,26 @@ abstract class TabBase extends SubTree {
         sm.onTransition[sm.trix(TabViewStateMachine.State.DIALOG, TabViewStateMachine.Event.Cancel)] = {
             cancelDialog()
         }
+
+        // delete transitions
+        sm.onTransition[sm.trix(TabViewStateMachine.State.SHOW, TabViewStateMachine.Event.Delete)] = {
+            deletemode()
+        }
+
+        sm.onTransition[sm.trix(TabViewStateMachine.State.DELETE, TabViewStateMachine.Event.Cancel)] = {
+            cancelDelete()
+            projectTree.onEditItemDone(currentItemId, currentCaption)
+        }
+
+        sm.onTransition[sm.trix(TabViewStateMachine.State.DELETE, TabViewStateMachine.Event.Root)] = {
+            deleteItem()
+            emptymode()
+            projectTree.onEditItemDone(currentItemId, currentCaption, true)
+        }
+
     }
 
-    /** item id of currently selected object from vaadin selection component */
+/** item id of currently selected object from vaadin selection component */
     protected abstract getCurrentItemId()
     /** value for the domain object id of currently displayed object */
     protected abstract Long getCurrentDomainId()
@@ -99,6 +116,12 @@ abstract class TabBase extends SubTree {
     protected abstract showmode()
     /** clear all editable fields */
     protected abstract clearFields()
+
+    //TODO make it abstract for subclasses
+    protected deletemode() {}
+    protected cancelDelete() {}
+    protected deleteItem() {}
+
     /**
      * for the given persistent object id, fetch the full dto and save it in field currentDto
      * @param itemId object id

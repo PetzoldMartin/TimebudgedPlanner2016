@@ -5,6 +5,7 @@ import de.fh_zwickau.pti.geobe.domain.Sprint
 import de.fh_zwickau.pti.geobe.domain.Task
 import de.fh_zwickau.pti.geobe.domain.Userstory
 import de.fh_zwickau.pti.geobe.dto.ProjectDto
+import de.fh_zwickau.pti.geobe.dto.ProjectDto.CDelete
 import de.fh_zwickau.pti.geobe.dto.ProjectDto.CSet
 import de.fh_zwickau.pti.geobe.dto.SprintDto
 import de.fh_zwickau.pti.geobe.dto.UserstoryDto
@@ -93,6 +94,18 @@ class ProjectService {
         if (command.sprintIds)
             sprintRepository.findAll(command.sprintIds).forEach { Sprint s -> project.sprint.add(s) }
         makeQFull(projectRepository.saveAndFlush(project))
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public deleteProject(CDelete command) {
+        //TODO delete project functionality
+//        projectRepository.delete(command.id)
+//        Project project
+//        if (command.id) {
+//            project = projectRepository.findOne(command.id)
+//            if (!project) return new ProjectDto.QFull()
+//            projectRepository.delete(project)
+//        }
     }
 
     private makeQFull(Project p) {

@@ -35,6 +35,10 @@ class ProjectDto {
 
     }
 
+    public static class CDelete {
+        Long id
+    }
+
     public static class QNode {
         String name
         //List<TaskDto.QNode> backlog = []

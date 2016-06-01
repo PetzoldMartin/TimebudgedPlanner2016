@@ -22,7 +22,7 @@ class UserstoryDto {
         Long id = 0
         String name = ''
         String description = ''
-        int priority = 1
+        Long priority = 1
         ProjectDto.QNode project = new ProjectDto.QNode()
         TaskDto.QList backlog = new TaskDto.QList()
 //        def available = new TaskDto.QList()

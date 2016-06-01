@@ -189,7 +189,7 @@ was dann passiert. '''), 0]
         def cols = ['text', 'votes', 'button']
         def itemId = table.addItem()
         // to better identify table rows, you could also use the 2nd version of addItem and
-        // use the entity ID as itemID
+        // use the entity id as itemID
 //        table.addItem(newId)
         // Stylable wrapper for the cell content
         CssLayout content = new CssLayout() {
@@ -212,7 +212,7 @@ was dann passiert. '''), 0]
         def cols = ['text', 'votes', 'button']
         def itemId = table.addItemAfter(previousItemId)
         // to better identify table rows, you could also use the 2nd version of addItemAfter and
-        // use the entity ID as itemID
+        // use the entity id as itemID
 //        table.addItemAfter(previousId, newId)
         Item row = table.getItem(itemId)
         Label label = new Label("Dies ist ein Kommentar der Ebene $indent zu einem Kommentar." +

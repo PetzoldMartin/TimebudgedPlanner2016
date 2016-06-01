@@ -7,6 +7,8 @@ import com.vaadin.ui.Button
 import com.vaadin.ui.Component
 import com.vaadin.ui.Notification
 import com.vaadin.ui.TextField
+import com.vaadin.ui.UI
+import com.vaadin.ui.Window
 import com.vaadin.ui.themes.Reindeer
 import de.fh_zwickau.pti.geobe.dto.ProjectDto
 import de.fh_zwickau.pti.geobe.service.IAuthorizationService
@@ -14,6 +16,7 @@ import de.fh_zwickau.pti.geobe.service.ProjectService
 import de.fh_zwickau.pti.geobe.util.view.VaadinSelectionListener
 import de.fh_zwickau.pti.geobe.util.view.VaadinTreeRootChangeListener
 import de.geobe.util.vaadin.TabViewStateMachine
+import de.geobe.util.vaadin.VaadinBuilder
 import org.springframework.beans.factory.annotation.Autowired
 
 import static TabViewStateMachine.Event
@@ -35,10 +38,12 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
     private static final String PBUDGET = 'pbudget'
 
     private TextField pid, pname, pbudget
-    private Button newButton, editButton, saveButton, cancelButton
+    private Button newButton, editButton, saveButton, cancelButton, deleteButton
     private Map<String, Serializable> currentItemId
     private ProjectDto.QFull currentDto
 
+    private DeleteDialog deleteDialog = new DeleteDialog()
+    
     @Autowired
     private ProjectService projectService
     @Autowired
@@ -51,7 +56,7 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
         // Caption shows on the tab
         def c = vaadin."$C.vlayout"('Projekt',
                 [spacing: true, margin: true]) {
-            "$F.text"('ID', [uikey: PID, enabled: false])
+            "$F.text"('id', [uikey: PID, enabled: false])
             "$F.text"('Name', [uikey: PNAME])
             "$F.text"('Budget', [uikey: PBUDGET])
             "$C.hlayout"([uikey       : 'buttonfield', spacing: true,
@@ -64,6 +69,10 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
                                      visible       : authorizationService.hasRole('ROLE_ADMIN'),
                                      disableOnClick: true,
                                      clickListener : { sm.execute(Event.Edit) }])
+                "$F.button"('Delete', [uikey         : 'deletebutton',
+                                     visible       : authorizationService.hasRole('ROLE_ADMIN'),
+                                     disableOnClick: true,
+                                     clickListener : { sm.execute(Event.Delete) }])
                 "$F.button"('Cancel', [uikey         : 'cancelbutton',
                                        disableOnClick: true, enabled: false,
                                        clickListener : { sm.execute(Event.Cancel) }])
@@ -84,10 +93,14 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
         pbudget = uiComponents."${subkeyPrefix + PBUDGET}"
         newButton = uiComponents."${subkeyPrefix}newbutton"
         editButton = uiComponents."${subkeyPrefix}editbutton"
+        deleteButton = uiComponents."${subkeyPrefix}deletebutton"
         saveButton = uiComponents."${subkeyPrefix}savebutton"
         cancelButton = uiComponents."${subkeyPrefix}cancelbutton"
         projectTree.selectionModel.addListenerForKey(this, 'Project')
         projectTree.selectionModel.addRootChangeListener(this)
+
+        // build dialog window
+        deleteDialog.build()
         // build state machine
         sm = new TabViewStateMachine(TabViewStateMachine.State.TOPTAB, 'PrjTab')
         configureSm()
@@ -122,6 +135,33 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
     }
 
     @Override
+    protected deletemode() {
+        projectTree.onEditItem()
+        deleteDialog.id.value= currentDto.id.toString()
+        deleteDialog.name.value= currentDto.name
+        deleteDialog.storyCount.value= currentDto.userstorys.all.size().toString()
+        deleteDialog.sprintCount.value= currentDto.sprints.all.size().toString()
+        [deleteDialog.acceptButton, deleteDialog.cancelButton].each { it.enabled = true }
+        UI.getCurrent().addWindow(deleteDialog.window)
+    }
+
+    @Override
+    protected cancelDelete() {
+        deleteDialog.window.close()
+
+    }
+
+    @Override
+    protected deleteItem() {
+        deleteProject()
+        deleteDialog.window.close()
+        }
+
+    def deleteProject() {
+        projectService.deleteProject(new ProjectDto.CDelete(id: currentDto.id))
+    }
+
+    @Override
     protected createemptymode() {
 //        authorizationService.roles
         def user = authorizationService.user
@@ -138,7 +178,7 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
     @Override
     protected emptymode() {
         clearFields()
-        [pname, pbudget, saveButton, cancelButton, editButton]
+        [pname, pbudget, saveButton, cancelButton, editButton, deleteButton]
                 .each { it.enabled = false }
         newButton.enabled = true
     }
@@ -149,7 +189,7 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
         initItem(currentDto.id)
         [pname, pbudget, saveButton, cancelButton]
                 .each { it.enabled = false }
-        [editButton, newButton].each { it.enabled = true }
+        [editButton, newButton, deleteButton].each { it.enabled = true }
     }
 
     /** prepare for editing in EDIT, CREATE, CREATEEMPTY states */
@@ -157,7 +197,7 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
     protected editmode() {
         projectTree.onEditItem()
         [pname, pbudget, saveButton, cancelButton].each { it.enabled = true }
-        [editButton, newButton].each { it.enabled = false }
+        [editButton, newButton, deleteButton].each { it.enabled = false }
     }
 
     /** clear all editable fields */
@@ -201,6 +241,49 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
         command.name = pname.value
         command.budget = new BigDecimal(longFrom(pbudget.value))
         currentDto = projectService.createOrUpdateProject(command)
+    }
+
+    private class DeleteDialog {
+        TextField name, id, storyCount, sprintCount
+        Button acceptButton, cancelButton
+        Window window
+
+        private VaadinBuilder winBuilder = new VaadinBuilder()
+
+        public Window build() {
+            String keyPrefix = "${subkeyPrefix}deleteDialog."
+            winBuilder.keyPrefix = keyPrefix
+            window = winBuilder."$C.window"('Wollen Sie wirklich dieses Projekt Löschen?',
+                    [spacing: true, margin: true,
+                     modal  : true, closable: false]) {
+                "$C.vlayout"('top', [spacing: true, margin: true]) {
+                    "$F.text"('id', [uikey: 'id'])
+                    "$F.text"('Name', [uikey: 'name'])
+                    "$F.text"('Anzahl der Userstorys', [uikey: 'storyCount'])
+                    "$F.text"('Anzahl der Sprints', [uikey: 'sprintcount'])
+                    "$C.hlayout"([uikey: 'buttonfield', spacing: true]) {
+                        "$F.button"('Accept',
+                                [uikey         : 'acceptButton',
+                                 disableOnClick: true, enabled: true,
+                                 clickListener : { sm.execute(Event.Root) }])
+                        "$F.button"('Cancel',
+                                [uikey         : 'cancelbutton',
+                                 disableOnClick: true, enabled: true,
+                                 clickListener : { sm.execute(Event.Cancel) }])
+                        }
+                }
+            }
+
+            def dialogComponents = winBuilder.uiComponents
+
+            id = dialogComponents."${keyPrefix}id"
+            name = dialogComponents."${keyPrefix}name"
+            storyCount = dialogComponents."${keyPrefix}storyCount"
+            sprintCount = dialogComponents."${keyPrefix}sprintcount"
+            acceptButton = dialogComponents."${keyPrefix}acceptButton"
+            cancelButton = dialogComponents."${keyPrefix}cancelbutton"
+            window.center()
+        }
     }
 
 }

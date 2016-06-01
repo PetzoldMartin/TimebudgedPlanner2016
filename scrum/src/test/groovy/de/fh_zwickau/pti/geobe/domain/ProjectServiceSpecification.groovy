@@ -49,7 +49,7 @@ class ProjectServiceSpecification extends Specification {
     public cleanup() {
         startupService.cleanupAll()
     }
-
+    //TODO redo ProjectService testing
     @Ignore
     def "get a dto from a project"() {
         setup:
