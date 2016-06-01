@@ -124,10 +124,16 @@ class TaskService {
                     estimate : t.estimate, spent: t.spent,
                     completed: t.completed])
             qFull.classname = t.class.canonicalName.replaceAll(/.*\./, '')
-            qFull.userstorys = new UserstoryDto.QList()
+            qFull.userstory = new UserstoryDto.QFull()
             qFull.supertask = new TaskDto.QList()
             qFull.sprints = new SprintDto.QList()
-            t.userstory.all.each { qFull.userstorys.all[it.id] = it.name }
+            if (t.userstory.one) { //TODO refactor because of compundtask
+                qFull.userstory.id = t.userstory.one.id
+                qFull.userstory.name = t.userstory.one.name
+                qFull.userstory.project.name = t.userstory.one.project.one.name
+            }
+
+            //t.userstory.all.each { qFull.userstorys.all[it.id] = it.name }
             t.supertask.all.each { qFull.supertask.all[it.id] = it.tag }
             t.sprint.all.sort { it.start }.each { qFull.sprints.all[it.id] = it.name }
             qFull.subtasks = taskSubtree(t)

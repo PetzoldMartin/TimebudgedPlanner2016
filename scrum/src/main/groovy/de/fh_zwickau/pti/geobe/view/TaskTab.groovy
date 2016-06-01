@@ -30,13 +30,15 @@ class TaskTab extends TabBase
                 Serializable {
 
     public static final String TAG = 'tag'
+    public static final String USERSTORY = 'us'
+    public static final String PROJECT = 'pro'
     public static final String IS_SUPERTASK = 'isSupertask'
     public static final String IS_COMPLETED = 'isCompleted'
     public static final String ESTIMATE = 'estimate'
     public static final String SPENT = 'spent'
     public static final String DESCRIPTION = 'description'
 
-    private TextField tag, estimate, spent
+    private TextField tag, estimate, spent, userstory, project
     private TextArea description
     private CheckBox supertask, completed
     private Button newButton, editButton, saveButton, cancelButton, subtaskButton
@@ -59,7 +61,11 @@ class TaskTab extends TabBase
     Component build() {
         topComponent = vaadin."$C.vlayout"('Tasks',
                 [spacing: true, margin: true]) {
-            "$F.text"('Aufgabe', [uikey: TAG])
+            "$C.hlayout"('Status', [spacing: true, margin: false]) {
+                "$F.text"('Aufgabe', [uikey: TAG])
+                "$F.text"('Userstory', [uikey: USERSTORY])
+                "$F.text"('Project', [uikey: PROJECT])
+            }
             "$C.hlayout"('Status', [spacing: true, margin: false]) {
                 "$F.checkbox"('übergeordnet', [uikey: IS_SUPERTASK])
                 "$F.checkbox"('abgeschlossen', [uikey: IS_COMPLETED])
@@ -100,6 +106,8 @@ class TaskTab extends TabBase
     @Override
     void init(Object... value) {
         uiComponents = vaadin.uiComponents
+        userstory = uiComponents."$subkeyPrefix$USERSTORY"
+        project = uiComponents."$subkeyPrefix$PROJECT"
         tag = uiComponents."$subkeyPrefix$TAG"
         estimate = uiComponents."$subkeyPrefix$ESTIMATE"
         spent = uiComponents."$subkeyPrefix$SPENT"
@@ -151,7 +159,7 @@ class TaskTab extends TabBase
     /** prepare INIT state */
     @Override
     protected initmode() {
-        [tag, estimate, spent, description, completed, supertask,
+        [tag, userstory, project, estimate, spent, description, completed, supertask,
          saveButton, cancelButton, subtaskButton, editButton, newButton].each { it.enabled = false }
     }
     /** prepare EMPTY state */
@@ -159,7 +167,7 @@ class TaskTab extends TabBase
     protected emptymode() {
         clearFields()
         currentDto = null
-        [tag, estimate, spent, description, completed, supertask,
+        [tag, userstory, project, estimate, spent, description, completed, supertask,
          saveButton, cancelButton, editButton, subtaskButton].each {
             it.enabled = false
         }
@@ -168,7 +176,7 @@ class TaskTab extends TabBase
     /** prepare SHOW state */
     @Override
     protected showmode() {
-        [tag, estimate, spent, description, completed, supertask, saveButton, cancelButton].each {
+        [tag, userstory, project, estimate, spent, description, completed, supertask, saveButton, cancelButton].each {
             it.enabled = false
         }
         [editButton, newButton, subtaskButton].each { it.enabled = true }
@@ -182,7 +190,7 @@ class TaskTab extends TabBase
     @Override
     protected createmode() {
         projectTree.onEditItem()
-        [tag, estimate, spent, description, supertask, completed, saveButton, cancelButton].
+        [tag, userstory, project, estimate, spent, description, supertask, completed, saveButton, cancelButton].
                 each { it.enabled = true }
         [editButton, newButton, subtaskButton].each { it.enabled = false }
 //        saveButton.setClickShortcut(ShortcutAction.KeyCode.ENTER)
@@ -191,8 +199,9 @@ class TaskTab extends TabBase
     @Override
     protected editmode() {
         projectTree.onEditItem()
-        if (currentDto.classname == 'Subtask')
+        if (currentDto.classname == 'Subtask') {
             completed.enabled = true
+        }
         [tag, estimate, spent, description, saveButton, cancelButton].each { it.enabled = true }
         [editButton, newButton, subtaskButton].each { it.enabled = false }
 //        saveButton.setClickShortcut(ShortcutAction.KeyCode.ENTER)
@@ -219,7 +228,7 @@ class TaskTab extends TabBase
     /** clear all editable fields */
     @Override
     protected clearFields() {
-        [tag, estimate, spent, description, completed, supertask].each { it.clear() }
+        [tag, userstory, project, estimate, spent, description, completed, supertask].each { it.clear() }
     }
     /**
      * for the given persistent object id, fetch the full dto and save it in field currentDto
@@ -236,6 +245,11 @@ class TaskTab extends TabBase
     @Override
     protected void setFieldValues() {
         tag.value = currentDto.tag
+        userstory.value = currentDto.userstory.name
+
+        //TODO get projectID
+        project.value = 'TODO'
+        project.value = currentDto.userstory.project.name
         estimate.value = currentDto.estimate.toString()
         spent.value = currentDto.spent.toString()
         description.value = currentDto.description
@@ -260,6 +274,7 @@ class TaskTab extends TabBase
         command.completed = completed.value
         command.classname = supertask.value ? 'CompoundTask' : 'Subtask'
         // determine level for a new item
+        // TODO change to Userstory (get userstoryID)
         if (id == 0) {
             if (!currentDto || currentDto.project.all) {
                 // we are on top level of tasks
