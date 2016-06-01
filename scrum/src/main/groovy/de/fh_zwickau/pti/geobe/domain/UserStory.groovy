@@ -38,7 +38,7 @@ class Userstory {
         return toProject;
     }
 
-    @OneToMany(mappedBy = "userstory", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "userstory", cascade = CascadeType.ALL)
     private Set<Task> tasks = new HashSet<>();
     @Transient
     private ToMany<Userstory, Task> toTask = new ToMany<>(
