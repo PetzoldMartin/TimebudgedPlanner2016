@@ -50,8 +50,8 @@ class UserstoryTab extends TabBase
                  margin : new MarginInfo(false, false, false, true),
                  spacing: true]) {
             "$F.text"('<b>Userstory</b>', [uikey: 'name', captionAsHtml: true, enabled: false])
-            "$F.text"('Project', [uikey: 'project', enabled: false])
-            "$F.text"('Description', [uikey: 'description', enabled: false])
+            "$F.text"('Projekt', [uikey: 'project', enabled: false])
+            "$F.text"('Beschreibung', [uikey: 'description', enabled: false])
             "$F.twincol"('Backlog', [uikey             : 'backlog', rows: 8, width: '100%',
                                      leftColumnCaption : 'available', enabled: false,
                                      rightColumnCaption: 'selected', gridPosition: [0, 2, 1, 2]])
@@ -205,7 +205,7 @@ class UserstoryTab extends TabBase
      */
     @Override
     protected saveItem(Long id) {
-        UserstoryDto.CSet command = new UserstoryDto().CSet()
+        UserstoryDto.CSet command = new UserstoryDto.CSet()
         command.id = id
         command.projectId = (Long) currentProjectItemId['id']
         command.name = name.getValue()
