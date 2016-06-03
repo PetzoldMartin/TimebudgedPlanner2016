@@ -141,6 +141,12 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
         deleteDialog.name.value= currentDto.name
         deleteDialog.storyCount.value= currentDto.userstorys.all.size().toString()
         deleteDialog.sprintCount.value= currentDto.sprints.all.size().toString()
+        //TODO add task count
+//        int count=0;
+//        currentDto.userstorys.all.each
+//                {Userstory us ->
+//            us.task.all.size()}
+//        deleteDialog.taskCount.value= count.toString()
         [deleteDialog.acceptButton, deleteDialog.cancelButton].each { it.enabled = true }
         UI.getCurrent().addWindow(deleteDialog.window)
     }
@@ -244,7 +250,7 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
     }
 
     private class DeleteDialog {
-        TextField name, id, storyCount, sprintCount
+        TextField name, id, storyCount, sprintCount, taskCount
         Button acceptButton, cancelButton
         Window window
 
@@ -259,8 +265,9 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
                 "$C.vlayout"('top', [spacing: true, margin: true]) {
                     "$F.text"('id', [uikey: 'id'])
                     "$F.text"('Name', [uikey: 'name'])
-                    "$F.text"('Anzahl der Userstorys', [uikey: 'storyCount'])
-                    "$F.text"('Anzahl der Sprints', [uikey: 'sprintcount'])
+                    "$F.text"('Anzahl der abhängigen Userstorys', [uikey: 'storyCount'])
+                    "$F.text"('Anzahl der abhängigen Sprints', [uikey: 'sprintCount'])
+                    "$F.text"('Anzahl der abhängigen Tasks', [uikey: 'taskCount'])
                     "$C.hlayout"([uikey: 'buttonfield', spacing: true]) {
                         "$F.button"('Accept',
                                 [uikey         : 'acceptButton',
@@ -278,8 +285,9 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
 
             id = dialogComponents."${keyPrefix}id"
             name = dialogComponents."${keyPrefix}name"
+            taskCount = dialogComponents."${keyPrefix}taskCount"
             storyCount = dialogComponents."${keyPrefix}storyCount"
-            sprintCount = dialogComponents."${keyPrefix}sprintcount"
+            sprintCount = dialogComponents."${keyPrefix}sprintCount"
             acceptButton = dialogComponents."${keyPrefix}acceptButton"
             cancelButton = dialogComponents."${keyPrefix}cancelbutton"
             window.center()

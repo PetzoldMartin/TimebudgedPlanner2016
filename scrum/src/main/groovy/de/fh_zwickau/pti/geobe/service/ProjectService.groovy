@@ -112,7 +112,7 @@ class ProjectService {
             ProjectDto.QFull qFull = new ProjectDto.QFull(id: p.id, name: p.name, budget: p.budget)
             qFull.userstorys = new UserstoryDto.QList()
             qFull.sprints = new SprintDto.QList()
-            p.userstorys.all.sort { it.id }.forEach { Userstory userstory ->
+            p.userstorys.all.sort { it.priority }.forEach { Userstory userstory ->
                 qFull.userstorys.all[userstory.id] = userstory.name
             }
             p.sprint.all.sort { it.start }.forEach { Sprint s -> qFull.sprints.all[s.id] = s.name }

@@ -220,5 +220,4 @@ class UserstoryTab extends TabBase
         command.taskIds = v
         currentDto = userstoryService.createOrUpdateUserstory(command)
     }
-
 }

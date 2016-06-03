@@ -99,10 +99,9 @@ class ProjectTree extends SubTree
         projects.all.each { projId, projNode ->
             def projectId = treeHelper.addNode([type: PROJECT_TYPE, id: projId],
                     null, projNode.name, true)
-
+            def userstoryTagId = treeHelper.addNode('userstory:' + projId, projectId,
+                    'Userstorys', !projNode.userstory.isEmpty())
             if (projNode.userstory) {
-                def userstoryTagId = treeHelper.addNode('userstory:' + projId, projectId,
-                        'Userstorys', !projNode.userstory.isEmpty())
                 projNode.userstory.each { userstoryNode ->
                     def userstory = treeHelper.addNode([type: USERSTORY_TYPE, id: userstoryNode.id],
                             userstoryTagId, userstoryNode.name, !userstoryNode.backlog.isEmpty())
