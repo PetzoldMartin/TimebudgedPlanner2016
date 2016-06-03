@@ -7,11 +7,13 @@ import com.vaadin.ui.*
 import com.vaadin.ui.themes.Reindeer
 import de.fh_zwickau.pti.geobe.dto.SprintDto
 import de.fh_zwickau.pti.geobe.dto.TaskDto.QNode
+import de.fh_zwickau.pti.geobe.service.IAuthorizationService
 import de.fh_zwickau.pti.geobe.service.ProjectService
 import de.fh_zwickau.pti.geobe.service.SprintService
 import de.fh_zwickau.pti.geobe.util.view.VaadinSelectionListener
 import de.fh_zwickau.pti.geobe.util.view.VaadinTreeRootChangeListener
 import de.geobe.util.vaadin.TabViewStateMachine
+import de.geobe.util.vaadin.VaadinBuilder
 import org.springframework.beans.factory.annotation.Autowired
 
 import static TabViewStateMachine.Event
@@ -29,11 +31,15 @@ class SprintTab extends TabBase
     private TextField name, project
     private DateField start, end
     private TwinColSelect backlog
-    private Button newButton, editButton, saveButton, cancelButton
+    private Button newButton, editButton, saveButton, cancelButton, deleteButton
     private Map<String, Serializable> currentSprintItemId
     private Map<String, Serializable> currentProjectItemId
     private SprintDto.QFull currentDto
 
+    private DeleteDialog deleteDialog = new DeleteDialog()
+
+    @Autowired
+    private IAuthorizationService authorizationService
 
     @Autowired
     private SprintService sprintService
@@ -58,6 +64,10 @@ class SprintTab extends TabBase
                                     clickListener: { sm.execute(Event.Create) }])
                 "$F.button"('Edit', [uikey        : 'editbutton', disableOnClick: true,
                                      clickListener: { sm.execute(Event.Edit) }])
+                "$F.button"('Delete', [uikey         : 'deleteButton',
+//                                       visible       : authorizationService.hasRole('ROLE_ADMIN'),
+                                       disableOnClick: true,
+                                       clickListener : { sm.execute(Event.Delete) }])
                 "$F.button"('Cancel', [uikey        : 'cancelbutton', disableOnClick: true, enabled: false,
                                        clickListener: { sm.execute(Event.Cancel) }])
                 "$F.button"('Save', [uikey        : 'savebutton', disableOnClick: true, enabled: false,
@@ -84,8 +94,12 @@ class SprintTab extends TabBase
         editButton = uiComponents."${subkeyPrefix}editbutton"
         saveButton = uiComponents."${subkeyPrefix}savebutton"
         cancelButton = uiComponents."${subkeyPrefix}cancelbutton"
+        deleteButton = uiComponents."${subkeyPrefix}deleteButton"
         projectTree.selectionModel.addListenerForKey(this, 'Sprint')
         projectTree.selectionModel.addRootChangeListener(this)
+
+        // build dialog window
+        deleteDialog.build()
         // build state machine
         sm = new TabViewStateMachine(TabViewStateMachine.State.SUBTAB, 'SprTab')
         configureSm()
@@ -120,14 +134,16 @@ class SprintTab extends TabBase
     /** prepare INIT state */
     @Override
     protected initmode() {
-        [name, start, end, backlog, saveButton, cancelButton, editButton, newButton].each { it.enabled = false }
+        [name, start, end, backlog, saveButton, cancelButton, editButton, deleteButton, newButton].each {
+            it.enabled = false
+        }
     }
 
     /** prepare EMPTY state */
     @Override
     protected emptymode() {
         clearFields()
-        [name, start, end, backlog, saveButton, cancelButton, editButton].each { it.enabled = false }
+        [name, start, end, backlog, saveButton, cancelButton, editButton, deleteButton].each { it.enabled = false }
         project.value = projectService.getProjectCaption((Long) currentProjectItemId['id'])
         setAvailableList()
         [newButton].each { it.enabled = true }
@@ -137,7 +153,7 @@ class SprintTab extends TabBase
     @Override
     protected showmode() {
         [name, start, end, backlog, saveButton, cancelButton].each { it.enabled = false }
-        [editButton, newButton].each { it.enabled = true }
+        [editButton, deleteButton, newButton].each { it.enabled = true }
     }
 
     /** prepare for editing in EDIT, CREATE, CREATEEMPTY states */
@@ -145,7 +161,7 @@ class SprintTab extends TabBase
     protected editmode() {
         projectTree.onEditItem()
         [name, start, end, backlog, saveButton, cancelButton].each { it.enabled = true }
-        [editButton, newButton].each { it.enabled = false }
+        [editButton, deleteButton, newButton].each { it.enabled = false }
     }
 
     /** clear all editable fields */
@@ -159,6 +175,28 @@ class SprintTab extends TabBase
         sprintService.getProjectBacklog((Long) currentProjectItemId['id']).each {
             makeAvailableList(it)
         }
+    }
+
+    @Override
+    protected deletemode() {
+        projectTree.onEditItem()
+        deleteDialog.id.value = currentDto.id.toString()
+        deleteDialog.name.value = currentDto.name
+        deleteDialog.taskCount.value = currentDto.backlog.all.size().toString()
+        [deleteDialog.acceptButton, deleteDialog.cancelButton].each { it.enabled = true }
+        UI.getCurrent().addWindow(deleteDialog.window)
+    }
+
+    @Override
+    protected cancelDelete() {
+        deleteDialog.window.close()
+
+    }
+
+    @Override
+    protected deleteItem() {
+        sprintService.deleteSprint(new SprintDto.CDelete(id: currentDto.id))
+        deleteDialog.window.close()
     }
 
     private makeAvailableList(QNode taskNode, int level = 0) {
@@ -219,4 +257,44 @@ class SprintTab extends TabBase
         currentDto = sprintService.createOrUpdateSprint(command)
     }
 
+    private class DeleteDialog {
+        TextField name, id, taskCount
+        Button acceptButton, cancelButton
+        Window window
+
+        private VaadinBuilder winBuilder = new VaadinBuilder()
+
+        public Window build() {
+            String keyPrefix = "${subkeyPrefix}deleteDialog."
+            winBuilder.keyPrefix = keyPrefix
+            window = winBuilder."$C.window"('Wollen Sie wirklich diesen Sprint Löschen?',
+                    [spacing: true, margin: true,
+                     modal  : true, closable: false]) {
+                "$C.vlayout"('top', [spacing: true, margin: true]) {
+                    "$F.text"('id', [uikey: 'id'])
+                    "$F.text"('Name', [uikey: 'name'])
+                    "$F.text"('Anzahl der verwalteten Tasks', [uikey: 'taskCount'])
+                    "$C.hlayout"([uikey: 'buttonfield', spacing: true]) {
+                        "$F.button"('Accept',
+                                [uikey         : 'acceptButton',
+                                 disableOnClick: true, enabled: true,
+                                 clickListener : { sm.execute(Event.Root) }])
+                        "$F.button"('Cancel',
+                                [uikey         : 'cancelbutton',
+                                 disableOnClick: true, enabled: true,
+                                 clickListener : { sm.execute(Event.Cancel) }])
+                    }
+                }
+            }
+
+            def dialogComponents = winBuilder.uiComponents
+
+            id = dialogComponents."${keyPrefix}id"
+            name = dialogComponents."${keyPrefix}name"
+            taskCount = dialogComponents."${keyPrefix}taskCount"
+            acceptButton = dialogComponents."${keyPrefix}acceptButton"
+            cancelButton = dialogComponents."${keyPrefix}cancelbutton"
+            window.center()
+        }
+    }
 }

@@ -118,6 +118,9 @@ abstract class TabBase extends SubTree {
     protected abstract clearFields()
 
     //TODO make it abstract for subclasses
+//    protected abstract deletemode()
+//    protected abstract cancelDelete()
+//    protected abstract deleteItem()
     protected deletemode() {}
     protected cancelDelete() {}
     protected deleteItem() {}

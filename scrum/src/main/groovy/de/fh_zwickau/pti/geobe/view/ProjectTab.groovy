@@ -3,12 +3,7 @@ package de.fh_zwickau.pti.geobe.view
 import com.vaadin.event.ShortcutAction
 import com.vaadin.spring.annotation.SpringComponent
 import com.vaadin.spring.annotation.UIScope
-import com.vaadin.ui.Button
-import com.vaadin.ui.Component
-import com.vaadin.ui.Notification
-import com.vaadin.ui.TextField
-import com.vaadin.ui.UI
-import com.vaadin.ui.Window
+import com.vaadin.ui.*
 import com.vaadin.ui.themes.Reindeer
 import de.fh_zwickau.pti.geobe.dto.ProjectDto
 import de.fh_zwickau.pti.geobe.service.IAuthorizationService
@@ -69,10 +64,10 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
                                      visible       : authorizationService.hasRole('ROLE_ADMIN'),
                                      disableOnClick: true,
                                      clickListener : { sm.execute(Event.Edit) }])
-                "$F.button"('Delete', [uikey         : 'deletebutton',
-                                     visible       : authorizationService.hasRole('ROLE_ADMIN'),
-                                     disableOnClick: true,
-                                     clickListener : { sm.execute(Event.Delete) }])
+                "$F.button"('Delete', [uikey         : 'deleteButton',
+                                       visible       : authorizationService.hasRole('ROLE_ADMIN'),
+                                       disableOnClick: true,
+                                       clickListener : { sm.execute(Event.Delete) }])
                 "$F.button"('Cancel', [uikey         : 'cancelbutton',
                                        disableOnClick: true, enabled: false,
                                        clickListener : { sm.execute(Event.Cancel) }])
@@ -93,7 +88,7 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
         pbudget = uiComponents."${subkeyPrefix + PBUDGET}"
         newButton = uiComponents."${subkeyPrefix}newbutton"
         editButton = uiComponents."${subkeyPrefix}editbutton"
-        deleteButton = uiComponents."${subkeyPrefix}deletebutton"
+        deleteButton = uiComponents."${subkeyPrefix}deleteButton"
         saveButton = uiComponents."${subkeyPrefix}savebutton"
         cancelButton = uiComponents."${subkeyPrefix}cancelbutton"
         projectTree.selectionModel.addListenerForKey(this, 'Project')
@@ -153,13 +148,10 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
 
     @Override
     protected deleteItem() {
-        deleteProject()
-        deleteDialog.window.close()
-        }
-
-    def deleteProject() {
         projectService.deleteProject(new ProjectDto.CDelete(id: currentDto.id))
+        deleteDialog.window.close()
     }
+
 
     @Override
     protected createemptymode() {
