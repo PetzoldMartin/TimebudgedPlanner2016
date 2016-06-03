@@ -117,4 +117,8 @@ class SprintService {
             new SprintDto.QFull()
         }
     }
+
+    public deleteSprint(SprintDto.CDelete command) {
+        sprintRepository.delete(command.id)
+    }
 }
