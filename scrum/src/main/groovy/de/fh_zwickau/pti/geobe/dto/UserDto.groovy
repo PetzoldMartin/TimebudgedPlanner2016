@@ -50,6 +50,8 @@ class UserDto {
             this.@nick+':'+this.@firstName+':'+this.@lastName
         }
     }
-
+    public static class CDelete {
+        Long id
+    }
 
 }

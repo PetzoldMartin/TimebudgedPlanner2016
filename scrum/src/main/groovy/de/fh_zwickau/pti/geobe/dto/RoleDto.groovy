@@ -21,23 +21,26 @@ class RoleDto {
     public static class QFull {
         Long id
         ROLETYPE userRole
-        ProjectDto.QNode project = new ProjectDto.QNode()
-        UserDto.QNode developer = new UserDto.QNode()
+        ProjectDto.QFull project = new ProjectDto.QFull()
+        UserDto.QFull user = new UserDto.QFull()
     }
 
     public static class CSet {
         Long id
         ROLETYPE userRole
         Long ProjectId
-        Long DeveloperId
+        Long userId
 
     }
     public static class QNode {
         Long id
         ROLETYPE userRole
         ProjectDto.QNode project
-        UserDto.QNode developer
+        UserDto.QNode user
 
+    }
+    public static class CDelete {
+        Long id
     }
 
 }

@@ -9,6 +9,7 @@ import de.fh_zwickau.pti.geobe.domain.Userstory
 import de.fh_zwickau.pti.geobe.dto.ProjectDto
 import de.fh_zwickau.pti.geobe.dto.RoleDto
 import de.fh_zwickau.pti.geobe.dto.SprintDto
+import de.fh_zwickau.pti.geobe.dto.TaskDto
 import de.fh_zwickau.pti.geobe.dto.UserDto
 import de.fh_zwickau.pti.geobe.dto.UserstoryDto
 import de.fh_zwickau.pti.geobe.repository.ProjectRepository
@@ -38,8 +39,8 @@ class UserRoleService {
         RoleDto.QList qList = new RoleDto.QList()
         roleRepository.findAllByOrderByIdDesc().each { ScrumRole sp ->
             def node = new RoleDto.QNode(userRole: sp.userRole,
-                    project: new ProjectDto.QNode(name: (Project)(sp.project.one).getName())
-                    ,developer: new UserDto.QNode(id: (User)(sp.scrumUser.one).getId())
+                    project: new ProjectDto.QNode(name: ((Project)(sp.project.one)).getName())
+                    ,user: new UserDto.QNode(id: ((User)(sp.scrumUser.one)).getId())
             )
 
             qList.all[sp.id] = node
@@ -48,20 +49,31 @@ class UserRoleService {
 
     }
 
-    public ProjectDto.QFull getRoleDetails(Long pid) {
+    public RoleDto.QFull getRoleDetails(Long pid) {
         ScrumRole p = roleRepository.findOne(pid)
         makeQFull(p)
     }
-    private makeQFull(ScrumRole p) {
+    private  makeQFull(ScrumRole p) {
         if (p) {
             RoleDto.QFull qFull = new RoleDto.QFull()
-            qFull.project = new ProjectDto.QFull(name: (Project)(p.project.one).getName())
-            qFull.developer = new UserDto.QFull(id: (User)(p.scrumUser.one).getId())
-
+            qFull.project = new ProjectDto.QFull(name: ((Project)(p.project.one)).getName(),
+                    id: ((Project)(p.project.one)).getId()
+            )
+           qFull.user = new UserDto.QFull(id: ((User)(p.scrumUser.one)).getId())
+            qFull.id=p.id
+            qFull.userRole=p.userRole
             qFull
         } else {
             new RoleDto.QFull()
         }
+    }
+
+    public deleteUserRole(RoleDto.CDelete command) {
+        roleRepository.getOne(command.id).each{ ScrumRole it->
+            it.scrumUser.removeAll()
+            it.project.removeAll()
+        }
+        roleRepository.delete(command.id)
     }
 
 

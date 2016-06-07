@@ -144,10 +144,8 @@ class StartupService implements IStartupService {
     @Override
     @Transactional
     void cleanupAll() {
-        def projects = projectRepository.findAll()
-//        projects.each {projectRepository.delete(it)}
-        def tasks = taskRepository.findAll()
-        tasks.each { Task t ->
+       def projects = projectRepository.findAll()
+        def tasks = taskRepository.findAll().each { Task t ->
             t.supertask.removeAll()
             t.userstory.removeAll()
             t.sprint.removeAll()
@@ -158,13 +156,24 @@ class StartupService implements IStartupService {
         }
         projectRepository.save(projects)
         userstoryRepository.deleteAll()
-        projectRepository.deleteAll()
+       projectRepository.deleteAll()
 
         taskRepository.deleteAll()
         sprintRepository.deleteAll()
+        roleRepository.findAll().each {
+            it.project.removeAll()
+            it.scrumUser.removeAll()
+        }
+        roleRepository.findAll().each {roleRepository.delete(it.id)}
+        userRepository.findAll().each {userRepository.delete(it.id)}
+        projectRepository.findAll().each {projectRepository.delete(it.id)}
 
         // check cleanup
+        projectRepository.findAll().each {Project it->println "Project[ tag:$it.name, desc: $it.description]"}
+        assert  roleRepository.findAll().isEmpty()
+        assert userRepository.findAll().isEmpty()
         assert projectRepository.findAll().isEmpty()
+
         assert userstoryRepository.findAll().isEmpty()
         assert sprintRepository.findAll().isEmpty()
 //        taskRepository.findAll().each {println "Task[ tag:$it.tag, desc: $it.description]"}
