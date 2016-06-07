@@ -62,7 +62,7 @@ class TaskService {
         createOrUpdate(cmd)
     }
 
-    TaskDto.QFull createOrUpdate(CSet cmd) { //TODO extends for sprint und user
+    TaskDto.QFull createOrUpdate(CSet cmd) { //TODO extends for user
         Task task
         if (cmd.id) {
             task = taskRepository.findOne(cmd.id)
@@ -100,6 +100,15 @@ class TaskService {
                     return new TaskDto.QFull()
                 }
             }
+            if (cmd.sprintIds) {
+                Project p = sprintRepository.findOne(cmd.sprintIds)
+                if (p) {
+                    task.sprint.add(p)
+                } else {
+                    log.error("no project found for $cmd.sprintIds")
+                    return new TaskDto.QFull()
+                }
+            }
         } else {
             log.error("no project or supertask defined for new task")
             return new TaskDto.QFull()
@@ -127,7 +136,7 @@ class TaskService {
             qFull.userstory = new UserstoryDto.QFull()
             qFull.supertask = new TaskDto.QList()
             qFull.sprints = new SprintDto.QList()
-            if (t.userstory.one) { //TODO refactor because of compundtask
+            if (t.userstory.one) {
                 qFull.userstory.id = t.userstory.one.id
                 qFull.userstory.name = t.userstory.one.name
                 qFull.userstory.project.name = t.userstory.one.project.one.name

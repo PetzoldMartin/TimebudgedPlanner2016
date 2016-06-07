@@ -43,6 +43,8 @@ class UserstoryTab extends TabBase
     @Autowired
     private ProjectService projectService
 
+    //TODO remove task selection
+    //TODO make create Task from scrap avaiable
     @Override
     Component build() {
         Component c = vaadin."$C.gridlayout"('Userstorys',

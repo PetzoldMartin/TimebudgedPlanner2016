@@ -223,9 +223,7 @@ class TaskTab extends TabBase
         projectTree.onEditItem()
         deleteDialog.id.value = currentDto.id.toString()
         deleteDialog.name.value = currentDto.tag
-        //TODO calculate all tasks
         int tasksCount = 0
-//        tasksCount += currentDto.subtasks.size()
         currentDto.subtasks.each { tasksCount += countTasks(it) }
         deleteDialog.taskCount.value = tasksCount.toString()
         [deleteDialog.acceptButton, deleteDialog.cancelButton].each { it.enabled = true }

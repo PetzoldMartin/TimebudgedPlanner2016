@@ -69,10 +69,10 @@ class TabViewStateMachine {
         Root,     // a new branch was selected, either by selecting another top level object or some subobject
         Edit,     // start editing the selected object
         Create,   // start creating a new object
-        Cancel,   // cancel edit or create
+        Cancel,   // cancel edit, delete or create
         Save,     // save newly edited or created object
         Dialog,   // enter a modal dialog
-        Delete,   // TODO add delete functionality for Sprint, Task, Userstory,...
+        Delete,   // enter the delete dialog
     }
 
     private DialogStateMachine sm
