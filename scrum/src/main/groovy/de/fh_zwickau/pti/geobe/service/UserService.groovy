@@ -62,7 +62,17 @@ class UserService {
     private  makeQFull(User p) {
         if (p) {
             UserDto.QFull qFull = new UserDto.QFull()
-            //TODO fill Lists
+            qFull.roles=new RoleDto.QList()
+            p.roles.getAll().each {
+                ScrumRole sr->
+                    qFull.roles.all[sr.id]=sr.id
+            }
+            qFull.tasks=new TaskDto.QList()
+            p.tasks.getAll().each {
+                Task ts->
+                    qFull.tasks.all[ts.id]=ts.id
+
+            }
             //qFull.roles=p.roles.all
             //qFull.tasks=p.tasks.all
             qFull.id=p.id
