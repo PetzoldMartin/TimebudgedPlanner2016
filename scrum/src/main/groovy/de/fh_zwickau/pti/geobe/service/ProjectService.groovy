@@ -98,7 +98,11 @@ class ProjectService {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public deleteProject(CDelete command) {
-            projectRepository.delete(command.id)
+        Project delete = projectRepository.findOne(command.id)
+        if (delete) {
+            delete.sprint.all.each {it.backlog.removeAll()}
+        }
+        projectRepository.delete(command.id)
 //        Project project
 //        if (command.id) {
 //            project = projectRepository.findOne(command.id)
