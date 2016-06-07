@@ -81,8 +81,8 @@ abstract class TabBase extends SubTree {
 
         sm.onTransition[sm.trix(TabViewStateMachine.State.DELETE, TabViewStateMachine.Event.Root)] = {
             deleteItem()
-            emptymode()
             projectTree.onEditItemDone(currentItemId, currentCaption, true)
+            emptymode()
         }
 
     }
@@ -117,13 +117,10 @@ abstract class TabBase extends SubTree {
     /** clear all editable fields */
     protected abstract clearFields()
 
-    //TODO make it abstract for subclasses
-//    protected abstract deletemode()
-//    protected abstract cancelDelete()
-//    protected abstract deleteItem()
-    protected deletemode() {}
-    protected cancelDelete() {}
-    protected deleteItem() {}
+    protected abstract deletemode()
+    protected abstract cancelDelete()
+    protected abstract deleteItem()
+
 
     /**
      * for the given persistent object id, fetch the full dto and save it in field currentDto
