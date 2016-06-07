@@ -36,7 +36,10 @@ public class User {
 
     public IToAny<ScrumRole> getRoles() { return toRoles; }
 
-    @ManyToMany(mappedBy = "developers",cascade = CascadeType.PERSIST)
+    @ManyToMany(cascade = [CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST])
+    @JoinTable(name = 'join_task_developer',
+            inverseJoinColumns =  @JoinColumn(name = 'task_id'),
+            joinColumns = @JoinColumn(name = 'developer_id'))
     protected Set<Task> tasks = new HashSet<>();
     @Transient
     private ToMany<User, Task> toTask = new ToMany<>(

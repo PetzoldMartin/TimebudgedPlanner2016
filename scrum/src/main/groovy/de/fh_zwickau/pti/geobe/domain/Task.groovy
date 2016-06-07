@@ -70,10 +70,10 @@ public abstract class Task {
         return toSupertask;
     }
 
-    @ManyToMany
-    @JoinTable(name = 'join_task_developer',
-            joinColumns = @JoinColumn(name = 'task_id'),
-            inverseJoinColumns = @JoinColumn(name = 'developer_id'))
+    @ManyToMany(mappedBy = 'tasks',cascade = [CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST]) //Owner
+//    @JoinTable(name = 'join_task_developer',
+//            joinColumns = @JoinColumn(name = 'task_id'),
+//            inverseJoinColumns = @JoinColumn(name = 'developer_id'))
     private Set<User> developers = new HashSet<>()
     @Transient
     private ToMany<Task, User> toDeveloper = new ToMany<>(
