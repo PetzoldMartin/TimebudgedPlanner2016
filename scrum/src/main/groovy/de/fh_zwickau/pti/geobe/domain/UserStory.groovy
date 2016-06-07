@@ -24,7 +24,7 @@ class Userstory {
     int priority
 
     // references
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "project_id")
     protected Project project;
     @Transient

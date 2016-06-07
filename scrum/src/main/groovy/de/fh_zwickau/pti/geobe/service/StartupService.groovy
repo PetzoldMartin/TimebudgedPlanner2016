@@ -30,6 +30,8 @@ class StartupService implements IStartupService {
     private UserRepository userRepository
     @Autowired
     private RoleRepository roleRepository
+    @Autowired
+    private SprintService sprintService
 
     @Override
     void initApplicationData() {
@@ -49,7 +51,7 @@ class StartupService implements IStartupService {
             //scrumUserRepository.save([user, master, owner])
 
             //scrumUserRepository.flush()
-            //scrumRoleRepository.saveAndFlush(userRoletype)
+//            scrumRoleRepository.saveAndFlush(userRoletype)
 
         }
 
@@ -104,7 +106,7 @@ class StartupService implements IStartupService {
             // finally persist project
             projectRepository.saveAndFlush(p)
 
-
+//            userstoryRepository.delete(us.id)
 
             // new project
             p = new Project([name: 'Projekt Garten', budget: 2000])

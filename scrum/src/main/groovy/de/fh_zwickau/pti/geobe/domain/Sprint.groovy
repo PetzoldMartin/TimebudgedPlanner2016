@@ -27,7 +27,7 @@ class Sprint {
     private Date end = new Date() + 7
 
     // references
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "project_id")
     private Project project
     @Transient
@@ -39,10 +39,12 @@ class Sprint {
 
     public IToAny<Project> getProject() { toProject }
 
-    @ManyToMany
-    @JoinTable(name = 'join_sprint_task',
-            joinColumns = @JoinColumn(name = 'sprint_id'),
-            inverseJoinColumns = @JoinColumn(name = 'task_id'))
+    @ManyToMany(mappedBy = 'sprints', cascade = [CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST])
+//    @JoinTable(name = 'join_sprint_task',
+//            joinColumns = @JoinColumn(name = 'sprint_id'),
+//            inverseJoinColumns = @JoinColumn(name = 'task_id'),
+//            foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT),
+//            inverseForeignKey = @ForeignKey(ConstraintMode.CONSTRAINT))
     private Set<Task> backlog = new HashSet<>()
     @Transient
     private ToMany<Sprint, Task> toBacklog = new ToMany<>(

@@ -27,7 +27,7 @@ public abstract class Task {
     public abstract boolean isCompleted();
 
     // references
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "userstory_id")
     protected Userstory userstory
     @Transient
@@ -40,7 +40,11 @@ public abstract class Task {
     public IToAny<Userstory> getUserstory() { toUserStory }
 
 
-    @ManyToMany(mappedBy = "backlog")
+    @ManyToMany(cascade = [CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST])
+    @JoinTable(name = 'join_sprint_task',
+            inverseJoinColumns = @JoinColumn(name = 'sprint_id'),
+            joinColumns = @JoinColumn(name = 'task_id'))
+
     protected Set<Sprint> sprints = new HashSet<>();
     @Transient
     private ToMany<Task, Sprint> toSprint = new ToMany<>(
@@ -52,7 +56,7 @@ public abstract class Task {
         return toSprint;
     }
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "supertask_id")
     protected CompoundTask supertask;
     @Transient

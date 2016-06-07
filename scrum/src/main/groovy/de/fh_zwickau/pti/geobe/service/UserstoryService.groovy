@@ -104,4 +104,8 @@ class UserstoryService {
             new UserstoryDto.QFull()
         }
     }
+
+    public deleteUserstory(UserstoryDto.CDelete command) {
+        userstoryRepository.delete(command.id)
+    }
 }

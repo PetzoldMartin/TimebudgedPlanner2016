@@ -37,6 +37,10 @@ class UserstoryDto {
         List<Long> taskIds = []
     }
 
+    public static class CDelete {
+        Long id
+    }
+
     public static class QNode {
         Long id
         String name

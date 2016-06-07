@@ -12,6 +12,7 @@ import de.fh_zwickau.pti.geobe.service.UserstoryService
 import de.fh_zwickau.pti.geobe.util.view.VaadinSelectionListener
 import de.fh_zwickau.pti.geobe.util.view.VaadinTreeRootChangeListener
 import de.geobe.util.vaadin.TabViewStateMachine
+import de.geobe.util.vaadin.VaadinBuilder
 import org.springframework.beans.factory.annotation.Autowired
 
 import static TabViewStateMachine.Event
@@ -30,11 +31,12 @@ class UserstoryTab extends TabBase
     private TextArea description
 
     private TwinColSelect backlog
-    private Button newButton, editButton, saveButton, cancelButton
+    private Button newButton, editButton, saveButton, cancelButton, deleteButton
     private Map<String, Serializable> currentUserstoryItemId
     private Map<String, Serializable> currentProjectItemId
     private UserstoryDto.QFull currentDto
 
+    private DeleteDialog deleteDialog = new DeleteDialog()
 
     @Autowired
     private UserstoryService userstoryService
@@ -59,6 +61,10 @@ class UserstoryTab extends TabBase
                                     clickListener: { sm.execute(Event.Create) }])
                 "$F.button"('Edit', [uikey        : 'editbutton', disableOnClick: true,
                                      clickListener: { sm.execute(Event.Edit) }])
+                "$F.button"('Delete', [uikey         : 'deleteButton',
+//                                       visible       : authorizationService.hasRole('ROLE_ADMIN'),
+                                       disableOnClick: true,
+                                       clickListener : { sm.execute(Event.Delete) }])
                 "$F.button"('Cancel', [uikey        : 'cancelbutton', disableOnClick: true, enabled: false,
                                        clickListener: { sm.execute(Event.Cancel) }])
                 "$F.button"('Save', [uikey        : 'savebutton', disableOnClick: true, enabled: false,
@@ -85,8 +91,12 @@ class UserstoryTab extends TabBase
         editButton = uiComponents."${subkeyPrefix}editbutton"
         saveButton = uiComponents."${subkeyPrefix}savebutton"
         cancelButton = uiComponents."${subkeyPrefix}cancelbutton"
+        deleteButton = uiComponents."${subkeyPrefix}deleteButton"
         projectTree.selectionModel.addListenerForKey(this, 'Userstory')
         projectTree.selectionModel.addRootChangeListener(this)
+
+        // build dialog window
+        deleteDialog.build()
         // build state machine
         sm = new TabViewStateMachine(TabViewStateMachine.State.SUBTAB, 'UsTab')
         configureSm()
@@ -121,7 +131,7 @@ class UserstoryTab extends TabBase
     /** prepare INIT state */
     @Override
     protected initmode() {
-        [name, description, priority, backlog, saveButton, cancelButton, editButton, newButton].each {
+        [name, description, priority, backlog, saveButton, cancelButton, editButton, deleteButton, newButton].each {
             it.enabled = false
         }
     }
@@ -130,7 +140,9 @@ class UserstoryTab extends TabBase
     @Override
     protected emptymode() {
         clearFields()
-        [name, description, priority, backlog, saveButton, cancelButton, editButton].each { it.enabled = false }
+        [name, description, priority, backlog, saveButton, cancelButton, editButton, deleteButton].each {
+            it.enabled = false
+        }
         project.value = projectService.getProjectCaption((Long) currentProjectItemId['id'])
         setAvailableList()
         [newButton].each { it.enabled = true }
@@ -140,7 +152,7 @@ class UserstoryTab extends TabBase
     @Override
     protected showmode() {
         [name, description, priority, backlog, saveButton, cancelButton].each { it.enabled = false }
-        [editButton, newButton].each { it.enabled = true }
+        [editButton, deleteButton, newButton].each { it.enabled = true }
     }
 
     /** prepare for editing in EDIT, CREATE, CREATEEMPTY states */
@@ -148,7 +160,7 @@ class UserstoryTab extends TabBase
     protected editmode() {
         projectTree.onEditItem()
         [name, description, priority, backlog, saveButton, cancelButton].each { it.enabled = true }
-        [editButton, newButton].each { it.enabled = false }
+        [editButton, deleteButton, newButton].each { it.enabled = false }
     }
 
     /** clear all editable fields */
@@ -178,6 +190,28 @@ class UserstoryTab extends TabBase
     protected void initItem(Long itemId) {
         currentDto = userstoryService.getUserstoryDetails(itemId)
         setFieldValues()
+    }
+
+    @Override
+    protected deletemode() {
+        projectTree.onEditItem()
+        deleteDialog.id.value = currentDto.id.toString()
+        deleteDialog.name.value = currentDto.name
+        deleteDialog.taskCount.value = currentDto.backlog.all.size().toString()
+        [deleteDialog.acceptButton, deleteDialog.cancelButton].each { it.enabled = true }
+        UI.getCurrent().addWindow(deleteDialog.window)
+    }
+
+    @Override
+    protected cancelDelete() {
+        deleteDialog.window.close()
+
+    }
+
+    @Override
+    protected deleteItem() {
+        userstoryService.deleteUserstory(new UserstoryDto.CDelete(id: currentDto.id))
+        deleteDialog.window.close()
     }
 
     /**
@@ -219,5 +253,46 @@ class UserstoryTab extends TabBase
         }
         command.taskIds = v
         currentDto = userstoryService.createOrUpdateUserstory(command)
+    }
+
+    private class DeleteDialog {
+        TextField name, id, taskCount
+        Button acceptButton, cancelButton
+        Window window
+
+        private VaadinBuilder winBuilder = new VaadinBuilder()
+
+        public Window build() {
+            String keyPrefix = "${subkeyPrefix}deleteDialog."
+            winBuilder.keyPrefix = keyPrefix
+            window = winBuilder."$C.window"('Wollen Sie wirklich diese Userstory Löschen?',
+                    [spacing: true, margin: true,
+                     modal  : true, closable: false]) {
+                "$C.vlayout"('top', [spacing: true, margin: true]) {
+                    "$F.text"('id', [uikey: 'id'])
+                    "$F.text"('Name', [uikey: 'name'])
+                    "$F.text"('Anzahl der abhängigen Tasks', [uikey: 'taskCount'])
+                    "$C.hlayout"([uikey: 'buttonfield', spacing: true]) {
+                        "$F.button"('Accept',
+                                [uikey         : 'acceptButton',
+                                 disableOnClick: true, enabled: true,
+                                 clickListener : { sm.execute(Event.Root) }])
+                        "$F.button"('Cancel',
+                                [uikey         : 'cancelbutton',
+                                 disableOnClick: true, enabled: true,
+                                 clickListener : { sm.execute(Event.Cancel) }])
+                    }
+                }
+            }
+
+            def dialogComponents = winBuilder.uiComponents
+
+            id = dialogComponents."${keyPrefix}id"
+            name = dialogComponents."${keyPrefix}name"
+            taskCount = dialogComponents."${keyPrefix}taskCount"
+            acceptButton = dialogComponents."${keyPrefix}acceptButton"
+            cancelButton = dialogComponents."${keyPrefix}cancelbutton"
+            window.center()
+        }
     }
 }
