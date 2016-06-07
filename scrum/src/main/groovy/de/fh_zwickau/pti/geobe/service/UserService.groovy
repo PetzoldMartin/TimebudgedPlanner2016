@@ -1,9 +1,8 @@
 package de.fh_zwickau.pti.geobe.service
 
-import de.fh_zwickau.pti.geobe.domain.Project
 import de.fh_zwickau.pti.geobe.domain.ScrumRole
+import de.fh_zwickau.pti.geobe.domain.Task
 import de.fh_zwickau.pti.geobe.domain.User
-import de.fh_zwickau.pti.geobe.dto.ProjectDto
 import de.fh_zwickau.pti.geobe.dto.RoleDto
 import de.fh_zwickau.pti.geobe.dto.TaskDto
 import de.fh_zwickau.pti.geobe.dto.UserDto
@@ -34,32 +33,43 @@ class UserService {
     @Autowired
     private TaskService taskService
 
-//    public UserDto.QList getUsers() {
-//        RoleDto.QList qList = new RoleDto.QList()
-//        roleRepository.findAllByOrderByIdDesc().each { User sp ->
-//            def node = new UserDto.QNode(nick: sp.nick,firstName: sp.firstName,lastName: sp.lastName,
-//                    roles: sp.getRoles().,tasks: taskService.getTasks(),
-//            )
-//
-//            qList.all[sp.id] = node
-//        }
-//        qList
-//
-//    }
+    public UserDto.QList getUsers() {
+        UserDto.QList qList = new UserDto.QList()
+        userRepository.findAll().each { User sp ->
+            UserDto.QNode node = new UserDto.QNode(nick: sp.nick,firstName: sp.firstName,lastName: sp.lastName)
+            sp.roles.getAll().each {
+                ScrumRole sr->
+                    RoleDto.QNode usDto =new RoleDto.QNode(id: sr.id,userRole: sr.userRole)
+                    node.roles.add(usDto)
+            }
+            sp.tasks.getAll().each {
+                Task ts->
+                TaskDto.QNode tusDto=new TaskDto.QNode(id: ts.id)
+                    node.tasks.add(tusDto)
+
+            }
+            qList.all[sp.id] = node
+        }
+        qList
+
+    }
 
     public UserDto.QFull getUserDetails(Long pid) {
-        ScrumRole p = roleRepository.findOne(pid)
+        User p = userRepository.findOne(pid)
         makeQFull(p)
     }
-    private  makeQFull(ScrumRole p) {
+
+    private  makeQFull(User p) {
         if (p) {
-            RoleDto.QFull qFull = new RoleDto.QFull()
-            qFull.project = new ProjectDto.QFull(name: ((Project)(p.project.one)).getName(),
-                    id: ((Project)(p.project.one)).getId()
-            )
-            qFull.user = new UserDto.QFull(id: ((User)(p.scrumUser.one)).getId())
+            UserDto.QFull qFull = new UserDto.QFull()
+            //TODO fill Lists
+            //qFull.roles=p.roles.all
+            //qFull.tasks=p.tasks.all
             qFull.id=p.id
-            qFull.userRole=p.userRole
+            qFull.birthdate=p.birthdate
+            qFull.firstName
+            qFull.lastName
+            qFull.nick
             qFull
         } else {
             new RoleDto.QFull()

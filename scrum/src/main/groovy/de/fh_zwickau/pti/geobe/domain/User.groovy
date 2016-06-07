@@ -47,7 +47,7 @@ public class User {
             { Task o -> o.developers } as IGetOther
     )
 
-    public IToAny<Sprint> getSprint() {
+    public IToAny<Task> getTasks() {
         return toTask;
     }
 }
