@@ -52,4 +52,8 @@ class TaskDto {
         Long supertaskId
         List<Long> subtaskIds = []
     }
+
+    public static class CDelete {
+        Long id
+    }
 }

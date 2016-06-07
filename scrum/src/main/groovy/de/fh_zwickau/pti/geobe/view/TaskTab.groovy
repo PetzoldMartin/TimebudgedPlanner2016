@@ -41,7 +41,7 @@ class TaskTab extends TabBase
     private TextField tag, estimate, spent, userstory, project
     private TextArea description
     private CheckBox supertask, completed
-    private Button newButton, editButton, saveButton, cancelButton, subtaskButton
+    private Button newButton, editButton, saveButton, cancelButton, subtaskButton, deleteButton
 
     private Map<String, Serializable> currentItemId
     private Map<String, Serializable> currentTopItemId
@@ -50,6 +50,8 @@ class TaskTab extends TabBase
     private Component topComponent
 
     private SubtaskDialog dialog = new SubtaskDialog()
+    private DeleteDialog deleteDialog = new DeleteDialog()
+
 
     @Autowired
     private TaskService taskService
@@ -83,6 +85,10 @@ class TaskTab extends TabBase
                         [uikey         : 'editbutton',
                          disableOnClick: true,
                          clickListener : { sm.execute(Event.Edit) }])
+                "$F.button"('Delete', [uikey         : 'deleteButton',
+//                                       visible       : authorizationService.hasRole('ROLE_ADMIN'),
+                                       disableOnClick: true,
+                                       clickListener : { sm.execute(Event.Delete) }])
                 "$F.button"('Subtask',
                         [uikey         : 'subtaskbutton',
                          disableOnClick: true, enabled: false,
@@ -116,6 +122,7 @@ class TaskTab extends TabBase
         supertask = uiComponents."$subkeyPrefix$IS_SUPERTASK"
         newButton = uiComponents."${subkeyPrefix}newbutton"
         editButton = uiComponents."${subkeyPrefix}editbutton"
+        deleteButton = uiComponents."${subkeyPrefix}deleteButton"
         saveButton = uiComponents."${subkeyPrefix}savebutton"
         cancelButton = uiComponents."${subkeyPrefix}cancelbutton"
         subtaskButton = uiComponents."${subkeyPrefix}subtaskbutton"
@@ -125,6 +132,7 @@ class TaskTab extends TabBase
         ui = getVaadinUi(topComponent)
         // build dialog window
         dialog.build()
+        deleteDialog.build()
         // build state machine
         sm = new TabViewStateMachine(TabViewStateMachine.State.SUBTAB, 'TskTab')
         configureSm()
@@ -160,7 +168,7 @@ class TaskTab extends TabBase
     @Override
     protected initmode() {
         [tag, userstory, project, estimate, spent, description, completed, supertask,
-         saveButton, cancelButton, subtaskButton, editButton, newButton].each { it.enabled = false }
+         saveButton, cancelButton, subtaskButton, editButton, deleteButton, newButton].each { it.enabled = false }
     }
     /** prepare EMPTY state */
     @Override
@@ -168,7 +176,7 @@ class TaskTab extends TabBase
         clearFields()
         currentDto = null
         [tag, userstory, project, estimate, spent, description, completed, supertask,
-         saveButton, cancelButton, editButton, subtaskButton].each {
+         saveButton, cancelButton, editButton, deleteButton, subtaskButton].each {
             it.enabled = false
         }
         [newButton].each { it.enabled = true }
@@ -179,7 +187,7 @@ class TaskTab extends TabBase
         [tag, userstory, project, estimate, spent, description, completed, supertask, saveButton, cancelButton].each {
             it.enabled = false
         }
-        [editButton, newButton, subtaskButton].each { it.enabled = true }
+        [editButton, deleteButton, newButton, subtaskButton].each { it.enabled = true }
     }
 
     @Override
@@ -192,7 +200,7 @@ class TaskTab extends TabBase
         projectTree.onEditItem()
         [tag, userstory, project, estimate, spent, description, supertask, completed, saveButton, cancelButton].
                 each { it.enabled = true }
-        [editButton, newButton, subtaskButton].each { it.enabled = false }
+        [editButton, deleteButton, newButton, subtaskButton].each { it.enabled = false }
 //        saveButton.setClickShortcut(ShortcutAction.KeyCode.ENTER)
     }
     /** prepare for editing in EDITstates */
@@ -203,9 +211,33 @@ class TaskTab extends TabBase
             completed.enabled = true
         }
         [tag, estimate, spent, description, saveButton, cancelButton].each { it.enabled = true }
-        [editButton, newButton, subtaskButton].each { it.enabled = false }
+        [editButton, deleteButton, newButton, subtaskButton].each { it.enabled = false }
 //        saveButton.setClickShortcut(ShortcutAction.KeyCode.ENTER)
     }
+
+
+    @Override
+    protected deletemode() {
+        projectTree.onEditItem()
+        deleteDialog.id.value = currentDto.id.toString()
+        deleteDialog.name.value = currentDto.tag
+        deleteDialog.taskCount.value = currentDto.subtasks.size().toString()
+        [deleteDialog.acceptButton, deleteDialog.cancelButton].each { it.enabled = true }
+        ui.addWindow(deleteDialog.window)
+    }
+
+    @Override
+    protected cancelDelete() {
+        deleteDialog.window.close()
+
+    }
+
+    @Override
+    protected deleteItem() {
+        taskService.deleteTasks(new TaskDto.CDelete(id: currentDto.id))
+        deleteDialog.window.close()
+    }
+
     /** prepare for working in DIALOG state */
     protected dialogmode() {
         projectTree.onEditItem()
@@ -347,6 +379,47 @@ class TaskTab extends TabBase
             completed = dialogComponents."$keyPrefix$IS_COMPLETED"
             supertask = dialogComponents."$keyPrefix$IS_SUPERTASK"
             saveButton = dialogComponents."${keyPrefix}savebutton"
+            cancelButton = dialogComponents."${keyPrefix}cancelbutton"
+            window.center()
+        }
+    }
+
+    private class DeleteDialog {
+        TextField name, id, taskCount
+        Button acceptButton, cancelButton
+        Window window
+
+        private VaadinBuilder winBuilder = new VaadinBuilder()
+
+        public Window build() {
+            String keyPrefix = "${subkeyPrefix}deleteDialog."
+            winBuilder.keyPrefix = keyPrefix
+            window = winBuilder."$C.window"('Wollen Sie wirklich diesen Task Löschen?',
+                    [spacing: true, margin: true,
+                     modal  : true, closable: false]) {
+                "$C.vlayout"('top', [spacing: true, margin: true]) {
+                    "$F.text"('id', [uikey: 'id'])
+                    "$F.text"('Name', [uikey: 'name'])
+                    "$F.text"('Anzahl der abhängigen Tasks', [uikey: 'taskCount'])
+                    "$C.hlayout"([uikey: 'buttonfield', spacing: true]) {
+                        "$F.button"('Accept',
+                                [uikey         : 'acceptButton',
+                                 disableOnClick: true, enabled: true,
+                                 clickListener : { sm.execute(Event.Root) }])
+                        "$F.button"('Cancel',
+                                [uikey         : 'cancelbutton',
+                                 disableOnClick: true, enabled: true,
+                                 clickListener : { sm.execute(Event.Cancel) }])
+                    }
+                }
+            }
+
+            def dialogComponents = winBuilder.uiComponents
+
+            id = dialogComponents."${keyPrefix}id"
+            name = dialogComponents."${keyPrefix}name"
+            taskCount = dialogComponents."${keyPrefix}taskCount"
+            acceptButton = dialogComponents."${keyPrefix}acceptButton"
             cancelButton = dialogComponents."${keyPrefix}cancelbutton"
             window.center()
         }

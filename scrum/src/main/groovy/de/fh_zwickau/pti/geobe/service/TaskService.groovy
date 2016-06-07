@@ -156,6 +156,10 @@ class TaskService {
         }
         subtree
     }
+
+    public deleteTasks(TaskDto.CDelete command) {
+        taskRepository.delete(command.id)
+    }
 }
 
 

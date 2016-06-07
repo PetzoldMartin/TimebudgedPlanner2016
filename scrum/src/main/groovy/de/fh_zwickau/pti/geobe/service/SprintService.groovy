@@ -121,9 +121,10 @@ class SprintService {
     public deleteSprint(SprintDto.CDelete command) {
         Sprint delete = sprintRepository.findOne(command.id)
         if (delete) {
-            delete.backlog.all.toArray().each { Task it ->
-                delete.backlog.remove(it)
-            }
+            delete.backlog.removeAll()
+//            delete.backlog.all.toArray().each { Task it ->
+//                delete.backlog.remove(it)
+//            }
             sprintRepository.delete(command.id)
         }
     }
