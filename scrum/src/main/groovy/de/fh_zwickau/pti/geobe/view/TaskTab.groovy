@@ -38,7 +38,7 @@ class TaskTab extends TabBase
     public static final String SPENT = 'spent'
     public static final String DESCRIPTION = 'description'
 
-    private TextField tag, estimate, spent, userstory, project
+    private TextField tag, estimate, spent, userstory, stask, project
     private TextArea description
     private CheckBox supertask, completed
     private Button newButton, editButton, saveButton, cancelButton, subtaskButton, deleteButton
@@ -67,6 +67,7 @@ class TaskTab extends TabBase
                 "$F.text"('Aufgabe', [uikey: TAG])
                 "$F.text"('Userstory', [uikey: USERSTORY])
                 "$F.text"('Project', [uikey: PROJECT])
+                "$F.text"('Supertask', [uikey: 'sTask'])
             }
             "$C.hlayout"('Status', [spacing: true, margin: false]) {
                 "$F.checkbox"('übergeordnet', [uikey: IS_SUPERTASK])
@@ -113,6 +114,7 @@ class TaskTab extends TabBase
     void init(Object... value) {
         uiComponents = vaadin.uiComponents
         userstory = uiComponents."$subkeyPrefix$USERSTORY"
+        stask = uiComponents."${subkeyPrefix}sTask"
         project = uiComponents."$subkeyPrefix$PROJECT"
         tag = uiComponents."$subkeyPrefix$TAG"
         estimate = uiComponents."$subkeyPrefix$ESTIMATE"
@@ -167,7 +169,7 @@ class TaskTab extends TabBase
     /** prepare INIT state */
     @Override
     protected initmode() {
-        [tag, userstory, project, estimate, spent, description, completed, supertask,
+        [tag, userstory, project, estimate, spent, description, completed, supertask, stask,
          saveButton, cancelButton, subtaskButton, editButton, deleteButton, newButton].each { it.enabled = false }
     }
     /** prepare EMPTY state */
@@ -175,7 +177,7 @@ class TaskTab extends TabBase
     protected emptymode() {
         clearFields()
         currentDto = null
-        [tag, userstory, project, estimate, spent, description, completed, supertask,
+        [tag, userstory, project, estimate, spent, description, completed, supertask, stask,
          saveButton, cancelButton, editButton, deleteButton, subtaskButton].each {
             it.enabled = false
         }
@@ -184,7 +186,7 @@ class TaskTab extends TabBase
     /** prepare SHOW state */
     @Override
     protected showmode() {
-        [tag, userstory, project, estimate, spent, description, completed, supertask, saveButton, cancelButton].each {
+        [tag, userstory, project, estimate, spent, description, completed, supertask, stask, saveButton, cancelButton].each {
             it.enabled = false
         }
         [editButton, deleteButton, newButton, subtaskButton].each { it.enabled = true }
@@ -198,7 +200,7 @@ class TaskTab extends TabBase
     @Override
     protected createmode() {
         projectTree.onEditItem()
-        [tag, userstory, project, estimate, spent, description, supertask, completed, saveButton, cancelButton].
+        [tag, userstory, project, estimate, spent, description, supertask, stask, completed, saveButton, cancelButton].
                 each { it.enabled = true }
         [editButton, deleteButton, newButton, subtaskButton].each { it.enabled = false }
 //        saveButton.setClickShortcut(ShortcutAction.KeyCode.ENTER)
@@ -222,9 +224,22 @@ class TaskTab extends TabBase
         deleteDialog.id.value = currentDto.id.toString()
         deleteDialog.name.value = currentDto.tag
         //TODO calculate all tasks
-        deleteDialog.taskCount.value = currentDto.subtasks.size().toString()
+        int tasksCount = 0
+//        tasksCount += currentDto.subtasks.size()
+        currentDto.subtasks.each { tasksCount += countTasks(it) }
+        deleteDialog.taskCount.value = tasksCount.toString()
         [deleteDialog.acceptButton, deleteDialog.cancelButton].each { it.enabled = true }
         ui.addWindow(deleteDialog.window)
+    }
+
+    int countTasks(TaskDto.QNode qNode) {
+        if (qNode) {
+            if (qNode.children.size() > 0) {
+                int taskCount = 0
+                qNode.children.each { taskCount += countTasks(it) }
+                return taskCount+1
+            } else return 1
+        } else return 0
     }
 
     @Override
@@ -279,9 +294,7 @@ class TaskTab extends TabBase
     protected void setFieldValues() {
         tag.value = currentDto.tag
         userstory.value = currentDto.userstory.name
-
-        //TODO get projectID
-        project.value = 'TODO'
+        stask.value = currentDto.supertask.firstId.toString()
         project.value = currentDto.userstory.project.name
         estimate.value = currentDto.estimate.toString()
         spent.value = currentDto.spent.toString()
@@ -400,7 +413,7 @@ class TaskTab extends TabBase
                      modal  : true, closable: false]) {
                 "$C.vlayout"('top', [spacing: true, margin: true]) {
                     "$F.text"('id', [uikey: 'id'])
-                    "$F.text"('Name', [uikey: 'name'])
+                    "$F.text"('Tag', [uikey: 'name'])
                     "$F.text"('Anzahl der abhängigen Tasks', [uikey: 'taskCount'])
                     "$C.hlayout"([uikey: 'buttonfield', spacing: true]) {
                         "$F.button"('Accept',

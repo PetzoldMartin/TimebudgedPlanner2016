@@ -73,7 +73,7 @@ class StartupService implements IStartupService {
             Task t = new Subtask(tag: 'Tee kochen', description: 'Kanne zum Wasser!', estimate: 42)
             s.backlog.add(t)
 
-            tasksforUserStory << t
+            //tasksforUserStory << t
 
             CompoundTask hausarbeit = new CompoundTask(tag: 'Hausarbeit', description: 'Immer viel zu tun', estimate: 4711)
             hausarbeit.sprint.add(s)
@@ -86,14 +86,14 @@ class StartupService implements IStartupService {
                 t.supertask.add(hausarbeit)
 //                t.project.add(p)
                 cpl++
-                tasksforUserStory << t
+                //tasksforUserStory << t
                 ['dies', 'das', 'etwas anderes', 'nichts davon'].each { tag ->
                     def sub = new Subtask([description: "und dann noch $tag",
                                            tag        : tag, estimate: 250,
                                            completed  : (cpl % 2 == 0)])
                     t.subtask.add(sub)
 
-                    tasksforUserStory << sub
+                  //  tasksforUserStory << sub
 
                 }
             }
