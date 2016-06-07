@@ -145,20 +145,20 @@ class StartupService implements IStartupService {
     @Transactional
     void cleanupAll() {
         def projects = projectRepository.findAll()
-        projects.each {projectRepository.delete(it)}
+//        projects.each {projectRepository.delete(it)}
         def tasks = taskRepository.findAll()
         tasks.each { Task t ->
             t.supertask.removeAll()
             t.userstory.removeAll()
             t.sprint.removeAll()
         }
-//        taskRepository.save(tasks)
-//        projects.each { Project p ->
-//            p.sprint.removeAll()
-//        }
-//        projectRepository.save(projects)
+        taskRepository.save(tasks)
+        projects.each { Project p ->
+            p.sprint.removeAll()
+        }
+        projectRepository.save(projects)
         userstoryRepository.deleteAll()
-       projectRepository.deleteAll()
+        projectRepository.deleteAll()
 
         taskRepository.deleteAll()
         sprintRepository.deleteAll()
