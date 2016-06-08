@@ -111,7 +111,6 @@ class UserService {
             c.roleIds.each {
                 u.roles.add(roleRepository.getOne(it))
             }
-            userRepository.saveAndFlush(u)
         } else {
              u = userRepository.getOne(c.id)
             u.firstName = c.firstName
