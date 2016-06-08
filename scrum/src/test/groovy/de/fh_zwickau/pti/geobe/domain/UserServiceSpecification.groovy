@@ -77,7 +77,7 @@ class UserServiceSpecification extends Specification {
         UserDto.QFull qFull = userService.getUserDetails(user.id)
         then:
         assert qList.all.size() == 1
-        assert qList.all.keySet().contains(role.id)
+        assert qList.all.keySet().contains(user.id)
         assert qFull.id == user.id
 
 
