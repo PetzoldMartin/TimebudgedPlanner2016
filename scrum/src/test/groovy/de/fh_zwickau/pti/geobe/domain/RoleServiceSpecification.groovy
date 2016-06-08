@@ -1,21 +1,16 @@
 package de.fh_zwickau.pti.geobe.domain
 
 import de.fh_zwickau.pti.geobe.GroovaaApplication
-import de.fh_zwickau.pti.geobe.dto.ProjectDto
 import de.fh_zwickau.pti.geobe.dto.RoleDto
-import de.fh_zwickau.pti.geobe.dto.UserDto
 import de.fh_zwickau.pti.geobe.repository.ProjectRepository
 import de.fh_zwickau.pti.geobe.repository.RoleRepository
 import de.fh_zwickau.pti.geobe.repository.UserRepository
 import de.fh_zwickau.pti.geobe.service.UserRoleService
 import de.fh_zwickau.pti.geobe.service.StartupService
-import jdk.nashorn.internal.ir.annotations.Ignore
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationConfiguration
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource
 import spock.lang.Specification
 
-import javax.persistence.Entity
 import javax.transaction.Transactional
 
 /**
@@ -210,7 +205,7 @@ class RoleServiceSpecification extends Specification {
         and: 'save'
         userRoleService.createOrUpdateRole(new RoleDto.CSet(userId: user.id,projectId: project.id,userRole: ROLETYPE.Developer))
         then:
-        assert userRoleService.getRolesOfProject(project.id)
+        assert userRoleService.getRolesInProject(project.id)
 
 
     }
@@ -232,7 +227,7 @@ class RoleServiceSpecification extends Specification {
         and: 'save'
         userRoleService.createOrUpdateRole(new RoleDto.CSet(userId: user.id,projectId: project.id,userRole: ROLETYPE.Developer))
         then:
-        assert userRoleService.getRolesOutOfProject(project2.id)
+        assert userRoleService.getRolesNotInProject(project2.id)
 
 
     }

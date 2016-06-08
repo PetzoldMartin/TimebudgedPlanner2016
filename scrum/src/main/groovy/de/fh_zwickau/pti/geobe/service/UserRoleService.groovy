@@ -101,7 +101,7 @@ class UserRoleService {
 
     }
 
-    public RoleDto.QList getRolesOfProject(Long command) {
+    public RoleDto.QList getRolesInProject(Long command) {
         RoleDto.QList qList = new RoleDto.QList()
         roleRepository.findByProjectId(command).each { ScrumRole sp ->
             def node = new RoleDto.QNode(userRole: sp.userRole,
@@ -115,7 +115,7 @@ class UserRoleService {
 
     }
 
-    public getRolesOutOfProject(Long command){
+    public getRolesNotInProject(Long command){
         RoleDto.QList qList = new RoleDto.QList()
         roleRepository.findByProjectIdNotLike(command).each { ScrumRole sp ->
             def node = new RoleDto.QNode(userRole: sp.userRole,
