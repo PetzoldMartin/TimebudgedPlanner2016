@@ -126,7 +126,7 @@ class UserService {
             }
 
         }
-        userRepository.saveAndFlush(u)
+        makeQFull(userRepository.saveAndFlush(u))
 
 
     }
