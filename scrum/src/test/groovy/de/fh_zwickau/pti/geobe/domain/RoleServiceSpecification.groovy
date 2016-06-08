@@ -210,7 +210,7 @@ class RoleServiceSpecification extends Specification {
         and: 'save'
         userRoleService.createOrUpdateRole(new RoleDto.CSet(userId: user.id,projectId: project.id,userRole: ROLETYPE.Developer))
         then:
-        assert userRoleService.getRolesOfProject(new ProjectDto.QFull(id: project.id))
+        assert userRoleService.getRolesOfProject(project.id)
 
 
     }
@@ -232,7 +232,7 @@ class RoleServiceSpecification extends Specification {
         and: 'save'
         userRoleService.createOrUpdateRole(new RoleDto.CSet(userId: user.id,projectId: project.id,userRole: ROLETYPE.Developer))
         then:
-        assert userRoleService.getRolesOutOfProject(new ProjectDto.QFull(id: project2.id))
+        assert userRoleService.getRolesOutOfProject(project2.id)
 
 
     }

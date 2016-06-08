@@ -128,10 +128,10 @@ class UserService {
         makeQFull(userRepository.saveAndFlush(u))
     }
 
-    public UserDto.QList getUsersNotInProject(ProjectDto.QFull command) {
+    public UserDto.QList getUsersNotInProject(Long command) {
         UserDto.QList qList = new UserDto.QList()
         userRepository.findAll().each { User sp ->
-            if(!roleRepository.findByProjectIdAndScrumUserId(command.id,sp.id).isEmpty()){
+            if(!roleRepository.findByProjectIdAndScrumUserId(command,sp.id).isEmpty()){
 
             }
             else {
@@ -156,10 +156,10 @@ class UserService {
 
     }
 
-    public UserDto.QList getUsersInProject(ProjectDto.QFull command) {
+    public UserDto.QList getUsersInProject(Long command) {
         UserDto.QList qList = new UserDto.QList()
         userRepository.findAll().each { User sp ->
-            if(roleRepository.findByProjectIdAndScrumUserId(command.id,sp.id).isEmpty()){
+            if(roleRepository.findByProjectIdAndScrumUserId(command,sp.id).isEmpty()){
 
             }
             else {

@@ -156,10 +156,10 @@ class UserServiceSpecification extends Specification {
         role.getScrumUser().add(user)
         and: 'save'
         userRoleService.createOrUpdateRole(new RoleDto.CSet(userId: user.id,projectId: project.id,userRole: ROLETYPE.Developer))
-        UserDto.QList q=userService.getUsersNotInProject(new ProjectDto.QFull(id: project2.id))
-        UserDto.QList q2=userService.getUsersInProject(new ProjectDto.QFull(id: project.id))
-        UserDto.QList q3=userService.getUsersNotInProject(new ProjectDto.QFull(id: project.id))
-        UserDto.QList q4=userService.getUsersInProject(new ProjectDto.QFull(id: project2.id))
+        UserDto.QList q=userService.getUsersNotInProject(project2.id)
+        UserDto.QList q2=userService.getUsersInProject(project.id)
+        UserDto.QList q3=userService.getUsersNotInProject(project.id)
+        UserDto.QList q4=userService.getUsersInProject(project2.id)
 
         then:
         assert q.all.keySet().contains(user.id);
