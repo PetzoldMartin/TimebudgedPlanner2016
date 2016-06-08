@@ -6,6 +6,7 @@ import com.vaadin.spring.annotation.UIScope
 import com.vaadin.ui.Component
 import com.vaadin.ui.Tree
 import de.fh_zwickau.pti.geobe.service.ProjectService
+import de.fh_zwickau.pti.geobe.service.StartupService
 import de.fh_zwickau.pti.geobe.service.UserService
 import de.fh_zwickau.pti.geobe.util.view.VaadinSelectionModel
 import de.fh_zwickau.pti.geobe.util.view.VaadinTreeHelper
@@ -47,6 +48,8 @@ class ProjectTree extends SubTree
     private ProjectService projectService
     @Autowired
     private UserService userService
+    @Autowired
+    private StartupService startupService
 
     @Autowired
     private VaadinSecurity vaadinSecurity
@@ -58,6 +61,12 @@ class ProjectTree extends SubTree
         vaadin."$C.vlayout"() {
             "$F.menubar"([uikey: MENU]) {
                 "$F.menuitem"('Logout', [command: { vaadinSecurity.logout() }])
+                "$F.menuitem"('Reload', [command: { //TODO for testing only
+                    startupService.cleanupAll()
+                    startupService.initApplicationData()
+                    onEditItemDone([type: 'reload', id: null], 'Reload', true)
+                }])
+
             }
             "$C.panel"('Projekte', [spacing: true, margin: true]) {
                 "$F.tree"('Projekte, Backlogs und Sprints',

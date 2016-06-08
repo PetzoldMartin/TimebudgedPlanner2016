@@ -38,6 +38,7 @@ class StartupService implements IStartupService {
 
         // users
         if (!userRepository.findAll()) {
+            userRepository.saveAndFlush(new User(nick: 'Dau', firstName: 'Dieter', lastName: 'Glubsch', birthdate: new Date(System.currentTimeMillis())))
             userRepository.saveAndFlush(new User(nick: 'Hanswurst', firstName: 'Hans', lastName: 'Wurst', birthdate: new Date(System.currentTimeMillis())))
 //            Project p = new Project([name: 'Projekt User', budget: 1000])
 //            User user = new User([nick: 'user', password: 'user'])
