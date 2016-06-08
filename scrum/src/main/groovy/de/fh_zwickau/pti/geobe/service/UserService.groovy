@@ -3,6 +3,7 @@ package de.fh_zwickau.pti.geobe.service
 import de.fh_zwickau.pti.geobe.domain.ScrumRole
 import de.fh_zwickau.pti.geobe.domain.Task
 import de.fh_zwickau.pti.geobe.domain.User
+import de.fh_zwickau.pti.geobe.dto.ProjectDto
 import de.fh_zwickau.pti.geobe.dto.RoleDto
 import de.fh_zwickau.pti.geobe.dto.TaskDto
 import de.fh_zwickau.pti.geobe.dto.UserDto
@@ -125,5 +126,61 @@ class UserService {
             }
         }
         makeQFull(userRepository.saveAndFlush(u))
+    }
+
+    public UserDto.QList getUsersNotInProject(ProjectDto.QFull command) {
+        UserDto.QList qList = new UserDto.QList()
+        userRepository.findAll().each { User sp ->
+            if(!roleRepository.findByProjectIdAndScrumUserId(command.id,sp.id).isEmpty()){
+
+            }
+            else {
+                UserDto.QNode node = new UserDto.QNode(id: sp.id, nick: sp.nick, firstName: sp.firstName, lastName: sp.lastName)
+                sp.roles.getAll().each {
+                    ScrumRole sr ->
+                        RoleDto.QNode usDto = new RoleDto.QNode(id: sr.id, userRole: sr.userRole)
+                        node.roles.add(usDto)
+                }
+                sp.tasks.getAll().each {
+                    Task ts ->
+                        TaskDto.QNode tusDto = new TaskDto.QNode(id: ts.id)
+                        node.tasks.add(tusDto)
+
+                }
+                qList.all[sp.id] = node
+
+            }
+
+        }
+        qList
+
+    }
+
+    public UserDto.QList getUsersInProject(ProjectDto.QFull command) {
+        UserDto.QList qList = new UserDto.QList()
+        userRepository.findAll().each { User sp ->
+            if(roleRepository.findByProjectIdAndScrumUserId(command.id,sp.id).isEmpty()){
+
+            }
+            else {
+                UserDto.QNode node = new UserDto.QNode(id: sp.id, nick: sp.nick, firstName: sp.firstName, lastName: sp.lastName)
+                sp.roles.getAll().each {
+                    ScrumRole sr ->
+                        RoleDto.QNode usDto = new RoleDto.QNode(id: sr.id, userRole: sr.userRole)
+                        node.roles.add(usDto)
+                }
+                sp.tasks.getAll().each {
+                    Task ts ->
+                        TaskDto.QNode tusDto = new TaskDto.QNode(id: ts.id)
+                        node.tasks.add(tusDto)
+
+                }
+                qList.all[sp.id] = node
+
+            }
+
+        }
+        qList
+
     }
 }

@@ -1,6 +1,7 @@
 package de.fh_zwickau.pti.geobe.domain
 
 import de.fh_zwickau.pti.geobe.GroovaaApplication
+import de.fh_zwickau.pti.geobe.dto.ProjectDto
 import de.fh_zwickau.pti.geobe.dto.RoleDto
 import de.fh_zwickau.pti.geobe.dto.UserDto
 import de.fh_zwickau.pti.geobe.repository.ProjectRepository
@@ -139,6 +140,39 @@ class UserServiceSpecification extends Specification {
     }
 
 
+    @Transactional
+    def "Save Role with Service and find (not) by Project"() {
+        setup:
+        cleanup()
+        when: 'role has project'
+        projectRepository.saveAndFlush(project)
+        projectRepository.saveAndFlush(project2)
+
+        role.getProject().add(project)
+
+        and: 'role has user'
+        userRepository.saveAndFlush(user)
+        userRepository.saveAndFlush(user2)
+        role.getScrumUser().add(user)
+        and: 'save'
+        userRoleService.createOrUpdateRole(new RoleDto.CSet(userId: user.id,projectId: project.id,userRole: ROLETYPE.Developer))
+        UserDto.QList q=userService.getUsersNotInProject(new ProjectDto.QFull(id: project2.id))
+        UserDto.QList q2=userService.getUsersInProject(new ProjectDto.QFull(id: project.id))
+        UserDto.QList q3=userService.getUsersNotInProject(new ProjectDto.QFull(id: project.id))
+        UserDto.QList q4=userService.getUsersInProject(new ProjectDto.QFull(id: project2.id))
+
+        then:
+        assert q.all.keySet().contains(user.id);
+        assert q.all.keySet().contains(user2.id);
+        assert q2.all.keySet().contains(user.id);
+        assert !q2.all.keySet().contains(user2.id);
+        assert q3.all.keySet().contains(user2.id);
+        assert !q3.all.keySet().contains(user.id);
+        assert q4.all.keySet().isEmpty()
+
+
+
+    }
 
 
 

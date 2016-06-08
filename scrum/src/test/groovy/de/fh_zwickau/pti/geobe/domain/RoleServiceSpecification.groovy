@@ -195,6 +195,47 @@ class RoleServiceSpecification extends Specification {
     }
 
 
+    @Transactional
+    def "Save Role with Service and find by Project"() {
+        setup:
+        cleanup()
+        when: 'role has project'
+        projectRepository.saveAndFlush(project)
+        role.getProject().add(project)
+
+        and: 'role has user'
+        userRepository.saveAndFlush(user)
+        role.getScrumUser().add(user)
+
+        and: 'save'
+        userRoleService.createOrUpdateRole(new RoleDto.CSet(userId: user.id,projectId: project.id,userRole: ROLETYPE.Developer))
+        then:
+        assert userRoleService.getRolesOfProject(new ProjectDto.QFull(id: project.id))
+
+
+    }
+
+    @Transactional
+    def "Save Role with Service and find not by Project"() {
+        setup:
+        cleanup()
+        when: 'role has project'
+        projectRepository.saveAndFlush(project)
+        projectRepository.saveAndFlush(project2)
+
+        role.getProject().add(project)
+
+        and: 'role has user'
+        userRepository.saveAndFlush(user)
+        role.getScrumUser().add(user)
+
+        and: 'save'
+        userRoleService.createOrUpdateRole(new RoleDto.CSet(userId: user.id,projectId: project.id,userRole: ROLETYPE.Developer))
+        then:
+        assert userRoleService.getRolesOutOfProject(new ProjectDto.QFull(id: project2.id))
+
+
+    }
 
 
 

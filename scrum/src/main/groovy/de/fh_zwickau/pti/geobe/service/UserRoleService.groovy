@@ -101,6 +101,31 @@ class UserRoleService {
 
     }
 
-    //TODO findbyProject notinproject
+    public RoleDto.QList getRolesOfProject(ProjectDto.QFull command) {
+        RoleDto.QList qList = new RoleDto.QList()
+        roleRepository.findByProjectId(command.id).each { ScrumRole sp ->
+            def node = new RoleDto.QNode(userRole: sp.userRole,
+                    project: new ProjectDto.QNode(name: ((Project) (sp.project.one)).getName())
+                    , user: new UserDto.QNode(id: ((User) (sp.scrumUser.one)).getId())
+            )
 
+            qList.all[sp.id] = node
+        }
+        qList
+
+    }
+
+    public getRolesOutOfProject(ProjectDto.QFull command){
+        RoleDto.QList qList = new RoleDto.QList()
+        roleRepository.findByProjectIdNotLike(command.id).each { ScrumRole sp ->
+            def node = new RoleDto.QNode(userRole: sp.userRole,
+                    project: new ProjectDto.QNode(name: ((Project) (sp.project.one)).getName())
+                    , user: new UserDto.QNode(id: ((User) (sp.scrumUser.one)).getId())
+            )
+
+            qList.all[sp.id] = node
+        }
+        qList
+
+    }
 }

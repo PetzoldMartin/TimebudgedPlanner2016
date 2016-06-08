@@ -9,5 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository
  */
 public interface RoleRepository extends JpaRepository<ScrumRole, Long> {
     List<ScrumRole> findAllByOrderByIdDesc();
-
+    List<ScrumRole> findByProjectId(Long pid);
+    List<ScrumRole> findByProjectIdNotLike(Long pid);
+    List<ScrumRole> findByProjectIdAndScrumUserId(Long pid,Long uid);
 }
