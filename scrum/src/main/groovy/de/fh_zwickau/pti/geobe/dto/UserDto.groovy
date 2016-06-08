@@ -35,6 +35,8 @@ class UserDto {
         String lastName=''
         Date birthdate=new Date()
         List<Long> taskIds=[]
+        List<Long> roleIds=[]
+
     }
 
 

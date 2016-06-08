@@ -8,6 +8,7 @@ import de.fh_zwickau.pti.geobe.dto.TaskDto
 import de.fh_zwickau.pti.geobe.dto.UserDto
 import de.fh_zwickau.pti.geobe.repository.ProjectRepository
 import de.fh_zwickau.pti.geobe.repository.RoleRepository
+import de.fh_zwickau.pti.geobe.repository.TaskRepository
 import de.fh_zwickau.pti.geobe.repository.UserRepository
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
@@ -32,19 +33,21 @@ class UserService {
     private UserRoleService userRoleService
     @Autowired
     private TaskService taskService
+    @Autowired
+    private TaskRepository taskRepository
 
     public UserDto.QList getUsers() {
         UserDto.QList qList = new UserDto.QList()
         userRepository.findAll().each { User sp ->
-            UserDto.QNode node = new UserDto.QNode(nick: sp.nick,firstName: sp.firstName,lastName: sp.lastName)
+            UserDto.QNode node = new UserDto.QNode(nick: sp.nick, firstName: sp.firstName, lastName: sp.lastName)
             sp.roles.getAll().each {
-                ScrumRole sr->
-                    RoleDto.QNode usDto =new RoleDto.QNode(id: sr.id,userRole: sr.userRole)
+                ScrumRole sr ->
+                    RoleDto.QNode usDto = new RoleDto.QNode(id: sr.id, userRole: sr.userRole)
                     node.roles.add(usDto)
             }
             sp.tasks.getAll().each {
-                Task ts->
-                TaskDto.QNode tusDto=new TaskDto.QNode(id: ts.id)
+                Task ts ->
+                    TaskDto.QNode tusDto = new TaskDto.QNode(id: ts.id)
                     node.tasks.add(tusDto)
 
             }
@@ -59,24 +62,24 @@ class UserService {
         makeQFull(p)
     }
 
-    private  makeQFull(User p) {
+    private makeQFull(User p) {
         if (p) {
             UserDto.QFull qFull = new UserDto.QFull()
-            qFull.roles=new RoleDto.QList()
+            qFull.roles = new RoleDto.QList()
             p.roles.getAll().each {
-                ScrumRole sr->
-                    qFull.roles.all[sr.id]=sr.id
+                ScrumRole sr ->
+                    qFull.roles.all[sr.id] = sr.id
             }
-            qFull.tasks=new TaskDto.QList()
+            qFull.tasks = new TaskDto.QList()
             p.tasks.getAll().each {
-                Task ts->
-                    qFull.tasks.all[ts.id]=ts.id
+                Task ts ->
+                    qFull.tasks.all[ts.id] = ts.id
 
             }
             //qFull.roles=p.roles.all
             //qFull.tasks=p.tasks.all
-            qFull.id=p.id
-            qFull.birthdate=p.birthdate
+            qFull.id = p.id
+            qFull.birthdate = p.birthdate
             qFull.firstName
             qFull.lastName
             qFull.nick
@@ -85,11 +88,47 @@ class UserService {
             new RoleDto.QFull()
         }
     }
+
     public deleteUser(UserDto.CDelete command) {
-        userRepository.getOne(command.id).roles.each {ScrumRole itt=it.one
+        userRepository.getOne(command.id).roles.each {
+            ScrumRole itt = it.one
             userRoleService.deleteUserRole(new RoleDto.CDelete(id: itt.id))
         }
+        userRepository.getOne(command.id).each {
+            it.tasks.removeAll()
+        }
         userRepository.delete(command.id)
+
+    }
+
+    public createOrUpdateUser(UserDto.CSet c) {
+        User u
+        if (!c.id) {
+             u = new User(firstName: c.firstName, lastName: c.lastName, nick: c.nick, birthdate: c.birthdate, password: c.password)
+            c.taskIds.each {
+                u.tasks.add(taskRepository.getOne(it))
+            }
+            c.roleIds.each {
+                u.roles.add(roleRepository.getOne(it))
+            }
+            userRepository.saveAndFlush(u)
+        } else {
+             u = userRepository.getOne(c.id)
+            u.firstName = c.firstName
+            u.lastName = c.lastName
+            u.nick = c.nick
+            u.birthdate = c.birthdate
+            u.password = c.password
+            c.taskIds.each {
+                u.tasks.add(taskRepository.getOne(it))
+            }
+            c.roleIds.each {
+                u.roles.add(roleRepository.getOne(it))
+            }
+
+        }
+        userRepository.saveAndFlush(u)
+
 
     }
 }

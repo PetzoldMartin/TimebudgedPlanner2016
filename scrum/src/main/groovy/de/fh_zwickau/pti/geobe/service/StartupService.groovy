@@ -158,14 +158,18 @@ class StartupService implements IStartupService {
         userstoryRepository.deleteAll()
        projectRepository.deleteAll()
 
-        taskRepository.deleteAll()
         sprintRepository.deleteAll()
         roleRepository.findAll().each {
             it.project.removeAll()
             it.scrumUser.removeAll()
         }
         roleRepository.findAll().each {roleRepository.delete(it.id)}
-        userRepository.findAll().each {userRepository.delete(it.id)}
+        userRepository.findAll().each {
+            it.roles.removeAll()
+            it.tasks.removeAll()
+            userRepository.delete(it.id)}
+        taskRepository.deleteAll()
+
         projectRepository.findAll().each {projectRepository.delete(it.id)}
 
         // check cleanup

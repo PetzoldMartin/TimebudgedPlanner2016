@@ -5,6 +5,7 @@ import de.fh_zwickau.pti.geobe.dto.RoleDto
 import de.fh_zwickau.pti.geobe.dto.UserDto
 import de.fh_zwickau.pti.geobe.repository.ProjectRepository
 import de.fh_zwickau.pti.geobe.repository.RoleRepository
+import de.fh_zwickau.pti.geobe.repository.TaskRepository
 import de.fh_zwickau.pti.geobe.repository.UserRepository
 import de.fh_zwickau.pti.geobe.service.StartupService
 import de.fh_zwickau.pti.geobe.service.UserRoleService
@@ -35,10 +36,14 @@ class UserServiceSpecification extends Specification {
     private UserRoleService userRoleService
     @Autowired
     private UserService userService
+    @Autowired
+    private TaskRepository taskRepository
+
 
     Project project,project2
     User user,user2
     ScrumRole role,role2
+    Task task
 
     public setup() {
         project = new Project()
@@ -50,7 +55,7 @@ class UserServiceSpecification extends Specification {
 
         role = new ScrumRole(userRole: ROLETYPE.Developer)
         role2 = new ScrumRole(userRole: ROLETYPE.ProjectOwner)
-
+        task = new CompoundTask(description: 'toptask', estimate: 7000)
     }
 
     @Autowired
@@ -100,6 +105,40 @@ class UserServiceSpecification extends Specification {
         assert projectRepository.findAll().isEmpty()
 
     }
+    @Transactional
+    def "save and update "() {
+        setup:
+        cleanup()
+        when: 'a project with a task is in the database'
+        role.getProject().add(project)
+        roleRepository.saveAndFlush(role)
+        role.getScrumUser().add(user)
+        taskRepository.saveAndFlush(task)
+        task.getDevelopers().add(user)
+        List<Long> taskIds=[]
+        List<Long> roleIds=[]
+        user.tasks.all.each {
+            taskIds.add(it.id)
+        }
+        user.roles.all.each {
+            roleIds.add(it.id)
+        }
+        userService.createOrUpdateUser(new UserDto.CSet(
+                nick: user.nick,firstName: user.firstName,lastName: user.lastName,
+                roleIds: roleIds,taskIds: taskIds
+        ))
+
+        then:
+        assert !user.tasks.all.isEmpty()
+        assert !taskRepository.findAll().isEmpty()
+        assert !roleRepository.findAll().isEmpty()
+        assert !projectRepository.findAll().isEmpty()
+        assert !userRepository.findAll().isEmpty()
+
+
+    }
+
+
 
 
 

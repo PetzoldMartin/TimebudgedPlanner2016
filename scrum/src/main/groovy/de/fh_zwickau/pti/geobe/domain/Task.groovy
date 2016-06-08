@@ -74,12 +74,12 @@ public abstract class Task {
 //    @JoinTable(name = 'join_task_developer',
 //            joinColumns = @JoinColumn(name = 'task_id'),
 //            inverseJoinColumns = @JoinColumn(name = 'developer_id'))
-    private Set<User> developers = new HashSet<>()
+    public Set<User> developers = new HashSet<>()
     @Transient
     private ToMany<Task, User> toDeveloper = new ToMany<>(
             { this.@developers } as IToAny.IGet, this,
             { User o -> o.tasks } as IGetOther
     )
 
-    public IToAny<Task> getBacklog() { toDeveloper }
+    public IToAny<Task> getDevelopers() { toDeveloper }
 }
