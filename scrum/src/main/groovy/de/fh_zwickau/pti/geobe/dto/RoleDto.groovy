@@ -19,21 +19,21 @@ class RoleDto {
     }
 
     public static class QFull {
-        Long id
+        Long id=0
         ROLETYPE userRole
         ProjectDto.QFull project = new ProjectDto.QFull()
         UserDto.QFull user = new UserDto.QFull()
     }
 
     public static class CSet {
-        Long id
+        Long id=0
         ROLETYPE userRole
         Long projectId
         Long userId
 
     }
     public static class QNode {
-        Long id
+        Long id=0
         ROLETYPE userRole
         ProjectDto.QNode project
         UserDto.QNode user

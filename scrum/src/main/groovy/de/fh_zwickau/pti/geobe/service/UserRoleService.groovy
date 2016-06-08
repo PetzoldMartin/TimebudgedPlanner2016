@@ -34,7 +34,10 @@ class UserRoleService {
     private RoleRepository roleRepository
     @Autowired
     private UserRepository userRepository
-
+    @Autowired
+    private ProjectService projectService
+    @Autowired
+    private UserService userService
     public RoleDto.QList getRoles() {
         RoleDto.QList qList = new RoleDto.QList()
         roleRepository.findAllByOrderByIdDesc().each { ScrumRole sp ->
@@ -57,10 +60,8 @@ class UserRoleService {
     private makeQFull(ScrumRole p) {
         if (p) {
             RoleDto.QFull qFull = new RoleDto.QFull()
-            qFull.project = new ProjectDto.QFull(name: ((Project) (p.project.one)).getName(),
-                    id: ((Project) (p.project.one)).getId()
-            )
-            qFull.user = new UserDto.QFull(id: ((User) (p.scrumUser.one)).getId())
+            qFull.project = projectService.getProjectDetails(p.project.one.id)
+            qFull.user = userService.getUserDetails(p.scrumUser.one.id)
             qFull.id = p.id
             qFull.userRole = p.userRole
             qFull
@@ -99,5 +100,7 @@ class UserRoleService {
         }
 
     }
+
+    //TODO findbyProject notinproject
 
 }
