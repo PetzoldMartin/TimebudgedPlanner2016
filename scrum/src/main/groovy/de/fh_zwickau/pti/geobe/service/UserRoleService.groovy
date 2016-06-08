@@ -106,9 +106,8 @@ class UserRoleService {
         roleRepository.findByProjectId(command).each { ScrumRole sp ->
             def node = new RoleDto.QNode(userRole: sp.userRole,
                     project: new ProjectDto.QNode(name: ((Project) (sp.project.one)).getName())
-                    , user: new UserDto.QNode(id: ((User) (sp.scrumUser.one)).getId())
+                    , user: new UserDto.QNode(id: sp.scrumUser.one.id, nick: sp.scrumUser.one.nick)
             )
-
             qList.all[sp.id] = node
         }
         qList

@@ -6,6 +6,8 @@ import com.vaadin.spring.annotation.SpringUI
 import com.vaadin.ui.Component
 import com.vaadin.ui.Notification
 import com.vaadin.ui.TabSheet
+import com.vaadin.ui.TextArea
+import com.vaadin.ui.TextField
 import com.vaadin.ui.UI
 import de.fh_zwickau.pti.geobe.util.view.VaadinSelectionListener
 import de.geobe.util.vaadin.VaadinBuilder
@@ -40,6 +42,7 @@ class ScrumView extends UI implements VaadinSelectionListener {
 
     private Component root, projectSelectTree,
                       projectSubtree, sprintSubtree, taskSubtree, userstorySubtree, userSubtree
+    public static TextArea DebugField
 
     @Override
     protected void init(VaadinRequest request) {
@@ -72,6 +75,7 @@ class ScrumView extends UI implements VaadinSelectionListener {
                 "$F.subtree"(sprintSubtree, [uikey: 'sprintpanel'])
                 "$F.subtree"(taskSubtree, [uikey: 'taskpanel'])
                 "$F.subtree"(userSubtree, [uikey: 'userpanel'])
+                "$F.textarea"('Debug:', [uikey: 'debug', enabled: true])
             }
         }
         widgets = vaadin.uiComponents
@@ -88,6 +92,9 @@ class ScrumView extends UI implements VaadinSelectionListener {
         taskTab.init()
         userstoryTab.init()
         userTab.init()
+        DebugField = vaadin.uiComponents."debug"
+        DebugField.setRows(40)
+
         projectTree.selectionModel.addAnyKeyListener(this)
     }
 

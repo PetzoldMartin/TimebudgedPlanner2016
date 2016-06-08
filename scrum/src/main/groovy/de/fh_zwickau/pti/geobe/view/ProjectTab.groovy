@@ -1,5 +1,6 @@
 package de.fh_zwickau.pti.geobe.view
 
+import com.vaadin.data.Property
 import com.vaadin.event.ShortcutAction
 import com.vaadin.spring.annotation.SpringComponent
 import com.vaadin.spring.annotation.UIScope
@@ -10,6 +11,7 @@ import de.fh_zwickau.pti.geobe.dto.RoleDto
 import de.fh_zwickau.pti.geobe.service.IAuthorizationService
 import de.fh_zwickau.pti.geobe.service.ProjectService
 import de.fh_zwickau.pti.geobe.service.UserRoleService
+import de.fh_zwickau.pti.geobe.service.UserService
 import de.fh_zwickau.pti.geobe.util.view.VaadinSelectionListener
 import de.fh_zwickau.pti.geobe.util.view.VaadinTreeRootChangeListener
 import de.geobe.util.vaadin.TabViewStateMachine
@@ -47,6 +49,8 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
     @Autowired
     private UserRoleService roleService
     @Autowired
+    private UserService userService
+    @Autowired
     private ProjectTree projectTree
     @Autowired
     private IAuthorizationService authorizationService
@@ -60,8 +64,8 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
             "$F.text"('Name', [uikey: PNAME])
             "$F.text"('Budget', [uikey: PBUDGET])
             "$F.twincol"('Userrollen', [uikey             : 'roleAssignment', rows: 8, width: '100%',
-                                        leftColumnCaption : 'Assigned User', enabled: false,
-                                        rightColumnCaption: 'Avaiable User', gridPosition: [0, 2, 1, 2]])
+                                        leftColumnCaption : 'Avaiable User', enabled: false,
+                                        rightColumnCaption: 'Assigned User', gridPosition: [0, 2, 1, 2]])
             "$C.hlayout"([uikey       : 'buttonfield', spacing: true,
                           gridPosition: [0, 3, 1, 3]]) {
                 "$F.button"('New', [uikey         : 'newbutton',
@@ -109,6 +113,16 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
         sm = new TabViewStateMachine(TabViewStateMachine.State.TOPTAB, 'PrjTab')
         configureSm()
         sm.execute(Event.Init)
+
+//        roleAssignment.setItemCaptionMode( AbstractSelect.ItemCaptionMode.PROPERTY)
+        roleAssignment.addListener(new Property.ValueChangeListener() {
+            @Override
+            void valueChange(Property.ValueChangeEvent event) {
+                if (event.getProperty().getValue() != null) {
+                    ScrumView.DebugField.value="$event.property.value+\n"
+                }
+            }
+        })
     }
 
     @Override
@@ -236,25 +250,20 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
         setAssignedList()
 
     }
-//TODO Role assignment
+    //TODO Role assignment
     private void setAssignedList() {
-//        roleAssignment.removeAllItems()
-        def select = []
-        roleService.getRolesInProject(currentDto.id).all.each { k, v ->
-            roleAssignment.addItem(k)
-            roleAssignment.setItemCaption(k, "$v.user.nick : $v.userRole.toString()")
-            select += k
+        roleAssignment.removeAllItems() //available side
+        userService.getUsersNotInProject(currentDto.id).all.each { id, userNode ->
+            roleAssignment.addItem(id)
+            roleAssignment.setItemCaption(id, "$userNode.nick ($userNode.firstName)" + " userID: $userNode.id")
+        }
+        def select = [] // assigned side
+        roleService.getRolesInProject(currentDto.id).all.each { id, roleNode ->
+            roleAssignment.addItem(roleNode.user.id)
+            roleAssignment.setItemCaption(roleNode.user.id, "$roleNode.user.nick : $roleNode.userRole" + " userID: $roleNode.user.id")
+            select << id
         }
         roleAssignment.setValue(select)
-//        roleService.getRolesOfProject(currentDto.id).each {
-//            makeAvailableList(it)
-//        }
-    }
-
-    private makeAvailableList(RoleDto.QNode roleNode, int level = 0) {
-//        backlog.addItem(taskNode.id)
-//        backlog.setItemCaption(taskNode.id, (level > 0 ? '  ' : '') + ('-' * level) + taskNode.tag)
-//        taskNode.children.each { makeAvailableList(it, level + 1) }
     }
 
     /**

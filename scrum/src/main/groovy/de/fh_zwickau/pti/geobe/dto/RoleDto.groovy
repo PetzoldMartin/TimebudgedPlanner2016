@@ -37,7 +37,10 @@ class RoleDto {
         ROLETYPE userRole
         ProjectDto.QNode project
         UserDto.QNode user
-
+        @Override
+        String toString() {
+           this.@user.nick+' ('+this.@userRole+')'+this.user.id
+        }
     }
     public static class CDelete {
         Long id
