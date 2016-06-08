@@ -34,10 +34,12 @@ class ScrumView extends UI implements VaadinSelectionListener {
     @Autowired
     private SprintTab sprintTab
     @Autowired
+    private UserTab userTab
+    @Autowired
     ProjectTree projectTree
 
     private Component root, projectSelectTree,
-                      projectSubtree, sprintSubtree, taskSubtree, userstorySubtree
+                      projectSubtree, sprintSubtree, taskSubtree, userstorySubtree, userSubtree
 
     @Override
     protected void init(VaadinRequest request) {
@@ -59,6 +61,7 @@ class ScrumView extends UI implements VaadinSelectionListener {
         userstorySubtree = userstoryTab.buildSubtree(vaadin, 'userstory.')
         sprintSubtree = sprintTab.buildSubtree(vaadin, 'sprint.')
         taskSubtree = taskTab.buildSubtree(vaadin, 'task.')
+        userSubtree = userTab.buildSubtree(vaadin, 'user.')
 
 
         root = vaadin."$C.hsplit"([uikey: 'topsplit', splitPosition: 20.0f]) {
@@ -68,6 +71,7 @@ class ScrumView extends UI implements VaadinSelectionListener {
                 "$F.subtree"(userstorySubtree, [uikey: 'userstorypanel'])
                 "$F.subtree"(sprintSubtree, [uikey: 'sprintpanel'])
                 "$F.subtree"(taskSubtree, [uikey: 'taskpanel'])
+                "$F.subtree"(userSubtree, [uikey: 'userpanel'])
             }
         }
         widgets = vaadin.uiComponents
@@ -83,6 +87,7 @@ class ScrumView extends UI implements VaadinSelectionListener {
         sprintTab.init()
         taskTab.init()
         userstoryTab.init()
+        userTab.init()
         projectTree.selectionModel.addAnyKeyListener(this)
     }
 
@@ -117,6 +122,10 @@ class ScrumView extends UI implements VaadinSelectionListener {
             case 'Userstory':
             case 'userstory':
                 tabs.selectedTab = userstorySubtree
+                break
+            case 'User':
+            case 'user':
+                tabs.selectedTab = userSubtree
                 break
         }
     }

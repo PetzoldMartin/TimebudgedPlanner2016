@@ -6,6 +6,7 @@ import com.vaadin.spring.annotation.UIScope
 import com.vaadin.ui.Component
 import com.vaadin.ui.Tree
 import de.fh_zwickau.pti.geobe.service.ProjectService
+import de.fh_zwickau.pti.geobe.service.UserService
 import de.fh_zwickau.pti.geobe.util.view.VaadinSelectionModel
 import de.fh_zwickau.pti.geobe.util.view.VaadinTreeHelper
 import de.geobe.util.vaadin.SubTree
@@ -29,6 +30,7 @@ class ProjectTree extends SubTree
     public static final String SPRINT_TYPE = 'Sprint'
     public static final String TASK_TYPE = 'Task'
     public static final String USERSTORY_TYPE = 'Userstory'
+    public static final String USER_TYPE = 'User'
 
     private static final String PTREE = 'ptree'
     private static final String MENU = 'logoutmenu'
@@ -43,6 +45,8 @@ class ProjectTree extends SubTree
 
     @Autowired
     private ProjectService projectService
+    @Autowired
+    private UserService userService
 
     @Autowired
     private VaadinSecurity vaadinSecurity
@@ -124,6 +128,12 @@ class ProjectTree extends SubTree
                 }
             }
 
+        }
+        //TODO add Users to the tree
+        def users = userService.getUsers()
+        def userstoryTagId = treeHelper.addNode('User', null, 'User', true)
+        users.all.each { userId, userNode ->
+            treeHelper.addNode([type: USER_TYPE, id: userNode.id], userstoryTagId, userNode.nick, false)
         }
     }
 
