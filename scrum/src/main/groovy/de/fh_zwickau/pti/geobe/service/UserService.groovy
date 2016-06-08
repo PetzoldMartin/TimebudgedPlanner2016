@@ -39,7 +39,7 @@ class UserService {
     public UserDto.QList getUsers() {
         UserDto.QList qList = new UserDto.QList()
         userRepository.findAll().each { User sp ->
-            UserDto.QNode node = new UserDto.QNode(nick: sp.nick, firstName: sp.firstName, lastName: sp.lastName)
+            UserDto.QNode node = new UserDto.QNode(id: sp.id, nick: sp.nick, firstName: sp.firstName, lastName: sp.lastName)
             sp.roles.getAll().each {
                 ScrumRole sr ->
                     RoleDto.QNode usDto = new RoleDto.QNode(id: sr.id, userRole: sr.userRole)
@@ -101,33 +101,32 @@ class UserService {
 
     }
 
-    public createOrUpdateUser(UserDto.CSet c) {
+
+    public createOrUpdateUser(UserDto.CSet command) {
         User u
-        if (!c.id) {
-             u = new User(firstName: c.firstName, lastName: c.lastName, nick: c.nick, birthdate: c.birthdate, password: c.password)
-            c.taskIds.each {
+        if (command.id) {
+            u = userRepository.getOne(command.id)
+            u.firstName = command.firstName
+            u.lastName = command.lastName
+            u.nick = command.nick
+            u.birthdate = command.birthdate
+            u.password = command.password
+            command.taskIds.each {
                 u.tasks.add(taskRepository.getOne(it))
             }
-            c.roleIds.each {
+            command.roleIds.each {
                 u.roles.add(roleRepository.getOne(it))
             }
         } else {
-             u = userRepository.getOne(c.id)
-            u.firstName = c.firstName
-            u.lastName = c.lastName
-            u.nick = c.nick
-            u.birthdate = c.birthdate
-            u.password = c.password
-            c.taskIds.each {
+
+            u = new User(firstName: command.firstName, lastName: command.lastName, nick: command.nick, birthdate: command.birthdate, password: command.password)
+            command.taskIds.each {
                 u.tasks.add(taskRepository.getOne(it))
             }
-            c.roleIds.each {
+            command.roleIds.each {
                 u.roles.add(roleRepository.getOne(it))
             }
-
         }
         makeQFull(userRepository.saveAndFlush(u))
-
-
     }
 }
