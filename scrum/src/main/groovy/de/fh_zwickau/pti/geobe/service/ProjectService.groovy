@@ -1,12 +1,14 @@
 package de.fh_zwickau.pti.geobe.service
 
 import de.fh_zwickau.pti.geobe.domain.Project
+import de.fh_zwickau.pti.geobe.domain.ROLETYPE
 import de.fh_zwickau.pti.geobe.domain.Sprint
 import de.fh_zwickau.pti.geobe.domain.Task
 import de.fh_zwickau.pti.geobe.domain.Userstory
 import de.fh_zwickau.pti.geobe.dto.ProjectDto
 import de.fh_zwickau.pti.geobe.dto.ProjectDto.CDelete
 import de.fh_zwickau.pti.geobe.dto.ProjectDto.CSet
+import de.fh_zwickau.pti.geobe.dto.RoleDto
 import de.fh_zwickau.pti.geobe.dto.SprintDto
 import de.fh_zwickau.pti.geobe.dto.UserstoryDto
 import de.fh_zwickau.pti.geobe.repository.ProjectRepository
@@ -38,6 +40,8 @@ class ProjectService {
     private SprintRepository sprintRepository
     @Autowired
     private TaskService taskService
+    @Autowired
+    private UserRoleService userRoleService
 //    @Autowired
 //    private SprintService sprintService
 
@@ -84,6 +88,9 @@ class ProjectService {
         if (command.id) {
             project = projectRepository.findOne(command.id)
             if (!project) return new ProjectDto.QFull()
+            project.roles.each {
+                userRoleService.createOrUpdateRole(new RoleDto.CSet(userId: it.one.scrumUser.one.id,projectId: project.id,userRole: it.one.userRole))
+            }
         } else {
             project = new Project()
         }
@@ -93,6 +100,7 @@ class ProjectService {
             UserstoryRepository.findAll(command.userstoryIds).forEach { Userstory us -> project.userstorys.add(us) }
         if (command.sprintIds)
             sprintRepository.findAll(command.sprintIds).forEach { Sprint s -> project.sprint.add(s) }
+
         makeQFull(projectRepository.saveAndFlush(project))
     }
 

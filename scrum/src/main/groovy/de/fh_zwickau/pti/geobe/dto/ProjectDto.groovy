@@ -29,7 +29,7 @@ class ProjectDto {
         Long id = 0
         String name = ''
         BigDecimal budget = 0
-        //List<Long> taskIds = []
+        List<Long> roleIds = []
         List<Long> sprintIds = []
         List<Long> userstoryIds = []
 
