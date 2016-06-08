@@ -77,14 +77,13 @@ class UserServiceSpecification extends Specification {
         UserDto.QFull qFull = userService.getUserDetails(user.id)
         then:
         assert qList.all.size() == 1
-        assert qList.all.keySet().contains(role.id)
+        assert qList.all.keySet().contains(user.id)
         assert qFull.id == user.id
 
 
     }
-    @Ignore
+    @Transactional
     def "delete from "() {
-        //TODO Test delete
         setup:
         cleanup()
         when: 'a project with a task is in the database'
@@ -92,10 +91,8 @@ class UserServiceSpecification extends Specification {
         role.getScrumUser().add(user)
         projectRepository.saveAndFlush(project)
         and: 'we ask for query dtos'
-        RoleDto.QList qList = userRoleService.getRoles()
-        RoleDto.QFull qFull = userRoleService.getRoleDetails(role.id)
-        userRoleService.deleteUserRole(new RoleDto.CDelete(id: role.id))
-        userRepository.deleteAll()
+
+        userService.deleteUser(new UserDto.CDelete(id: user.id))
         projectRepository.deleteAll()
         then:
         assert userRepository.findAll().isEmpty()
