@@ -83,7 +83,7 @@ class ProjectTree extends SubTree
         def selectId = event.property.value
         if (selectId) {
             def topItemId = treeHelper.topParentForId(selectId)
-            if (topItemId != selectedProjectId) {
+            if (topItemId != selectedProjectId && topItemId instanceof Map) {
                 selectionModel.notifyRootChange(topItemId)
                 selectedProjectId = topItemId
             }
@@ -131,7 +131,7 @@ class ProjectTree extends SubTree
         }
         //TODO add Users to the tree
         def users = userService.getUsers()
-        def userstoryTagId = treeHelper.addNode('User', null, 'User', true)
+        def userstoryTagId = treeHelper.addNode('UserTag', null, 'User', true)
         users.all.each { userId, userNode ->
             treeHelper.addNode([type: USER_TYPE, id: userNode.id], userstoryTagId, userNode.nick, false)
         }
