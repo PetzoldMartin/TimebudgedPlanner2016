@@ -6,8 +6,10 @@ import com.vaadin.spring.annotation.UIScope
 import com.vaadin.ui.*
 import com.vaadin.ui.themes.Reindeer
 import de.fh_zwickau.pti.geobe.dto.ProjectDto
+import de.fh_zwickau.pti.geobe.dto.RoleDto
 import de.fh_zwickau.pti.geobe.service.IAuthorizationService
 import de.fh_zwickau.pti.geobe.service.ProjectService
+import de.fh_zwickau.pti.geobe.service.UserRoleService
 import de.fh_zwickau.pti.geobe.util.view.VaadinSelectionListener
 import de.fh_zwickau.pti.geobe.util.view.VaadinTreeRootChangeListener
 import de.geobe.util.vaadin.TabViewStateMachine
@@ -33,6 +35,7 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
     private static final String PBUDGET = 'pbudget'
 
     private TextField pid, pname, pbudget
+    private TwinColSelect roleAssignment
     private Button newButton, editButton, saveButton, cancelButton, deleteButton
     private Map<String, Serializable> currentItemId
     private ProjectDto.QFull currentDto
@@ -41,6 +44,8 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
     
     @Autowired
     private ProjectService projectService
+    @Autowired
+    private UserRoleService roleService
     @Autowired
     private ProjectTree projectTree
     @Autowired
@@ -54,6 +59,9 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
             "$F.text"('id', [uikey: PID, enabled: false])
             "$F.text"('Name', [uikey: PNAME])
             "$F.text"('Budget', [uikey: PBUDGET])
+            "$F.twincol"('Userrollen', [uikey             : 'roleAssignment', rows: 8, width: '100%',
+                                        leftColumnCaption : 'Assigned User', enabled: false,
+                                        rightColumnCaption: 'Avaiable User', gridPosition: [0, 2, 1, 2]])
             "$C.hlayout"([uikey       : 'buttonfield', spacing: true,
                           gridPosition: [0, 3, 1, 3]]) {
                 "$F.button"('New', [uikey         : 'newbutton',
@@ -86,6 +94,7 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
         pid = uiComponents."${subkeyPrefix + PID}"
         pname = uiComponents."${subkeyPrefix + PNAME}"
         pbudget = uiComponents."${subkeyPrefix + PBUDGET}"
+        roleAssignment = uiComponents."${subkeyPrefix}roleAssignment"
         newButton = uiComponents."${subkeyPrefix}newbutton"
         editButton = uiComponents."${subkeyPrefix}editbutton"
         deleteButton = uiComponents."${subkeyPrefix}deleteButton"
@@ -176,7 +185,7 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
     @Override
     protected emptymode() {
         clearFields()
-        [pname, pbudget, saveButton, cancelButton, editButton, deleteButton]
+        [pname, pbudget, roleAssignment, saveButton, cancelButton, editButton, deleteButton]
                 .each { it.enabled = false }
         newButton.enabled = true
     }
@@ -185,7 +194,7 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
     @Override
     protected showmode() {
         initItem(currentDto.id)
-        [pname, pbudget, saveButton, cancelButton]
+        [pname, pbudget, roleAssignment, saveButton, cancelButton]
                 .each { it.enabled = false }
         [editButton, newButton, deleteButton].each { it.enabled = true }
     }
@@ -194,14 +203,14 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
     @Override
     protected editmode() {
         projectTree.onEditItem()
-        [pname, pbudget, saveButton, cancelButton].each { it.enabled = true }
+        [pname, pbudget, roleAssignment, saveButton, cancelButton].each { it.enabled = true }
         [editButton, newButton, deleteButton].each { it.enabled = false }
     }
 
     /** clear all editable fields */
     @Override
     protected clearFields() {
-        [pname, pbudget].each { it.clear() }
+        [pname, pbudget, roleAssignment].each { it.clear() }
     }
 
     /**
@@ -223,6 +232,29 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
         pid.value = currentDto.id.toString()
         pname.value = currentDto.name
         pbudget.value = currentDto.budget.toString()
+
+        setAssignedList()
+
+    }
+//TODO Role assignment
+    private void setAssignedList() {
+//        roleAssignment.removeAllItems()
+        def select = []
+        roleService.getRolesInProject(currentDto.id).all.each { k, v ->
+            roleAssignment.addItem(k)
+            roleAssignment.setItemCaption(k, "$v.user.nick : $v.userRole.toString()")
+            select += k
+        }
+        roleAssignment.setValue(select)
+//        roleService.getRolesOfProject(currentDto.id).each {
+//            makeAvailableList(it)
+//        }
+    }
+
+    private makeAvailableList(RoleDto.QNode roleNode, int level = 0) {
+//        backlog.addItem(taskNode.id)
+//        backlog.setItemCaption(taskNode.id, (level > 0 ? '  ' : '') + ('-' * level) + taskNode.tag)
+//        taskNode.children.each { makeAvailableList(it, level + 1) }
     }
 
     /**
