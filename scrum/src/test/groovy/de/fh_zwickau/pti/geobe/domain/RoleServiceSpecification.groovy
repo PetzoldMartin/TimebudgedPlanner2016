@@ -63,8 +63,12 @@ class RoleServiceSpecification extends Specification {
         cleanup()
         when: 'role has project'
         role.getProject().add(project)
+        role2.getProject().add(project)
+
         and: 'role has user'
         role.getScrumUser().add(user)
+        role2.getScrumUser().add(user)
+
         then:
         assert role.getProject().one==project
         assert role.getScrumUser().one==user

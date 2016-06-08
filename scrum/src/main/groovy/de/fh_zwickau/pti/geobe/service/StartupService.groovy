@@ -1,6 +1,7 @@
 package de.fh_zwickau.pti.geobe.service
 
 import de.fh_zwickau.pti.geobe.domain.*
+import de.fh_zwickau.pti.geobe.dto.RoleDto
 import de.fh_zwickau.pti.geobe.repository.*
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
@@ -33,6 +34,9 @@ class StartupService implements IStartupService {
     @Autowired
     private SprintService sprintService
     @Autowired
+    private UserRoleService userRoleService
+
+
 
     @Override
     void initApplicationData() {
@@ -143,13 +147,11 @@ class StartupService implements IStartupService {
 //            projectRepository.delete(p.id)
             //roles init
             userRepository.findAll().each {
-                ScrumRole sr=new ScrumRole()
-                sr.userRole=ROLETYPE.Developer
-                sr.getProject().add(p)
-                sr.getScrumUser().add(it)
-                roleRepository.saveAndFlush(sr)
+                userRoleService.createOrUpdateRole(new RoleDto.CSet(userId: it.id,projectId: p.id,userRole: ROLETYPE.Developer))
+
             }
         }
+
     }
 
     @Override
