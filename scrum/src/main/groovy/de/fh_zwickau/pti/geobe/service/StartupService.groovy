@@ -32,6 +32,7 @@ class StartupService implements IStartupService {
     private RoleRepository roleRepository
     @Autowired
     private SprintService sprintService
+    @Autowired
 
     @Override
     void initApplicationData() {
@@ -140,6 +141,14 @@ class StartupService implements IStartupService {
             tasks.forEach({ log.info("task (${it.id}): $it.description") })
             userstoryRepository.findAll().forEach({ log.info("userstory (${it.id}): $it.description") })
 //            projectRepository.delete(p.id)
+            //roles init
+            userRepository.findAll().each {
+                ScrumRole sr=new ScrumRole()
+                sr.userRole=ROLETYPE.Developer
+                sr.getProject().add(p)
+                sr.getScrumUser().add(it)
+                roleRepository.saveAndFlush(sr)
+            }
         }
     }
 
