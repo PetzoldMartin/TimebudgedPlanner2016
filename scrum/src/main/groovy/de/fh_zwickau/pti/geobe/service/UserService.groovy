@@ -86,6 +86,10 @@ class UserService {
         }
     }
     public deleteUser(UserDto.CDelete command) {
+        userRepository.getOne(command.id).roles.each {ScrumRole itt=it.one
+            userRoleService.deleteUserRole(new RoleDto.CDelete(id: itt.id))
+        }
         userRepository.delete(command.id)
+
     }
 }
