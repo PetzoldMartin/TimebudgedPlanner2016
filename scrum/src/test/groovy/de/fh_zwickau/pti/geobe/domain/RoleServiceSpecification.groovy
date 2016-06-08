@@ -9,6 +9,7 @@ import de.fh_zwickau.pti.geobe.repository.RoleRepository
 import de.fh_zwickau.pti.geobe.repository.UserRepository
 import de.fh_zwickau.pti.geobe.service.UserRoleService
 import de.fh_zwickau.pti.geobe.service.StartupService
+import jdk.nashorn.internal.ir.annotations.Ignore
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationConfiguration
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource
@@ -84,6 +85,57 @@ class RoleServiceSpecification extends Specification {
         roleRepository.save(role2)
         then:
         assert roleRepository.findAll()
+    }
+
+    @Transactional
+    def "failed Save Role with Service "() {
+        setup:
+        cleanup()
+
+        when:
+        userRoleService.createOrUpdateRole(new RoleDto.CSet(userId: 0,projectId: 0,userRole: ROLETYPE.Developer))
+        then:
+        assert roleRepository.findAll().empty
+    }
+
+    @Transactional
+    def "Save Role with Service"() {
+        setup:
+        cleanup()
+        when: 'role has project'
+        projectRepository.saveAndFlush(project)
+        role.getProject().add(project)
+
+        and: 'role has user'
+        userRepository.saveAndFlush(user)
+        role.getScrumUser().add(user)
+
+        and: 'save'
+        userRoleService.createOrUpdateRole(new RoleDto.CSet(userId: user.id,projectId: project.id,userRole: ROLETYPE.Developer))
+        then:
+        assert roleRepository.findAll()
+        assert roleRepository.findOne(role.id).project.one==project
+        assert roleRepository.findOne(role.id).scrumUser.one==user
+
+    }
+
+    @Transactional
+    def "update Role with Service "() {
+        setup:
+        cleanup()
+        when: 'role has project'
+        projectRepository.saveAndFlush(project)
+        role.getProject().add(project)
+        and: 'role has user'
+        userRepository.saveAndFlush(user)
+        role.getScrumUser().add(user)
+        and: 'save'
+        userRoleService.createOrUpdateRole(new RoleDto.CSet(userId: user.id,projectId: project.id,userRole: ROLETYPE.Developer))
+        role.getScrumUser().add(user2)
+        then:
+        assert roleRepository.findAll()
+        assert roleRepository.findOne(role.id).project.one==project
+        assert roleRepository.findOne(role.id).scrumUser.one==user2
     }
 
     @Transactional

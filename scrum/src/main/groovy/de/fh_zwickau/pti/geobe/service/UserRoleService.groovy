@@ -39,8 +39,8 @@ class UserRoleService {
         RoleDto.QList qList = new RoleDto.QList()
         roleRepository.findAllByOrderByIdDesc().each { ScrumRole sp ->
             def node = new RoleDto.QNode(userRole: sp.userRole,
-                    project: new ProjectDto.QNode(name: ((Project)(sp.project.one)).getName())
-                    ,user: new UserDto.QNode(id: ((User)(sp.scrumUser.one)).getId())
+                    project: new ProjectDto.QNode(name: ((Project) (sp.project.one)).getName())
+                    , user: new UserDto.QNode(id: ((User) (sp.scrumUser.one)).getId())
             )
 
             qList.all[sp.id] = node
@@ -53,15 +53,16 @@ class UserRoleService {
         ScrumRole p = roleRepository.findOne(pid)
         makeQFull(p)
     }
-    private  makeQFull(ScrumRole p) {
+
+    private makeQFull(ScrumRole p) {
         if (p) {
             RoleDto.QFull qFull = new RoleDto.QFull()
-            qFull.project = new ProjectDto.QFull(name: ((Project)(p.project.one)).getName(),
-                    id: ((Project)(p.project.one)).getId()
+            qFull.project = new ProjectDto.QFull(name: ((Project) (p.project.one)).getName(),
+                    id: ((Project) (p.project.one)).getId()
             )
-           qFull.user = new UserDto.QFull(id: ((User)(p.scrumUser.one)).getId())
-            qFull.id=p.id
-            qFull.userRole=p.userRole
+            qFull.user = new UserDto.QFull(id: ((User) (p.scrumUser.one)).getId())
+            qFull.id = p.id
+            qFull.userRole = p.userRole
             qFull
         } else {
             new RoleDto.QFull()
@@ -69,12 +70,34 @@ class UserRoleService {
     }
 
     public deleteUserRole(RoleDto.CDelete command) {
-        roleRepository.getOne(command.id).each{ ScrumRole it->
+        roleRepository.getOne(command.id).each { ScrumRole it ->
             it.scrumUser.removeAll()
             it.project.removeAll()
         }
         roleRepository.delete(command.id)
     }
 
+    public createOrUpdateRole(RoleDto.CSet command) {
+        if (!command.userId | !command.projectId | !command.userRole) return new RoleDto.QFull()
+        else
+         {
+            ScrumRole sr
+            if (command.id) {
+                roleRepository.getOne(command.id).each {
+                    if (command.userId) it.scrumUser = userRepository.getOne(command.userId)
+                    if (command.projectId) it.project = projectRepository.getOne(command.projectId)
+                    it.userRole = command.userRole
+                }
+            } else {
+                sr = new ScrumRole(
+                        scrumUser: userRepository.getOne(command.userId),
+                        project: projectRepository.getOne(command.projectId),
+                        userRole: command.userRole
+                )
+            }
+            makeQFull(roleRepository.saveAndFlush(sr))
+        }
+
+    }
 
 }

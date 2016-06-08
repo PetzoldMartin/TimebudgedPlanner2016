@@ -28,7 +28,7 @@ class RoleDto {
     public static class CSet {
         Long id
         ROLETYPE userRole
-        Long ProjectId
+        Long projectId
         Long userId
 
     }
