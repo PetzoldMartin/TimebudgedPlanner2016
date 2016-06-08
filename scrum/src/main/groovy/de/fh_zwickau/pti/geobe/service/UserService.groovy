@@ -90,15 +90,12 @@ class UserService {
     }
 
     public deleteUser(UserDto.CDelete command) {
-        userRepository.getOne(command.id).roles.each {
-            ScrumRole itt = it.one
-            userRoleService.deleteUserRole(new RoleDto.CDelete(id: itt.id))
+        def user = userRepository.getOne(command.id)
+        user.roles.all.each { ScrumRole role ->
+            userRoleService.deleteUserRole(new RoleDto.CDelete(id: role.id))
         }
-        userRepository.getOne(command.id).each {
-            it.tasks.removeAll()
-        }
+        user.tasks.removeAll()
         userRepository.delete(command.id)
-
     }
 
 
