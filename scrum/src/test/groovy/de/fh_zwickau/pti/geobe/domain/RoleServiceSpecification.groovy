@@ -127,8 +127,8 @@ class RoleServiceSpecification extends Specification {
         projectRepository.saveAndFlush(project)
         role.getProject().add(project)
         and: 'role has user'
-        userRepository.saveAndFlush(user)
-        role.getScrumUser().add(user)
+        userRepository.saveAndFlush(user2)
+        role.getScrumUser().add(user2)
         and: 'save'
         userRoleService.createOrUpdateRole(new RoleDto.CSet(userId: user.id,projectId: project.id,userRole: ROLETYPE.Developer))
         role.getScrumUser().add(user2)
