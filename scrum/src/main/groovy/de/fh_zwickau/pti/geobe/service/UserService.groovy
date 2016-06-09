@@ -1,9 +1,8 @@
 package de.fh_zwickau.pti.geobe.service
 
-import de.fh_zwickau.pti.geobe.domain.ScrumRole
+import de.fh_zwickau.pti.geobe.domain.Role
 import de.fh_zwickau.pti.geobe.domain.Task
 import de.fh_zwickau.pti.geobe.domain.User
-import de.fh_zwickau.pti.geobe.dto.ProjectDto
 import de.fh_zwickau.pti.geobe.dto.RoleDto
 import de.fh_zwickau.pti.geobe.dto.TaskDto
 import de.fh_zwickau.pti.geobe.dto.UserDto
@@ -31,7 +30,7 @@ class UserService {
     @Autowired
     private UserRepository userRepository
     @Autowired
-    private UserRoleService userRoleService
+    private RoleService userRoleService
     @Autowired
     private TaskService taskService
     @Autowired
@@ -42,7 +41,7 @@ class UserService {
         userRepository.findAll().each { User sp ->
             UserDto.QNode node = new UserDto.QNode(id: sp.id, nick: sp.nick, firstName: sp.firstName, lastName: sp.lastName)
             sp.roles.getAll().each {
-                ScrumRole sr ->
+                Role sr ->
                     RoleDto.QNode usDto = new RoleDto.QNode(id: sr.id, userRole: sr.userRole)
                     node.roles.add(usDto)
             }
@@ -68,7 +67,7 @@ class UserService {
             UserDto.QFull qFull = new UserDto.QFull()
             qFull.roles = new RoleDto.QList()
             user.roles.getAll().each {
-                ScrumRole sr ->
+                Role sr ->
                     qFull.roles.all[sr.id] = sr.id
             }
             qFull.tasks = new TaskDto.QList()
@@ -92,7 +91,7 @@ class UserService {
 
     public deleteUser(UserDto.CDelete command) {
         def user = userRepository.getOne(command.id)
-        user.roles.all.each { ScrumRole role ->
+        user.roles.all.each { Role role ->
             userRoleService.deleteUserRole(new RoleDto.CDelete(id: role.id))
         }
         user.tasks.removeAll()
@@ -137,7 +136,7 @@ class UserService {
             else {
                 UserDto.QNode node = new UserDto.QNode(id: sp.id, nick: sp.nick, firstName: sp.firstName, lastName: sp.lastName)
                 sp.roles.getAll().each {
-                    ScrumRole sr ->
+                    Role sr ->
                         RoleDto.QNode usDto = new RoleDto.QNode(id: sr.id, userRole: sr.userRole)
                         node.roles.add(usDto)
                 }
@@ -165,7 +164,7 @@ class UserService {
             else {
                 UserDto.QNode node = new UserDto.QNode(id: sp.id, nick: sp.nick, firstName: sp.firstName, lastName: sp.lastName)
                 sp.roles.getAll().each {
-                    ScrumRole sr ->
+                    Role sr ->
                         RoleDto.QNode usDto = new RoleDto.QNode(id: sr.id, userRole: sr.userRole)
                         node.roles.add(usDto)
                 }

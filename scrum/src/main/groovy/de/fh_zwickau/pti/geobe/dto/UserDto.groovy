@@ -49,7 +49,7 @@ class UserDto {
         List<TaskDto.QNode> tasks = []
         @Override
         String toString() {
-            this.@nick+':'+this.@firstName+':'+this.@lastName
+            this.@nick+'('+this.@firstName+' '+this.@lastName+')'
         }
     }
     public static class CDelete {

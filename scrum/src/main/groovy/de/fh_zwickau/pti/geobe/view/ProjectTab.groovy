@@ -6,11 +6,11 @@ import com.vaadin.spring.annotation.SpringComponent
 import com.vaadin.spring.annotation.UIScope
 import com.vaadin.ui.*
 import com.vaadin.ui.themes.Reindeer
+import de.fh_zwickau.pti.geobe.domain.ROLETYPE
 import de.fh_zwickau.pti.geobe.dto.ProjectDto
-import de.fh_zwickau.pti.geobe.dto.RoleDto
 import de.fh_zwickau.pti.geobe.service.IAuthorizationService
 import de.fh_zwickau.pti.geobe.service.ProjectService
-import de.fh_zwickau.pti.geobe.service.UserRoleService
+import de.fh_zwickau.pti.geobe.service.RoleService
 import de.fh_zwickau.pti.geobe.service.UserService
 import de.fh_zwickau.pti.geobe.util.view.VaadinSelectionListener
 import de.fh_zwickau.pti.geobe.util.view.VaadinTreeRootChangeListener
@@ -38,16 +38,18 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
 
     private TextField pid, pname, pbudget
     private TwinColSelect roleAssignment
+    private NativeSelect roleTypeSelect
     private Button newButton, editButton, saveButton, cancelButton, deleteButton
     private Map<String, Serializable> currentItemId
     private ProjectDto.QFull currentDto
+
 
     private DeleteDialog deleteDialog = new DeleteDialog()
     
     @Autowired
     private ProjectService projectService
     @Autowired
-    private UserRoleService roleService
+    private RoleService roleService
     @Autowired
     private UserService userService
     @Autowired
@@ -66,6 +68,7 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
             "$F.twincol"('Userrollen', [uikey             : 'roleAssignment', rows: 8, width: '100%',
                                         leftColumnCaption : 'Avaiable User', enabled: false,
                                         rightColumnCaption: 'Assigned User', gridPosition: [0, 2, 1, 2]])
+            "$F.nativeselect"('Rollentypauswahl', [uikey: 'roleTypeSelect',enabled: true])
             "$C.hlayout"([uikey       : 'buttonfield', spacing: true,
                           gridPosition: [0, 3, 1, 3]]) {
                 "$F.button"('New', [uikey         : 'newbutton',
@@ -99,6 +102,7 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
         pname = uiComponents."${subkeyPrefix + PNAME}"
         pbudget = uiComponents."${subkeyPrefix + PBUDGET}"
         roleAssignment = uiComponents."${subkeyPrefix}roleAssignment"
+        roleTypeSelect = uiComponents."${subkeyPrefix}roleTypeSelect"
         newButton = uiComponents."${subkeyPrefix}newbutton"
         editButton = uiComponents."${subkeyPrefix}editbutton"
         deleteButton = uiComponents."${subkeyPrefix}deleteButton"
@@ -114,12 +118,32 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
         configureSm()
         sm.execute(Event.Init)
 
-//        roleAssignment.setItemCaptionMode( AbstractSelect.ItemCaptionMode.PROPERTY)
-        roleAssignment.addListener(new Property.ValueChangeListener() {
+        // role assignment init
+        roleTypeSelect.setItemCaptionMode(AbstractSelect.ItemCaptionMode.ID)
+        roleAssignment.setItemCaptionMode(AbstractSelect.ItemCaptionMode.ID) //WTF???
+
+        roleTypeSelect.setNullSelectionAllowed(false)
+        roleTypeSelect.addItems(ROLETYPE.values())
+        roleTypeSelect.setValue(ROLETYPE.Developer)
+
+        roleTypeSelect.addValueChangeListener(new Property.ValueChangeListener() {
+            @Override
+            void valueChange(Property.ValueChangeEvent event) {
+//                Notification.show("Value changed:",
+//                        String.valueOf(event.property.value,
+//                        Notification.Type.TRAY_NOTIFICATION))
+            }
+        })
+
+        roleAssignment.addValueChangeListener(new Property.ValueChangeListener() {
             @Override
             void valueChange(Property.ValueChangeEvent event) {
                 if (event.getProperty().getValue() != null) {
-                    ScrumView.DebugField.value="$event.property.value+\n"
+//                    Notification.show("Value changed:",
+//                            String.valueOf(event.property().getValue()),
+//                            Notification.Type.TRAY_NOTIFICATION)
+                    ScrumView.DebugField.value+="ValueChanged: $event.property.value \n"
+                    ScrumView.DebugField.value+="ItemIds: $roleAssignment.containerDataSource.itemIds \n"
                 }
             }
         })
@@ -250,18 +274,18 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
         setAssignedList()
 
     }
-    //TODO Role assignment
+    //TODO Role assignment with separate Lists
     private void setAssignedList() {
         roleAssignment.removeAllItems() //available side
         userService.getUsersNotInProject(currentDto.id).all.each { id, userNode ->
-            roleAssignment.addItem(id)
-            roleAssignment.setItemCaption(id, "$userNode.nick ($userNode.firstName)" + " userID: $userNode.id")
+            roleAssignment.addItem(userNode)
+//            roleAssignment.setItemCaption(id, "$userNode.nick ($userNode.firstName)" + " userID: $userNode.id")
         }
         def select = [] // assigned side
         roleService.getRolesInProject(currentDto.id).all.each { id, roleNode ->
-            roleAssignment.addItem(roleNode.user.id)
-            roleAssignment.setItemCaption(roleNode.user.id, "$roleNode.user.nick : $roleNode.userRole" + " userID: $roleNode.user.id")
-            select << id
+            roleAssignment.addItem(roleNode)
+//            roleAssignment.setItemCaption(roleNode.user.id, "$roleNode.user.nick : $roleNode.userRole" + " userID: $roleNode.user.id")
+            select << roleNode
         }
         roleAssignment.setValue(select)
     }

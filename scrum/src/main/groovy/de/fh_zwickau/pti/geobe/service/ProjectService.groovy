@@ -1,7 +1,6 @@
 package de.fh_zwickau.pti.geobe.service
 
 import de.fh_zwickau.pti.geobe.domain.Project
-import de.fh_zwickau.pti.geobe.domain.ROLETYPE
 import de.fh_zwickau.pti.geobe.domain.Sprint
 import de.fh_zwickau.pti.geobe.domain.Task
 import de.fh_zwickau.pti.geobe.domain.Userstory
@@ -41,7 +40,7 @@ class ProjectService {
     @Autowired
     private TaskService taskService
     @Autowired
-    private UserRoleService userRoleService
+    private RoleService userRoleService
 //    @Autowired
 //    private SprintService sprintService
 

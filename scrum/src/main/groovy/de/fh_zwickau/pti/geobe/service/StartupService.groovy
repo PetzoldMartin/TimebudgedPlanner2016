@@ -34,7 +34,7 @@ class StartupService implements IStartupService {
     @Autowired
     private SprintService sprintService
     @Autowired
-    private UserRoleService userRoleService
+    private RoleService userRoleService
 
 
 
@@ -47,13 +47,13 @@ class StartupService implements IStartupService {
             userRepository.saveAndFlush(new User(nick: 'Hanswurst', firstName: 'Hans', lastName: 'Wurst', birthdate: new Date(System.currentTimeMillis())))
 //            Project p = new Project([name: 'Projekt User', budget: 1000])
 //            User user = new User([nick: 'user', password: 'user'])
-//            ScrumRole userRoletype = new ScrumRole([userRole: ROLETYPE.Developer])
+//            Role userRoletype = new Role([userRole: ROLETYPE.Developer])
 //            userRoletype.project.add(p)
 //            userRoletype.scrumUser.add(user)
 //            User master = new User([nick: 'master', password: 'master'])
-//            ScrumRole masterRoletype = new ScrumRole([userRole: ROLETYPE.ScrumMaster])
+//            Role masterRoletype = new Role([userRole: ROLETYPE.ScrumMaster])
 //            User owner = new User([nick: 'owner', password: 'owner'])
-//            ScrumRole ownerRoletype = new ScrumRole([userRole: ROLETYPE.ProjectOwner])
+//            Role ownerRoletype = new Role([userRole: ROLETYPE.ProjectOwner])
             //projectRepository.save(p)
             //scrumUserRepository.save([user, master, owner])
 

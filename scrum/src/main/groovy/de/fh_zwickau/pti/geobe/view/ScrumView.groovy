@@ -94,6 +94,7 @@ class ScrumView extends UI implements VaadinSelectionListener {
         userTab.init()
         DebugField = vaadin.uiComponents."debug"
         DebugField.setRows(40)
+        DebugField.setSizeFull()
 
         projectTree.selectionModel.addAnyKeyListener(this)
     }

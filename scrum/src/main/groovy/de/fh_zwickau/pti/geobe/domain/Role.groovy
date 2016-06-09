@@ -10,10 +10,15 @@ enum ROLETYPE {
     ProjectOwner,
     ScrumMaster,
     Developer
+
+    @Override
+    String toString() {
+        return name()
+    }
 }
 
 @Entity
-public class ScrumRole {
+public class Role {
 
 
     @Id
@@ -33,7 +38,7 @@ public class ScrumRole {
     private Project project;
 
     @Transient
-    private ToOne<ScrumRole, Project> toProject = new ToOne<>(
+    private ToOne<Role, Project> toProject = new ToOne<>(
             { this.@project } as IToAny.IGet,
             { Project p -> this.setProject(p) } as IToAny.ISet,
             this, { o -> o.roles } as IGetOther
@@ -47,7 +52,7 @@ public class ScrumRole {
     private User scrumUser;
 
     @Transient
-    private ToOne<ScrumRole, User> toScrumUser = new ToOne<>(
+    private ToOne<Role, User> toScrumUser = new ToOne<>(
             { this.@scrumUser } as IToAny.IGet,
             { User su -> this.setScrumUser(su) } as IToAny.ISet,
             this, { o -> o.roles } as IGetOther

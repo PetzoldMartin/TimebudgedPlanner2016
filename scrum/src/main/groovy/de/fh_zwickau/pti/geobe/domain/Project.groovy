@@ -52,12 +52,12 @@ public class Project {
 
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
-    private Set<ScrumRole> roles = new HashSet<>();
+    private Set<Role> roles = new HashSet<>();
     @Transient
-    private ToMany<Project, ScrumRole> toRoles = new ToMany<>(
+    private ToMany<Project, Role> toRoles = new ToMany<>(
             { this.@roles } as IToAny.IGet, this,
-            { ScrumRole o -> o.project } as IGetOther
+            { Role o -> o.project } as IGetOther
     )
 
-    public IToAny<ScrumRole> getRoles() { return toRoles; }
+    public IToAny<Role> getRoles() { return toRoles; }
 }

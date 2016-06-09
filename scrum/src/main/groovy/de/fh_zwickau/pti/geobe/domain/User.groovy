@@ -25,16 +25,16 @@ public class User {
 
     // references
     @OneToMany(mappedBy = "scrumUser", cascade = CascadeType.ALL)
-    private Set<ScrumRole> roles = new HashSet<>();
+    private Set<Role> roles = new HashSet<>();
     @Transient
-    private ToMany<User, ScrumRole> toRoles = new ToMany<>(
+    private ToMany<User, Role> toRoles = new ToMany<>(
 
             { this.@roles } as IToAny.IGet, this,
-            { ScrumRole o -> o.scrumUser } as IGetOther
+            { Role o -> o.scrumUser } as IGetOther
 
     )
 
-    public IToAny<ScrumRole> getRoles() { return toRoles; }
+    public IToAny<Role> getRoles() { return toRoles; }
 
     @ManyToMany(cascade = [CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST])
     @JoinTable(name = 'join_task_developer',

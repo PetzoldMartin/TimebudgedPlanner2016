@@ -1,6 +1,8 @@
 package de.fh_zwickau.pti.geobe.dto
 
+import com.vaadin.data.util.BeanItem
 import de.fh_zwickau.pti.geobe.domain.ROLETYPE
+import org.springframework.context.annotation.Bean
 
 /**
  * Created by aisma on 24.05.2016.
@@ -37,9 +39,10 @@ class RoleDto {
         ROLETYPE userRole
         ProjectDto.QNode project
         UserDto.QNode user
+
         @Override
         String toString() {
-           this.@user.nick+' ('+this.@userRole+')'+this.user.id
+           this.@user.nick + (userRole!=null? ' ('+this.@userRole+')' :'')
         }
     }
     public static class CDelete {

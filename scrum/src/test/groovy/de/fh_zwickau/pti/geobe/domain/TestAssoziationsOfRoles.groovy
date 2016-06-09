@@ -26,7 +26,7 @@ class TestAssoziationsOfRoles extends Specification {
 
     private Project project, project2
     //@Autowired
-    private ScrumRole scrumRole1, scrumRole2
+    private Role scrumRole1, scrumRole2
     //@Autowired
     private User scrumUser1
 
@@ -37,8 +37,8 @@ class TestAssoziationsOfRoles extends Specification {
         project2.name = "auch ein Projekt"
         scrumUser1 = new User()
 
-        scrumRole1 = new ScrumRole();
-        scrumRole2 = new ScrumRole();
+        scrumRole1 = new Role();
+        scrumRole2 = new Role();
     }
 
     @Ignore
@@ -157,7 +157,7 @@ class TestAssoziationsOfRoles extends Specification {
         project = scrumRole2.getProject().getOne()
         scrumUser1 = scrumRole2.getScrumUser().getOne()
 
-        ScrumRole role = new ScrumRole()
+        Role role = new Role()
 
         //role.scrumRoleID = new ScrumRoleID(project.getId(), scrumUser1.getId(), ROLETYPE.ScrumMaster)
 

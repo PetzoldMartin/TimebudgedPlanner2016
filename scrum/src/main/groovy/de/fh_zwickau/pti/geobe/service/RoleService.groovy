@@ -1,17 +1,11 @@
 package de.fh_zwickau.pti.geobe.service
 
 import de.fh_zwickau.pti.geobe.domain.Project
-import de.fh_zwickau.pti.geobe.domain.ScrumRole
-import de.fh_zwickau.pti.geobe.domain.Sprint
-import de.fh_zwickau.pti.geobe.domain.Task
+import de.fh_zwickau.pti.geobe.domain.Role
 import de.fh_zwickau.pti.geobe.domain.User
-import de.fh_zwickau.pti.geobe.domain.Userstory
 import de.fh_zwickau.pti.geobe.dto.ProjectDto
 import de.fh_zwickau.pti.geobe.dto.RoleDto
-import de.fh_zwickau.pti.geobe.dto.SprintDto
-import de.fh_zwickau.pti.geobe.dto.TaskDto
 import de.fh_zwickau.pti.geobe.dto.UserDto
-import de.fh_zwickau.pti.geobe.dto.UserstoryDto
 import de.fh_zwickau.pti.geobe.repository.ProjectRepository
 import de.fh_zwickau.pti.geobe.repository.RoleRepository
 import de.fh_zwickau.pti.geobe.repository.UserRepository
@@ -27,7 +21,7 @@ import javax.transaction.Transactional
 @Service
 @Transactional
 @Slf4j
-class UserRoleService {
+class RoleService {
     @Autowired
     private ProjectRepository projectRepository
     @Autowired
@@ -40,7 +34,7 @@ class UserRoleService {
     private UserService userService
     public RoleDto.QList getRoles() {
         RoleDto.QList qList = new RoleDto.QList()
-        roleRepository.findAllByOrderByIdDesc().each { ScrumRole sp ->
+        roleRepository.findAllByOrderByIdDesc().each { Role sp ->
             def node = new RoleDto.QNode(userRole: sp.userRole,
                     project: new ProjectDto.QNode(name: ((Project) (sp.project.one)).getName())
                     , user: new UserDto.QNode(id: ((User) (sp.scrumUser.one)).getId())
@@ -53,11 +47,11 @@ class UserRoleService {
     }
 
     public RoleDto.QFull getRoleDetails(Long pid) {
-        ScrumRole p = roleRepository.findOne(pid)
+        Role p = roleRepository.findOne(pid)
         makeQFull(p)
     }
 
-    private makeQFull(ScrumRole p) {
+    private makeQFull(Role p) {
         if (p) {
             RoleDto.QFull qFull = new RoleDto.QFull()
             qFull.project = projectService.getProjectDetails(p.project.one.id)
@@ -71,7 +65,7 @@ class UserRoleService {
     }
 
     public deleteUserRole(RoleDto.CDelete command) {
-        roleRepository.getOne(command.id).each { ScrumRole it ->
+        roleRepository.getOne(command.id).each { Role it ->
             it.scrumUser.removeAll()
             it.project.removeAll()
         }
@@ -82,7 +76,7 @@ class UserRoleService {
         if (!command.userId | !command.projectId | !command.userRole) return new RoleDto.QFull()
         else
          {
-            ScrumRole sr
+            Role sr
             if (command.id) {
                 roleRepository.getOne(command.id).each {
                     if (command.userId) it.scrumUser = userRepository.getOne(command.userId)
@@ -90,7 +84,7 @@ class UserRoleService {
                     it.userRole = command.userRole
                 }
             } else {
-                sr = new ScrumRole(
+                sr = new Role(
                         scrumUser: userRepository.getOne(command.userId),
                         project: projectRepository.getOne(command.projectId),
                         userRole: command.userRole
@@ -103,7 +97,7 @@ class UserRoleService {
 
     public RoleDto.QList getRolesInProject(Long command) {
         RoleDto.QList qList = new RoleDto.QList()
-        roleRepository.findByProjectId(command).each { ScrumRole sp ->
+        roleRepository.findByProjectId(command).each { Role sp ->
             def node = new RoleDto.QNode(userRole: sp.userRole,
                     project: new ProjectDto.QNode(name: ((Project) (sp.project.one)).getName())
                     , user: new UserDto.QNode(id: sp.scrumUser.one.id, nick: sp.scrumUser.one.nick)
@@ -116,7 +110,7 @@ class UserRoleService {
 
     public getRolesNotInProject(Long command){
         RoleDto.QList qList = new RoleDto.QList()
-        roleRepository.findByProjectIdNotLike(command).each { ScrumRole sp ->
+        roleRepository.findByProjectIdNotLike(command).each { Role sp ->
             def node = new RoleDto.QNode(userRole: sp.userRole,
                     project: new ProjectDto.QNode(name: ((Project) (sp.project.one)).getName())
                     , user: new UserDto.QNode(id: ((User) (sp.scrumUser.one)).getId())

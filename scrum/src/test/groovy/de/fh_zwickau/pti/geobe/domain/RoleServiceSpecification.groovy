@@ -5,7 +5,7 @@ import de.fh_zwickau.pti.geobe.dto.RoleDto
 import de.fh_zwickau.pti.geobe.repository.ProjectRepository
 import de.fh_zwickau.pti.geobe.repository.RoleRepository
 import de.fh_zwickau.pti.geobe.repository.UserRepository
-import de.fh_zwickau.pti.geobe.service.UserRoleService
+import de.fh_zwickau.pti.geobe.service.RoleService
 import de.fh_zwickau.pti.geobe.service.StartupService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationConfiguration
@@ -29,11 +29,11 @@ class RoleServiceSpecification extends Specification {
     @Autowired
     private RoleRepository roleRepository
     @Autowired
-    private UserRoleService userRoleService
+    private RoleService userRoleService
 
     Project project,project2
     User user,user2
-    ScrumRole role,role2
+    Role role, role2
 
     public setup() {
         project = new Project()
@@ -43,8 +43,8 @@ class RoleServiceSpecification extends Specification {
         user =new User(firstName: "heinz",lastName: "karl")
         user2 =new User(firstName: "heinz",lastName: "karl2")
 
-        role = new ScrumRole(userRole: ROLETYPE.Developer)
-        role2 = new ScrumRole(userRole: ROLETYPE.ProjectOwner)
+        role = new Role(userRole: ROLETYPE.Developer)
+        role2 = new Role(userRole: ROLETYPE.ProjectOwner)
 
     }
 
