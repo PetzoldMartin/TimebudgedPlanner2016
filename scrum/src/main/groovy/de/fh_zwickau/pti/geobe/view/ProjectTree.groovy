@@ -138,7 +138,6 @@ class ProjectTree extends SubTree
             }
 
         }
-        //TODO add Users to the tree
         def users = userService.getUsers()
         def userstoryTagId = treeHelper.addNode('UserTag', null, 'User', true)
         users.all.each { userId, userNode ->

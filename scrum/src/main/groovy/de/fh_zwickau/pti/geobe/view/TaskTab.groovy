@@ -318,11 +318,10 @@ class TaskTab extends TabBase
         command.completed = completed.value
         command.classname = supertask.value ? 'CompoundTask' : 'Subtask'
         // determine level for a new item
-        // TODO change to Userstory (get userstoryID)
         if (id == 0) {
-            if (!currentDto || currentDto.project.all) {
+            if (!currentDto || currentDto.userstory.backlog.all) {
                 // we are on top level of tasks
-                command.projectId = (Long) currentTopItemId['id']
+                command.userstoryId = (Long) currentDto.userstory.id
             } else {
                 // we are on a lower level
                 command.supertaskId = currentDto.supertask.firstId
