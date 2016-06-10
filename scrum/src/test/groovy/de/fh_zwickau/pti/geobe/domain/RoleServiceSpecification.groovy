@@ -173,6 +173,7 @@ class RoleServiceSpecification extends Specification {
         assert qFull.userRole == role.userRole
 
     }
+    @Transactional
     def "delete from "() {
         setup:
         cleanup()
@@ -180,7 +181,6 @@ class RoleServiceSpecification extends Specification {
         role.getProject().add(project)
         role.getScrumUser().add(user)
         projectRepository.saveAndFlush(project)
-        assert !roleRepository.findAll().isEmpty()
         and: 'we ask for query dtos'
         RoleDto.QList qList = userRoleService.getRoles()
         RoleDto.QFull qFull = userRoleService.getRoleDetails(role.id)
