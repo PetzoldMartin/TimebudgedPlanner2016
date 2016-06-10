@@ -238,8 +238,4 @@ class RoleServiceSpecification extends Specification {
 
     }
 
-
-
-
-
 }
