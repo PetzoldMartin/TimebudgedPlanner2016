@@ -46,7 +46,7 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
 
 
     private DeleteDialog deleteDialog = new DeleteDialog()
-    
+
     @Autowired
     private ProjectService projectService
     @Autowired
@@ -67,8 +67,8 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
             "$F.text"('Name', [uikey: PNAME])
             "$F.text"('Budget', [uikey: PBUDGET])
             "$C.hlayout"([uikey: 'assignedField', spacing: true]) {
-                "$F.list"('Avaiable User', [uikey  : 'leftColumn', rows: 12, width: '500', enabled: false,
-                                            itemCaptionMode: AbstractSelect.ItemCaptionMode.ID,
+                "$F.list"('Avaiable User', [uikey               : 'leftColumn', rows: 12, width: '500', enabled: false,
+                                            itemCaptionMode     : AbstractSelect.ItemCaptionMode.ID,
                                             nullSelectionAllowed: false, multiSelect: true
                 ])
                 "$C.vlayout"([uikey: 'selectField', spacing: true]) {
@@ -79,19 +79,19 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
                                                            items               : ROLETYPE.values(), value: ROLETYPE.Developer
                     ])
                     "$F.button"('>> Add >>', [uikey         : 'removeButton', width: '150',
-                                        //                                        visible       : authorizationService.hasRole('ROLE_ADMIN'),
-                                        disableOnClick: false,
-                                        clickListener : {addRoles()}
+                                              //                                        visible       : authorizationService.hasRole('ROLE_ADMIN'),
+                                              disableOnClick: false,
+                                              clickListener : { addRoles() }
                     ])
                     "$F.label"('')
                     "$F.button"('<< Remove <<', [uikey         : 'addButton', width: '150',
 //                                         visible       : authorizationService.hasRole('ROLE_ADMIN'),
-                                           disableOnClick: false,
-                                           clickListener : {removeRoles()}
+                                                 disableOnClick: false,
+                                                 clickListener : { removeRoles() }
                     ])
                 }
-                "$F.list"('Assigned User', [uikey  : 'rightColumn', rows: 12, width: '500', enabled: false,
-                                            itemCaptionMode: AbstractSelect.ItemCaptionMode.ID,
+                "$F.list"('Assigned User', [uikey               : 'rightColumn', rows: 12, width: '500', enabled: false,
+                                            itemCaptionMode     : AbstractSelect.ItemCaptionMode.ID,
                                             nullSelectionAllowed: false, multiSelect: true
                 ])
             }
@@ -129,7 +129,7 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
         assignedList = uiComponents."${subkeyPrefix}rightColumn"
         availableList = uiComponents."${subkeyPrefix}leftColumn"
         addButton = uiComponents."${subkeyPrefix}addButton"
-        removeButton= uiComponents."${subkeyPrefix}removeButton"
+        removeButton = uiComponents."${subkeyPrefix}removeButton"
         roleTypeSelect = uiComponents."${subkeyPrefix}roleTypeSelect"
         newButton = uiComponents."${subkeyPrefix}newbutton"
         editButton = uiComponents."${subkeyPrefix}editbutton"
@@ -184,10 +184,10 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
     @Override
     protected deletemode() {
         projectTree.onEditItem()
-        deleteDialog.id.value= currentDto.id.toString()
-        deleteDialog.name.value= currentDto.name
-        deleteDialog.storyCount.value= currentDto.userstorys.all.size().toString()
-        deleteDialog.sprintCount.value= currentDto.sprints.all.size().toString()
+        deleteDialog.id.value = currentDto.id.toString()
+        deleteDialog.name.value = currentDto.name
+        deleteDialog.storyCount.value = currentDto.userstorys.all.size().toString()
+        deleteDialog.sprintCount.value = currentDto.sprints.all.size().toString()
         //TODO add task count
 //        int count=0;
 //        currentDto.userstorys.all.each
@@ -275,11 +275,9 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
         pid.value = currentDto.id.toString()
         pname.value = currentDto.name
         pbudget.value = currentDto.budget.toString()
-
         setAssignedList()
-
     }
-    //TODO Role assignment with separate Lists
+    //TODO refresh with right id when in creation mode
     private void setAssignedList() {
         availableList.removeAllItems() //availableList side
         userService.getUsersNotInProject(currentDto.id).all.each { id, userNode ->
@@ -291,27 +289,27 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
             assignedList.addItem(roleNode)
         }
     }
+
     private addRoles() {
         if (availableList.value.empty) {
             Notification.show("Keine Avaiable User ausgewählt")
         } else {
-            availableList.value.each {RoleDto.QNode node ->
+            availableList.value.each { RoleDto.QNode node ->
                 availableList.removeItem(node)
-                node.userRole=roleTypeSelect.value
+                node.userRole = roleTypeSelect.value
                 assignedList.addItem(node)
             }
 //            Notification.show(availableList.value.toString()+roleTypeSelect.value)
         }
     }
-    private removeRoles() {
-        availableList.items
 
+    private removeRoles() {
         if (assignedList.value.empty) {
             Notification.show("Keine Assigned User ausgewählt")
         } else {
-            assignedList.value.each {RoleDto.QNode node ->
+            assignedList.value.each { RoleDto.QNode node ->
                 assignedList.removeItem(node)
-                node.userRole=null
+                node.userRole = null
                 availableList.addItem(node)
 
             }
@@ -328,18 +326,17 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
      */
     @Override
     protected saveItem(Long id) {
-        availableList.getItemIds().toArray().each {RoleDto.QNode it ->
-            roleService.deleteRole(new RoleDto.CDelete(id: it.id))
-        }
-        assignedList.getItemIds().toArray().each {RoleDto.QNode it ->
-            roleService.createOrUpdateRole(new RoleDto.CSet(id: it.id, userRole: it.userRole,projectId: currentDto.id, userId: it.user.id))
-        }
         ProjectDto.CSet command = new ProjectDto.CSet()
         command.id = id
         command.name = pname.value
         command.budget = new BigDecimal(longFrom(pbudget.value))
         currentDto = projectService.createOrUpdateProject(command)
-        setAssignedList()
+        availableList.getItemIds().toArray().each { RoleDto.QNode it ->
+            roleService.deleteRole(new RoleDto.CDelete(id: it.id))
+        }
+        assignedList.getItemIds().toArray().each { RoleDto.QNode it ->
+            roleService.createOrUpdateRole(new RoleDto.CSet(id: it.id, userRole: it.userRole, projectId: id, userId: it.user.id))
+        }
     }
 
     private class DeleteDialog {
@@ -370,7 +367,7 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
                                 [uikey         : 'cancelbutton',
                                  disableOnClick: true, enabled: true,
                                  clickListener : { sm.execute(Event.Cancel) }])
-                        }
+                    }
                 }
             }
 
