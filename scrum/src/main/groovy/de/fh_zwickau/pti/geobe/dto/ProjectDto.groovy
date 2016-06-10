@@ -19,17 +19,15 @@ class ProjectDto {
         Long id = 0
         String name = ''
         BigDecimal budget = 0
-        //TaskDto.QList backlog = new TaskDto.QList()
         SprintDto.QList sprints = new SprintDto.QList()
         UserstoryDto.QList userstorys = new UserstoryDto.QList()
-        RoleDto.QList developers = new RoleDto.QList()
+        RoleDto.QList developers = new RoleDto.QList() //TODO remove or use
     }
 
     public static class CSet {
         Long id = 0
         String name = ''
         BigDecimal budget = 0
-        List<Long> roleIds = []
         List<Long> sprintIds = []
         List<Long> userstoryIds = []
 
@@ -41,11 +39,9 @@ class ProjectDto {
 
     public static class QNode {
         String name
-        //List<TaskDto.QNode> backlog = []
         List<SprintDto.QNode> sprint = []
         List<UserstoryDto.QNode> userstory = []
-        List<UserstoryDto.QNode> userStory = []
-        List<RoleDto.QNode> developers = []
+        List<RoleDto.QNode> developers = [] //TODO remove or use
         @Override
         String toString() {
             this.@name

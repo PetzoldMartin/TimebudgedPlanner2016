@@ -85,9 +85,9 @@ class ProjectService {
         if (command.id) {
             project = projectRepository.findOne(command.id)
             if (!project) return new ProjectDto.QFull()
-            project.roles.each {
-                userRoleService.createOrUpdateRole(new RoleDto.CSet(userId: it.one.scrumUser.one.id,projectId: project.id,userRole: it.one.userRole))
-            }
+//            project.roles.each {
+//                userRoleService.createOrUpdateRole(new RoleDto.CSet(userId: it.one.scrumUser.one.id,projectId: project.id,userRole: it.one.userRole))
+//            }
         } else {
             project = new Project()
         }

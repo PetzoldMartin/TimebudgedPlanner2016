@@ -92,7 +92,7 @@ class UserService {
     public deleteUser(UserDto.CDelete command) {
         def user = userRepository.getOne(command.id)
         user.roles.all.each { Role role ->
-            userRoleService.deleteUserRole(new RoleDto.CDelete(id: role.id))
+            userRoleService.deleteRole(new RoleDto.CDelete(id: role.id))
         }
         user.tasks.removeAll()
         userRepository.delete(command.id)

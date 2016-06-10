@@ -8,6 +8,7 @@ import com.vaadin.ui.*
 import com.vaadin.ui.themes.Reindeer
 import de.fh_zwickau.pti.geobe.domain.ROLETYPE
 import de.fh_zwickau.pti.geobe.dto.ProjectDto
+import de.fh_zwickau.pti.geobe.dto.RoleDto
 import de.fh_zwickau.pti.geobe.service.IAuthorizationService
 import de.fh_zwickau.pti.geobe.service.ProjectService
 import de.fh_zwickau.pti.geobe.service.RoleService
@@ -38,8 +39,8 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
 
     private TextField pid, pname, pbudget
     private NativeSelect roleTypeSelect
-    private ListSelect available, assigned
-    private Button newButton, editButton, saveButton, cancelButton, deleteButton
+    private ListSelect availableList, assignedList
+    private Button newButton, editButton, saveButton, cancelButton, deleteButton, addButton, removeButton
     private Map<String, Serializable> currentItemId
     private ProjectDto.QFull currentDto
 
@@ -66,26 +67,33 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
             "$F.text"('Name', [uikey: PNAME])
             "$F.text"('Budget', [uikey: PBUDGET])
             "$C.hlayout"([uikey: 'assignedField', spacing: true]) {
-                "$F.list"('Avaiable User', [uikey  : 'leftColumn', rows: 12, width: '500',
-                                            enabled: false, itemCaptionMode: AbstractSelect.ItemCaptionMode.ID])
+                "$F.list"('Avaiable User', [uikey  : 'leftColumn', rows: 12, width: '500', enabled: false,
+                                            itemCaptionMode: AbstractSelect.ItemCaptionMode.ID,
+                                            nullSelectionAllowed: false, multiSelect: true
+                ])
                 "$C.vlayout"([uikey: 'selectField', spacing: true]) {
                     "$F.label"('')
-                    "$F.button"('Remove', [uikey         : 'addButton', width: '150',
-//                                        visible       : authorizationService.hasRole('ROLE_ADMIN'),
-                                           disableOnClick: true,
-                                           clickListener : { Notification.show("Left") }])
-                    "$F.button"('Add', [uikey         : 'removeButton', width: '150',
-                                        //                                        visible       : authorizationService.hasRole('ROLE_ADMIN'),
-                                        disableOnClick: true,
-                                        clickListener : { Notification.show("Right") }])
                     "$F.nativeselect"('Rollentypauswahl', [uikey               : 'roleTypeSelect', enabled: true, width: '150',
                                                            itemCaptionMode     : AbstractSelect.ItemCaptionMode.ID,
                                                            nullSelectionAllowed: false,
                                                            items               : ROLETYPE.values(), value: ROLETYPE.Developer
                     ])
+                    "$F.button"('>> Add >>', [uikey         : 'removeButton', width: '150',
+                                        //                                        visible       : authorizationService.hasRole('ROLE_ADMIN'),
+                                        disableOnClick: false,
+                                        clickListener : {addRoles()}
+                    ])
+                    "$F.label"('')
+                    "$F.button"('<< Remove <<', [uikey         : 'addButton', width: '150',
+//                                         visible       : authorizationService.hasRole('ROLE_ADMIN'),
+                                           disableOnClick: false,
+                                           clickListener : {removeRoles()}
+                    ])
                 }
-                "$F.list"('Assigned User', [uikey  : 'rightColumn', rows: 12, width: '500',
-                                            enabled: false, itemCaptionMode: AbstractSelect.ItemCaptionMode.ID])
+                "$F.list"('Assigned User', [uikey  : 'rightColumn', rows: 12, width: '500', enabled: false,
+                                            itemCaptionMode: AbstractSelect.ItemCaptionMode.ID,
+                                            nullSelectionAllowed: false, multiSelect: true
+                ])
             }
             "$C.hlayout"([uikey: 'buttonfield', spacing: true]) {
                 "$F.button"('New', [uikey         : 'newbutton',
@@ -118,8 +126,10 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
         pid = uiComponents."${subkeyPrefix + PID}"
         pname = uiComponents."${subkeyPrefix + PNAME}"
         pbudget = uiComponents."${subkeyPrefix + PBUDGET}"
-        assigned = uiComponents."${subkeyPrefix}rightColumn"
-        available = uiComponents."${subkeyPrefix}leftColumn"
+        assignedList = uiComponents."${subkeyPrefix}rightColumn"
+        availableList = uiComponents."${subkeyPrefix}leftColumn"
+        addButton = uiComponents."${subkeyPrefix}addButton"
+        removeButton= uiComponents."${subkeyPrefix}removeButton"
         roleTypeSelect = uiComponents."${subkeyPrefix}roleTypeSelect"
         newButton = uiComponents."${subkeyPrefix}newbutton"
         editButton = uiComponents."${subkeyPrefix}editbutton"
@@ -128,14 +138,12 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
         cancelButton = uiComponents."${subkeyPrefix}cancelbutton"
         projectTree.selectionModel.addListenerForKey(this, 'Project')
         projectTree.selectionModel.addRootChangeListener(this)
-
         // build dialog window
         deleteDialog.build()
         // build state machine
         sm = new TabViewStateMachine(TabViewStateMachine.State.TOPTAB, 'PrjTab')
         configureSm()
         sm.execute(Event.Init)
-
         roleTypeSelect.addValueChangeListener(new Property.ValueChangeListener() {
             @Override
             void valueChange(Property.ValueChangeEvent event) {
@@ -220,7 +228,7 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
     @Override
     protected emptymode() {
         clearFields()
-        [pname, pbudget, saveButton, cancelButton, editButton, deleteButton]
+        [pname, pbudget, saveButton, cancelButton, editButton, deleteButton, assignedList, availableList, addButton, removeButton, roleTypeSelect]
                 .each { it.enabled = false }
         newButton.enabled = true
     }
@@ -229,7 +237,7 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
     @Override
     protected showmode() {
         initItem(currentDto.id)
-        [pname, pbudget, saveButton, cancelButton]
+        [pname, pbudget, saveButton, cancelButton, assignedList, availableList, addButton, removeButton, roleTypeSelect]
                 .each { it.enabled = false }
         [editButton, newButton, deleteButton].each { it.enabled = true }
     }
@@ -238,7 +246,7 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
     @Override
     protected editmode() {
         projectTree.onEditItem()
-        [pname, pbudget, saveButton, cancelButton].each { it.enabled = true }
+        [pname, pbudget, saveButton, cancelButton, assignedList, availableList, addButton, removeButton, roleTypeSelect].each { it.enabled = true }
         [editButton, newButton, deleteButton].each { it.enabled = false }
     }
 
@@ -273,18 +281,42 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
     }
     //TODO Role assignment with separate Lists
     private void setAssignedList() {
-        available.removeAllItems() //available side
+        availableList.removeAllItems() //availableList side
         userService.getUsersNotInProject(currentDto.id).all.each { id, userNode ->
-            available.addItem(userNode)
-//            roleAssignment.setItemCaption(id, "$userNode.nick ($userNode.firstName)" + " userID: $userNode.id")
+            availableList.addItem(new RoleDto.QNode(user: userNode))
         }
-        def select = [] // assigned side
+        assignedList.removeAllItems() // assignedList side
+//        currentDto.developers.all.each { id, roleNode ->
         roleService.getRolesInProject(currentDto.id).all.each { id, roleNode ->
-            assigned.addItem(roleNode)
-//            assigned.setItemCaption(roleNode.user.id, "$roleNode.user.nick : $roleNode.userRole" + " userID: $roleNode.user.id")
-//            select << roleNode
+            assignedList.addItem(roleNode)
         }
-//        roleAssignment.setValue(select)
+    }
+    private addRoles() {
+        if (availableList.value.empty) {
+            Notification.show("Keine Avaiable User ausgewählt")
+        } else {
+            availableList.value.each {RoleDto.QNode node ->
+                availableList.removeItem(node)
+                node.userRole=roleTypeSelect.value
+                assignedList.addItem(node)
+            }
+//            Notification.show(availableList.value.toString()+roleTypeSelect.value)
+        }
+    }
+    private removeRoles() {
+        availableList.items
+
+        if (assignedList.value.empty) {
+            Notification.show("Keine Assigned User ausgewählt")
+        } else {
+            assignedList.value.each {RoleDto.QNode node ->
+                assignedList.removeItem(node)
+                node.userRole=null
+                availableList.addItem(node)
+
+            }
+//            Notification.show(assignedList.value.toString())
+        }
     }
 
     /**
@@ -296,11 +328,18 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
      */
     @Override
     protected saveItem(Long id) {
+        availableList.getItemIds().toArray().each {RoleDto.QNode it ->
+            roleService.deleteRole(new RoleDto.CDelete(id: it.id))
+        }
+        assignedList.getItemIds().toArray().each {RoleDto.QNode it ->
+            roleService.createOrUpdateRole(new RoleDto.CSet(id: it.id, userRole: it.userRole,projectId: currentDto.id, userId: it.user.id))
+        }
         ProjectDto.CSet command = new ProjectDto.CSet()
         command.id = id
         command.name = pname.value
         command.budget = new BigDecimal(longFrom(pbudget.value))
         currentDto = projectService.createOrUpdateProject(command)
+        setAssignedList()
     }
 
     private class DeleteDialog {

@@ -42,7 +42,7 @@ class RoleDto {
 
         @Override
         String toString() {
-           this.@user.nick + (userRole!=null? ' ('+this.@userRole+')' :'')
+           this.@user.nick + (userRole!=null? ' ('+this.@userRole+')' :'') + "($id)" //TODO remove Debug
         }
     }
     public static class CDelete {

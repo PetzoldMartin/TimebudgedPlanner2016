@@ -64,7 +64,14 @@ class RoleService {
         }
     }
 
-    public deleteUserRole(RoleDto.CDelete command) {
+    public deleteRole(RoleDto.CDelete command) {
+//        if (command.id) {
+//            //FIXME cant delete from UI
+//            Role delete = roleRepository.getOne(command.id)
+//            delete.scrumUser.removeAll()
+//            delete.project.removeAll()
+//            roleRepository.delete(delete)
+//        }
         roleRepository.getOne(command.id).each { Role it ->
             it.scrumUser.removeAll()
             it.project.removeAll()
@@ -78,7 +85,7 @@ class RoleService {
          {
             Role sr
             if (command.id) {
-                roleRepository.getOne(command.id).each {
+                sr = roleRepository.getOne(command.id).each {
                     if (command.userId) it.scrumUser = userRepository.getOne(command.userId)
                     if (command.projectId) it.project = projectRepository.getOne(command.projectId)
                     it.userRole = command.userRole
@@ -98,9 +105,9 @@ class RoleService {
     public RoleDto.QList getRolesInProject(Long command) {
         RoleDto.QList qList = new RoleDto.QList()
         roleRepository.findByProjectId(command).each { Role sp ->
-            def node = new RoleDto.QNode(userRole: sp.userRole,
+            def node = new RoleDto.QNode(id: sp.id, userRole: sp.userRole,
                     project: new ProjectDto.QNode(name: ((Project) (sp.project.one)).getName())
-                    , user: new UserDto.QNode(id: sp.scrumUser.one.id, nick: sp.scrumUser.one.nick)
+                    , user: new UserDto.QNode(id: sp.scrumUser.one.id, nick: sp.scrumUser.one.nick, firstName: sp.scrumUser.one.firstName, lastName: sp.scrumUser.one.lastName)
             )
             qList.all[sp.id] = node
         }

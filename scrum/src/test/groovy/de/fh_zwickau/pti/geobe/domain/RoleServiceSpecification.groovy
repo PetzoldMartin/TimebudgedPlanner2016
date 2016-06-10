@@ -52,7 +52,7 @@ class RoleServiceSpecification extends Specification {
     private StartupService startupService
 
     public cleanup() {
-        //TODO Fix CleanupALL for test when role is assigned
+        //TODO Fix CleanupALL for test when role is assignedList
         startupService.cleanupAll()
     }
 
@@ -180,10 +180,12 @@ class RoleServiceSpecification extends Specification {
         role.getProject().add(project)
         role.getScrumUser().add(user)
         projectRepository.saveAndFlush(project)
+        assert !roleRepository.findAll().isEmpty()
         and: 'we ask for query dtos'
         RoleDto.QList qList = userRoleService.getRoles()
         RoleDto.QFull qFull = userRoleService.getRoleDetails(role.id)
-        userRoleService.deleteUserRole(new RoleDto.CDelete(id: role.id))
+        userRoleService.deleteRole(new RoleDto.CDelete(id: role.id))
+
         userRepository.deleteAll()
         projectRepository.deleteAll()
         then:
