@@ -41,8 +41,6 @@ class ProjectService {
     private TaskService taskService
     @Autowired
     private RoleService userRoleService
-//    @Autowired
-//    private SprintService sprintService
 
     public ProjectDto.QList getProjects() {
         ProjectDto.QList qList = new ProjectDto.QList()

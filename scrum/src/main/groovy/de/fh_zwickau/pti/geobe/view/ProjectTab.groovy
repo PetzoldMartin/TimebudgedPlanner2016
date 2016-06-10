@@ -37,8 +37,8 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
     private static final String PBUDGET = 'pbudget'
 
     private TextField pid, pname, pbudget
-    private TwinColSelect roleAssignment
     private NativeSelect roleTypeSelect
+    private ListSelect available, assigned
     private Button newButton, editButton, saveButton, cancelButton, deleteButton
     private Map<String, Serializable> currentItemId
     private ProjectDto.QFull currentDto
@@ -65,12 +65,29 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
             "$F.text"('id', [uikey: PID, enabled: false])
             "$F.text"('Name', [uikey: PNAME])
             "$F.text"('Budget', [uikey: PBUDGET])
-            "$F.twincol"('Userrollen', [uikey             : 'roleAssignment', rows: 8, width: '100%',
-                                        leftColumnCaption : 'Avaiable User', enabled: false,
-                                        rightColumnCaption: 'Assigned User', gridPosition: [0, 2, 1, 2]])
-            "$F.nativeselect"('Rollentypauswahl', [uikey: 'roleTypeSelect',enabled: true])
-            "$C.hlayout"([uikey       : 'buttonfield', spacing: true,
-                          gridPosition: [0, 3, 1, 3]]) {
+            "$C.hlayout"([uikey: 'assignedField', spacing: true]) {
+                "$F.list"('Avaiable User', [uikey  : 'leftColumn', rows: 12, width: '500',
+                                            enabled: false, itemCaptionMode: AbstractSelect.ItemCaptionMode.ID])
+                "$C.vlayout"([uikey: 'selectField', spacing: true]) {
+                    "$F.label"('')
+                    "$F.button"('Remove', [uikey         : 'addButton', width: '150',
+//                                        visible       : authorizationService.hasRole('ROLE_ADMIN'),
+                                           disableOnClick: true,
+                                           clickListener : { Notification.show("Left") }])
+                    "$F.button"('Add', [uikey         : 'removeButton', width: '150',
+                                        //                                        visible       : authorizationService.hasRole('ROLE_ADMIN'),
+                                        disableOnClick: true,
+                                        clickListener : { Notification.show("Right") }])
+                    "$F.nativeselect"('Rollentypauswahl', [uikey               : 'roleTypeSelect', enabled: true, width: '150',
+                                                           itemCaptionMode     : AbstractSelect.ItemCaptionMode.ID,
+                                                           nullSelectionAllowed: false,
+                                                           items               : ROLETYPE.values(), value: ROLETYPE.Developer
+                    ])
+                }
+                "$F.list"('Assigned User', [uikey  : 'rightColumn', rows: 12, width: '500',
+                                            enabled: false, itemCaptionMode: AbstractSelect.ItemCaptionMode.ID])
+            }
+            "$C.hlayout"([uikey: 'buttonfield', spacing: true]) {
                 "$F.button"('New', [uikey         : 'newbutton',
                                     visible       : authorizationService.hasRole('ROLE_ADMIN'),
                                     disableOnClick: true,
@@ -101,7 +118,8 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
         pid = uiComponents."${subkeyPrefix + PID}"
         pname = uiComponents."${subkeyPrefix + PNAME}"
         pbudget = uiComponents."${subkeyPrefix + PBUDGET}"
-        roleAssignment = uiComponents."${subkeyPrefix}roleAssignment"
+        assigned = uiComponents."${subkeyPrefix}rightColumn"
+        available = uiComponents."${subkeyPrefix}leftColumn"
         roleTypeSelect = uiComponents."${subkeyPrefix}roleTypeSelect"
         newButton = uiComponents."${subkeyPrefix}newbutton"
         editButton = uiComponents."${subkeyPrefix}editbutton"
@@ -118,33 +136,12 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
         configureSm()
         sm.execute(Event.Init)
 
-        // role assignment init
-        roleTypeSelect.setItemCaptionMode(AbstractSelect.ItemCaptionMode.ID)
-        roleAssignment.setItemCaptionMode(AbstractSelect.ItemCaptionMode.ID) //WTF???
-
-        roleTypeSelect.setNullSelectionAllowed(false)
-        roleTypeSelect.addItems(ROLETYPE.values())
-        roleTypeSelect.setValue(ROLETYPE.Developer)
-
         roleTypeSelect.addValueChangeListener(new Property.ValueChangeListener() {
             @Override
             void valueChange(Property.ValueChangeEvent event) {
 //                Notification.show("Value changed:",
 //                        String.valueOf(event.property.value,
 //                        Notification.Type.TRAY_NOTIFICATION))
-            }
-        })
-
-        roleAssignment.addValueChangeListener(new Property.ValueChangeListener() {
-            @Override
-            void valueChange(Property.ValueChangeEvent event) {
-                if (event.getProperty().getValue() != null) {
-//                    Notification.show("Value changed:",
-//                            String.valueOf(event.property().getValue()),
-//                            Notification.Type.TRAY_NOTIFICATION)
-                    ScrumView.DebugField.value+="ValueChanged: $event.property.value \n"
-                    ScrumView.DebugField.value+="ItemIds: $roleAssignment.containerDataSource.itemIds \n"
-                }
             }
         })
     }
@@ -223,7 +220,7 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
     @Override
     protected emptymode() {
         clearFields()
-        [pname, pbudget, roleAssignment, saveButton, cancelButton, editButton, deleteButton]
+        [pname, pbudget, saveButton, cancelButton, editButton, deleteButton]
                 .each { it.enabled = false }
         newButton.enabled = true
     }
@@ -232,7 +229,7 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
     @Override
     protected showmode() {
         initItem(currentDto.id)
-        [pname, pbudget, roleAssignment, saveButton, cancelButton]
+        [pname, pbudget, saveButton, cancelButton]
                 .each { it.enabled = false }
         [editButton, newButton, deleteButton].each { it.enabled = true }
     }
@@ -241,14 +238,14 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
     @Override
     protected editmode() {
         projectTree.onEditItem()
-        [pname, pbudget, roleAssignment, saveButton, cancelButton].each { it.enabled = true }
+        [pname, pbudget, saveButton, cancelButton].each { it.enabled = true }
         [editButton, newButton, deleteButton].each { it.enabled = false }
     }
 
     /** clear all editable fields */
     @Override
     protected clearFields() {
-        [pname, pbudget, roleAssignment].each { it.clear() }
+        [pname, pbudget].each { it.clear() }
     }
 
     /**
@@ -276,18 +273,18 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
     }
     //TODO Role assignment with separate Lists
     private void setAssignedList() {
-        roleAssignment.removeAllItems() //available side
+        available.removeAllItems() //available side
         userService.getUsersNotInProject(currentDto.id).all.each { id, userNode ->
-            roleAssignment.addItem(userNode)
+            available.addItem(userNode)
 //            roleAssignment.setItemCaption(id, "$userNode.nick ($userNode.firstName)" + " userID: $userNode.id")
         }
         def select = [] // assigned side
         roleService.getRolesInProject(currentDto.id).all.each { id, roleNode ->
-            roleAssignment.addItem(roleNode)
-//            roleAssignment.setItemCaption(roleNode.user.id, "$roleNode.user.nick : $roleNode.userRole" + " userID: $roleNode.user.id")
-            select << roleNode
+            assigned.addItem(roleNode)
+//            assigned.setItemCaption(roleNode.user.id, "$roleNode.user.nick : $roleNode.userRole" + " userID: $roleNode.user.id")
+//            select << roleNode
         }
-        roleAssignment.setValue(select)
+//        roleAssignment.setValue(select)
     }
 
     /**
