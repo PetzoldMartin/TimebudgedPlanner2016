@@ -64,6 +64,7 @@ class RoleService {
         }
     }
 
+    @Transactional
     public deleteRole(RoleDto.CDelete command) {
 //        if (command.id) {
 //            //FIXME cant delete from UI
@@ -72,11 +73,13 @@ class RoleService {
 //            delete.project.removeAll()
 //            roleRepository.delete(delete)
 //        }
-        roleRepository.getOne(command.id).each { Role it ->
-            it.scrumUser.removeAll()
-            it.project.removeAll()
+        if (command.id) {
+            roleRepository.getOne(command.id).each { Role it ->
+                it.scrumUser.remove(it.scrumUser.one)
+                it.project.remove(it.project.one)
+            }
+            roleRepository.delete(command.id)
         }
-        roleRepository.delete(command.id)
     }
 
     public createOrUpdateRole(RoleDto.CSet command) {
