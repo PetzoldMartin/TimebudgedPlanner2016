@@ -104,6 +104,7 @@ class SprintService {
             Project p = sp.project.one
             qFull.project = new ProjectDto.QNode(name: p.name)
             def assigned = []
+            //TODO Test
             sp.backlog.all.forEach { Task t ->
                 qFull.backlog.all[t.id] = t.tag
                 assigned.add(t.id)

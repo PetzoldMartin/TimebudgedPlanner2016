@@ -4,12 +4,15 @@ import de.fh_zwickau.pti.geobe.domain.CompoundTask
 import de.fh_zwickau.pti.geobe.domain.Project
 import de.fh_zwickau.pti.geobe.domain.Subtask
 import de.fh_zwickau.pti.geobe.domain.Task
+import de.fh_zwickau.pti.geobe.domain.User
 import de.fh_zwickau.pti.geobe.dto.SprintDto
 import de.fh_zwickau.pti.geobe.dto.TaskDto
 import de.fh_zwickau.pti.geobe.dto.TaskDto.CSet
+import de.fh_zwickau.pti.geobe.dto.UserDto
 import de.fh_zwickau.pti.geobe.dto.UserstoryDto
 import de.fh_zwickau.pti.geobe.repository.SprintRepository
 import de.fh_zwickau.pti.geobe.repository.TaskRepository
+import de.fh_zwickau.pti.geobe.repository.UserRepository
 import de.fh_zwickau.pti.geobe.repository.UserstoryRepository
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
@@ -32,6 +35,8 @@ class TaskService {
     private TaskRepository taskRepository
     @Autowired
     private SprintRepository sprintRepository
+    @Autowired
+    private UserRepository userRepository
 
     TaskDto.QList getTasks() {
         TaskDto.QList qList = new TaskDto.QList()
@@ -77,6 +82,7 @@ class TaskService {
                 task.spent = cmd.spent
                 task.completed = cmd.completed
             }
+
         } else if (cmd.userstoryId || cmd.supertaskId) {
             if (cmd.classname.endsWith('Subtask')) {
                 task = new Subtask()
@@ -109,6 +115,19 @@ class TaskService {
                     return new TaskDto.QFull()
                 }
             }
+            if(cmd.developersIds) {
+                cmd.developersIds.each {
+                    User d = userRepository.findOne(it)
+                    if (d) {
+                        task.developers.add(d)
+                    } else {
+                        log.error("no user found for $cmd.developersIds")
+                        return new TaskDto.QFull()
+                    }
+                }
+            }
+
+
         } else {
             log.error("no project or supertask defined for new task")
             return new TaskDto.QFull()
@@ -119,6 +138,11 @@ class TaskService {
             task.supertask.add(taskRepository.findOne(cmd.supertaskId))
         if (cmd.sprintIds)
             sprintRepository.findAll(cmd.sprintIds).forEach { task.sprint.add(it) }
+        if(cmd.developersIds) {
+            userRepository.findAll(cmd.developersIds).forEach {
+                task.developers.add(it)
+            }
+        }
         makeQFull(sprintRepository.saveAndFlush(task))
     }
 
@@ -136,6 +160,13 @@ class TaskService {
             qFull.userstory = new UserstoryDto.QFull()
             qFull.supertask = new TaskDto.QList()
             qFull.sprints = new SprintDto.QList()
+            qFull.developers=new UserDto.QList()
+
+            if(t.developers.all){
+                t.developers.all.each {User u->
+                    qFull.developers.all[u.id] = new UserDto.QFull(id: u.id,nick:u.nick )
+                }
+            }
             if (t.userstory.one) {
                 qFull.userstory.id = t.userstory.one.id
                 qFull.userstory.name = t.userstory.one.name

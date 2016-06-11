@@ -155,6 +155,17 @@ class UserService {
 
     }
 
+    public  UserDto.QList getUsersInProjectofTaskButNotinTask(Long commandT,long commandu) {
+        def x=taskRepository.getOne(commandT).userstory.one.project.one.id
+        return getUsersInProject(x)
+
+    }
+    public  UserDto.QList getUsersInProjectofTask(Long command) {
+        def x=taskRepository.getOne(command).userstory.one.project.one.id
+      return getUsersInProject(x)
+
+    }
+
     public UserDto.QList getUsersInProject(Long command) {
         UserDto.QList qList = new UserDto.QList()
         userRepository.findAll().each { User sp ->

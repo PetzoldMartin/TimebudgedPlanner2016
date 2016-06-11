@@ -51,6 +51,7 @@ class TaskDto {
         List<Long> sprintIds = []
         Long supertaskId
         List<Long> subtaskIds = []
+        List<Long> developersIds = []
     }
 
     public static class CDelete {

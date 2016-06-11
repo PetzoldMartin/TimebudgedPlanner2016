@@ -6,7 +6,9 @@ import com.vaadin.spring.annotation.UIScope
 import com.vaadin.ui.*
 import com.vaadin.ui.themes.Reindeer
 import de.fh_zwickau.pti.geobe.dto.TaskDto
+import de.fh_zwickau.pti.geobe.dto.UserDto
 import de.fh_zwickau.pti.geobe.service.TaskService
+import de.fh_zwickau.pti.geobe.service.UserService
 import de.fh_zwickau.pti.geobe.util.view.VaadinSelectionListener
 import de.fh_zwickau.pti.geobe.util.view.VaadinTreeRootChangeListener
 import de.geobe.util.vaadin.TabViewStateMachine
@@ -40,6 +42,7 @@ class TaskTab extends TabBase
 
     private TextField tag, estimate, spent, userstory, stask, project
     private TextArea description
+    private TwinColSelect developers
     private CheckBox supertask, completed
     private Button newButton, editButton, saveButton, cancelButton, subtaskButton, deleteButton
 
@@ -57,6 +60,8 @@ class TaskTab extends TabBase
     private TaskService taskService
     @Autowired
     private ProjectTree projectTree
+    @Autowired
+    private UserService userService
 
 
     @Override
@@ -76,6 +81,9 @@ class TaskTab extends TabBase
             "$F.text"('Schätzung', [uikey: ESTIMATE])
             "$F.text"('aktueller Verbrauch', [uikey: SPENT])
             "$F.textarea"('Beschreibung', [uikey: DESCRIPTION])
+            "$F.twincol"('Developers', [uikey             : 'developers', rows: 8, width: '100%',
+                                     leftColumnCaption : 'available', enabled: false,
+                                     rightColumnCaption: 'selected', gridPosition: [0, 2, 1, 2]])
             "$C.hlayout"([uikey       : 'buttonfield', spacing: true,
                           gridPosition: [0, 3, 1, 3]]) {
                 "$F.button"('New',
@@ -122,6 +130,7 @@ class TaskTab extends TabBase
         description = uiComponents."$subkeyPrefix$DESCRIPTION"
         completed = uiComponents."$subkeyPrefix$IS_COMPLETED"
         supertask = uiComponents."$subkeyPrefix$IS_SUPERTASK"
+        developers = uiComponents."${subkeyPrefix}developers"
         newButton = uiComponents."${subkeyPrefix}newbutton"
         editButton = uiComponents."${subkeyPrefix}editbutton"
         deleteButton = uiComponents."${subkeyPrefix}deleteButton"
@@ -169,7 +178,7 @@ class TaskTab extends TabBase
     /** prepare INIT state */
     @Override
     protected initmode() {
-        [tag, userstory, project, estimate, spent, description, completed, supertask, stask,
+        [tag, userstory, project, estimate, spent, description, completed, supertask,developers, stask,
          saveButton, cancelButton, subtaskButton, editButton, deleteButton, newButton].each { it.enabled = false }
     }
     /** prepare EMPTY state */
@@ -177,16 +186,17 @@ class TaskTab extends TabBase
     protected emptymode() {
         clearFields()
         currentDto = null
-        [tag, userstory, project, estimate, spent, description, completed, supertask, stask,
+        [tag, userstory, project, estimate, spent, description, completed, supertask,developers, stask,
          saveButton, cancelButton, editButton, deleteButton, subtaskButton].each {
             it.enabled = false
         }
+        setAvailableList()
         [newButton].each { it.enabled = true }
     }
     /** prepare SHOW state */
     @Override
     protected showmode() {
-        [tag, userstory, project, estimate, spent, description, completed, supertask, stask, saveButton, cancelButton].each {
+        [tag, userstory, project, estimate, spent, description, completed, supertask,developers, stask, saveButton, cancelButton].each {
             it.enabled = false
         }
         [editButton, deleteButton, newButton, subtaskButton].each { it.enabled = true }
@@ -200,7 +210,7 @@ class TaskTab extends TabBase
     @Override
     protected createmode() {
         projectTree.onEditItem()
-        [tag, userstory, project, estimate, spent, description, supertask, stask, completed, saveButton, cancelButton].
+        [tag, userstory, project, estimate, spent, description, supertask,developers, stask, completed, saveButton, cancelButton].
                 each { it.enabled = true }
         [editButton, deleteButton, newButton, subtaskButton].each { it.enabled = false }
 //        saveButton.setClickShortcut(ShortcutAction.KeyCode.ENTER)
@@ -212,7 +222,7 @@ class TaskTab extends TabBase
         if (currentDto.classname == 'Subtask') {
             completed.enabled = true
         }
-        [tag, estimate, spent, description, saveButton, cancelButton].each { it.enabled = true }
+        [tag, estimate, spent, description,developers, saveButton, cancelButton].each { it.enabled = true }
         [editButton, deleteButton, newButton, subtaskButton].each { it.enabled = false }
 //        saveButton.setClickShortcut(ShortcutAction.KeyCode.ENTER)
     }
@@ -224,11 +234,13 @@ class TaskTab extends TabBase
         deleteDialog.id.value = currentDto.id.toString()
         deleteDialog.name.value = currentDto.tag
         int tasksCount = 0
+        deleteDialog.taskCount.value = currentDto.developers.all.size().toString()
         currentDto.subtasks.each { tasksCount += countTasks(it) }
         deleteDialog.taskCount.value = tasksCount.toString()
         [deleteDialog.acceptButton, deleteDialog.cancelButton].each { it.enabled = true }
         ui.addWindow(deleteDialog.window)
     }
+
 
     int countTasks(TaskDto.QNode qNode) {
         if (qNode) {
@@ -299,6 +311,28 @@ class TaskTab extends TabBase
         description.value = currentDto.description
         completed.value = currentDto.completed
         supertask.value = currentDto.classname == 'CompoundTask'
+        setAvailableList()
+        def select = []
+        def x=currentDto.developers
+        x.all.each { k, v ->
+            developers.addItem(k)
+            developers.setItemCaption(k, v.nick)
+            select += k
+        }
+        developers.setValue(select)
+    }
+
+    private void setAvailableList() {
+        if(currentItemId) {
+            developers.removeAllItems()
+            userService.getUsersInProjectofTask((Long) currentItemId['id']).all.each {
+                makeAvailableList(it.value)
+            }
+        }
+    }
+    private makeAvailableList(UserDto.QNode userNode) {
+        developers.addItem(userNode.id)
+        developers.setItemCaption(userNode.id,  userNode.nick)
     }
     /**
      * create or update a domain object from the current field values and
@@ -327,6 +361,11 @@ class TaskTab extends TabBase
                 command.supertaskId = currentDto.supertask.firstId
             }
         }
+        def v = []
+        developers.value.each {
+            v << it
+        }
+        command.developersIds = v
         currentDto = taskService.createOrUpdate(command)
     }
 

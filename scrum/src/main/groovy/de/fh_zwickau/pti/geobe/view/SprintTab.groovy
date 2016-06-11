@@ -177,6 +177,12 @@ class SprintTab extends TabBase
         }
     }
 
+    private makeAvailableList(QNode taskNode, int level = 0) {
+        backlog.addItem(taskNode.id)
+        backlog.setItemCaption(taskNode.id, (level > 0 ? '  ' : '') + ('-' * level) + taskNode.tag)
+        taskNode.children.each { makeAvailableList(it, level + 1) }
+    }
+
     @Override
     protected deletemode() {
         projectTree.onEditItem()
@@ -199,11 +205,7 @@ class SprintTab extends TabBase
         deleteDialog.window.close()
     }
 
-    private makeAvailableList(QNode taskNode, int level = 0) {
-        backlog.addItem(taskNode.id)
-        backlog.setItemCaption(taskNode.id, (level > 0 ? '  ' : '') + ('-' * level) + taskNode.tag)
-        taskNode.children.each { makeAvailableList(it, level + 1) }
-    }
+
 
     /**
      * for the given persistent object id, fetch the full dto and save it in field currentDto
