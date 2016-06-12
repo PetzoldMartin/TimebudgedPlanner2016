@@ -375,6 +375,11 @@ class TaskTab extends TabBase
         }
         command.developersIds = v
         currentDto = taskService.createOrUpdate(command)
+        //TODO make functional TaskService.getSubtaskIDs double Save for better debu
+        //Fixme compoundtask bug can not read subtasks
+
+        command.subtaskIds=taskService.getSubtaskIDs(id)
+        currentDto = taskService.createOrUpdate(command)
     }
 
     def createSubtask() {

@@ -143,6 +143,16 @@ class TaskService {
                 task.developers.add(it)
             }
         }
+        //TODO Make functional TaskService.getSubtaskIDs
+        //Fixme compoundtask bug can not read subtasks
+
+        if(cmd.subtaskIds){
+            cmd.subtaskIds.each {
+                Task sT=taskRepository.getOne(it)
+                CSet TCS = new CSet(id: sT.id,subtaskIds: getSubtaskIDs(sT.id), developersIds: cmd.developersIds)
+                createOrUpdate(TCS);
+            }
+        }
         makeQFull(sprintRepository.saveAndFlush(task))
     }
 
@@ -181,6 +191,22 @@ class TaskService {
         } else {
             new TaskDto.QFull()
         }
+    }
+
+    public List<Long>  getSubtaskIDs(Long Id){
+        //TODO Debug cast Problem
+        //Fixme compoundtask bug can not read subtasks
+        Task sT=taskRepository.getOne(Id)
+        def subtaskIds=[]
+        TaskDto.QFull q=makeQFull(sT);
+
+        //Why Compundtask is no Compoundtask whwn it comes from repository
+        if (sT instanceof CompoundTask) {
+            sT.subtask.all.each {
+                subtaskIds.add(it.id)
+            }
+        }
+        return subtaskIds
     }
 
     private List<TaskDto.QNode> taskSubtree(Task t, boolean notCompleted = false) {
