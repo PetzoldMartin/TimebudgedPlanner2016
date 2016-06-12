@@ -197,6 +197,13 @@ class TaskService {
         subtree
     }
 
+    public Task getRootTask(Task task){
+        if(task.supertask.one){
+            getRootTask(task.supertask.one)
+        }else{
+            return task
+        }
+    }
     public deleteTasks(TaskDto.CDelete command) {
         taskRepository.delete(command.id)
     }

@@ -5,8 +5,10 @@ import com.vaadin.spring.annotation.SpringComponent
 import com.vaadin.spring.annotation.UIScope
 import com.vaadin.ui.*
 import com.vaadin.ui.themes.Reindeer
+import de.fh_zwickau.pti.geobe.dto.RoleDto
 import de.fh_zwickau.pti.geobe.dto.TaskDto
 import de.fh_zwickau.pti.geobe.dto.UserDto
+import de.fh_zwickau.pti.geobe.service.RoleService
 import de.fh_zwickau.pti.geobe.service.TaskService
 import de.fh_zwickau.pti.geobe.service.UserService
 import de.fh_zwickau.pti.geobe.util.view.VaadinSelectionListener
@@ -62,6 +64,8 @@ class TaskTab extends TabBase
     private ProjectTree projectTree
     @Autowired
     private UserService userService
+    @Autowired
+    private RoleService roleService
 
 
     @Override
@@ -314,10 +318,13 @@ class TaskTab extends TabBase
         setAvailableList()
         def select = []
         def x=currentDto.developers
-        x.all.each { k, v ->
-            developers.addItem(k)
-            developers.setItemCaption(k, v.nick)
-            select += k
+        if(currentItemId) {
+            x.all.each { k, v ->
+                developers.addItem(k)
+                RoleDto.QFull r=roleService.getRoleofProjectAndUserByTaskAndUser((Long) currentItemId['id'],v.id)
+                developers.setItemCaption(k, v.nick+" ("+r.userRole+")")
+                select += k
+            }
         }
         developers.setValue(select)
     }
@@ -332,7 +339,8 @@ class TaskTab extends TabBase
     }
     private makeAvailableList(UserDto.QNode userNode) {
         developers.addItem(userNode.id)
-        developers.setItemCaption(userNode.id,  userNode.nick)
+        RoleDto.QFull r=roleService.getRoleofProjectAndUserByTaskAndUser((Long) currentItemId['id'],userNode.id)
+        developers.setItemCaption(userNode.id,  userNode.nick+" ("+r.userRole+")")
     }
     /**
      * create or update a domain object from the current field values and

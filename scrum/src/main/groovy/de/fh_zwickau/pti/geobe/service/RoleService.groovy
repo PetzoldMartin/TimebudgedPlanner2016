@@ -2,12 +2,14 @@ package de.fh_zwickau.pti.geobe.service
 
 import de.fh_zwickau.pti.geobe.domain.Project
 import de.fh_zwickau.pti.geobe.domain.Role
+import de.fh_zwickau.pti.geobe.domain.Task
 import de.fh_zwickau.pti.geobe.domain.User
 import de.fh_zwickau.pti.geobe.dto.ProjectDto
 import de.fh_zwickau.pti.geobe.dto.RoleDto
 import de.fh_zwickau.pti.geobe.dto.UserDto
 import de.fh_zwickau.pti.geobe.repository.ProjectRepository
 import de.fh_zwickau.pti.geobe.repository.RoleRepository
+import de.fh_zwickau.pti.geobe.repository.TaskRepository
 import de.fh_zwickau.pti.geobe.repository.UserRepository
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
@@ -32,6 +34,11 @@ class RoleService {
     private ProjectService projectService
     @Autowired
     private UserService userService
+    @Autowired
+    private  TaskRepository taskRepository
+    @Autowired
+    private TaskService taskService
+
     public RoleDto.QList getRoles() {
         RoleDto.QList qList = new RoleDto.QList()
         roleRepository.findAllByOrderByIdDesc().each { Role sp ->
@@ -49,6 +56,17 @@ class RoleService {
     public RoleDto.QFull getRoleDetails(Long pid) {
         Role p = roleRepository.findOne(pid)
         makeQFull(p)
+    }
+
+    public  RoleDto.QFull getRoleofProjectAndUserByTaskAndUser(Long commandTask,long commandUser) {
+        Task task = taskRepository.getOne(commandTask)
+        if (taskService.getRootTask(task).userstory.one) {
+        def x = taskService.getRootTask(task).userstory.one.project.one.id
+        return makeQFull(roleRepository.findByProjectIdAndScrumUserId(x, commandUser))
+    }else{
+            return new RoleDto.QFull();
+        }
+
     }
 
     private makeQFull(Role p) {

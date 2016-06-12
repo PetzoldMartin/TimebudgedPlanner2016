@@ -28,6 +28,8 @@ class UserService {
     @Autowired
     private RoleRepository roleRepository
     @Autowired
+    private RoleService roleService
+    @Autowired
     private UserRepository userRepository
     @Autowired
     private RoleService userRoleService
@@ -155,16 +157,18 @@ class UserService {
 
     }
 
-    public  UserDto.QList getUsersInProjectofTaskButNotinTask(Long commandT,long commandu) {
-        def x=taskRepository.getOne(commandT).userstory.one.project.one.id
-        return getUsersInProject(x)
 
-    }
     public  UserDto.QList getUsersInProjectofTask(Long command) {
-        def x=taskRepository.getOne(command).userstory.one.project.one.id
-      return getUsersInProject(x)
+        Task task=taskRepository.getOne(command)
+        if(taskService.getRootTask(task).userstory){
+        def x= taskService.getRootTask(task).userstory.one.project.one.id
+        return getUsersInProject(x)}else{
+            return new UserDto.QList();
+        }
 
     }
+
+
 
     public UserDto.QList getUsersInProject(Long command) {
         UserDto.QList qList = new UserDto.QList()
