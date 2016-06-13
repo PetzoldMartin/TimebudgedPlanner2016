@@ -306,6 +306,7 @@ class TaskTab extends TabBase
      */
     @Override
     protected void setFieldValues() {
+        //FIXME getRootTask detach?
         project.value = taskService.getRootTask(currentDto.id).userstory.project.name
         userstory.value = taskService.getRootTask(currentDto.id).userstory.name
 
