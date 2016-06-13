@@ -29,7 +29,6 @@ import javax.transaction.Transactional
 @Transactional
 @Slf4j
 class ProjectService {
-    //TODO Scrumuserrole implementation
 
     @Autowired
     private ProjectRepository projectRepository

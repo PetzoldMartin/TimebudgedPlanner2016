@@ -24,7 +24,6 @@ import javax.transaction.Transactional
 @Service
 @Transactional
 class TaskService {
-    //TODO Scrumuser implementation
     @Autowired
     private UserstoryRepository userstoryRepository
     @Autowired
@@ -63,7 +62,7 @@ class TaskService {
         createOrUpdate(cmd)
     }
 
-    TaskDto.QFull createOrUpdate(CSet cmd) { //TODO extends for user
+    TaskDto.QFull createOrUpdate(CSet cmd) {
         Task task
         if (cmd.id) {
             task = taskRepository.findOne(cmd.id)

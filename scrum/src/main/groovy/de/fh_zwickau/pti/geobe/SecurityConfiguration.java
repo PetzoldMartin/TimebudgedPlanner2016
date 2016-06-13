@@ -39,7 +39,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
 
-        auth.inMemoryAuthentication() //TODO make user in DB
+        auth.inMemoryAuthentication()
                 .withUser("user").password("user").roles("USER")
                 .and()
                 .withUser("admin").password("admin").roles("ADMIN");

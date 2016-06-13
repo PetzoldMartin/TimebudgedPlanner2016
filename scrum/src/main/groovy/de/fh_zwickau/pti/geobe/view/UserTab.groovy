@@ -222,7 +222,6 @@ class UserTab extends TabBase
         command.firstName = firstName.getValue()
         command.lastName = lastName.getValue()
         command.birthdate = birthdate.value
-        //TODO Create/Update User funtionallity in UserService
         currentDto = userService.createOrUpdateUser(command)
     }
 

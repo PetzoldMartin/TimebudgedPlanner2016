@@ -306,7 +306,6 @@ class TaskTab extends TabBase
      */
     @Override
     protected void setFieldValues() {
-        //FIXME getRootTask detach?
         if(currentDto.rootTaskId){
             TaskDto.QFull tempDto =taskService.getTaskDetails(currentDto.rootTaskId)
             project.value =tempDto.userstory.project.name
