@@ -91,6 +91,7 @@ class UserService {
         }
     }
 
+    //FIXME remove tasks assignment truly
     public deleteUser(UserDto.CDelete command) {
         def user = userRepository.getOne(command.id)
         user.roles.all.each { Role role ->
@@ -99,7 +100,6 @@ class UserService {
         user.tasks.removeAll()
         userRepository.delete(command.id)
     }
-
 
     public createOrUpdateUser(UserDto.CSet command) {
         User u
@@ -132,10 +132,9 @@ class UserService {
     public UserDto.QList getUsersNotInProject(Long command) {
         UserDto.QList qList = new UserDto.QList()
         userRepository.findAll().each { User sp ->
-            if(!roleRepository.findByProjectIdAndScrumUserId(command,sp.id).isEmpty()){
+            if (!roleRepository.findByProjectIdAndScrumUserId(command, sp.id).isEmpty()) {
 
-            }
-            else {
+            } else {
                 UserDto.QNode node = new UserDto.QNode(id: sp.id, nick: sp.nick, firstName: sp.firstName, lastName: sp.lastName)
                 sp.roles.getAll().each {
                     Role sr ->
@@ -158,18 +157,12 @@ class UserService {
     }
 
 
-
-
-
-
-
     public UserDto.QList getUsersInProject(Long command) {
         UserDto.QList qList = new UserDto.QList()
         userRepository.findAll().each { User sp ->
-            if(roleRepository.findByProjectIdAndScrumUserId(command,sp.id).isEmpty()){
+            if (roleRepository.findByProjectIdAndScrumUserId(command, sp.id).isEmpty()) {
 
-            }
-            else {
+            } else {
                 UserDto.QNode node = new UserDto.QNode(id: sp.id, nick: sp.nick, firstName: sp.firstName, lastName: sp.lastName)
                 sp.roles.getAll().each {
                     Role sr ->

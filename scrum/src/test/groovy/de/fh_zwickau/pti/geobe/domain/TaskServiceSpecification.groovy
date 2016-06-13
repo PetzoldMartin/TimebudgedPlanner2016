@@ -22,7 +22,6 @@ import javax.transaction.Transactional
 
 @Slf4j
 @SpringApplicationConfiguration(classes = GroovaaApplication)
-@Ignore
 class TaskServiceSpecification extends Specification {
 
     @Autowired

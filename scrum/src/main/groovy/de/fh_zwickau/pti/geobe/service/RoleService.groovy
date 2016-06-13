@@ -79,6 +79,9 @@ class RoleService {
     public deleteRole(RoleDto.CDelete command) {
         if (command.id) {
             Role delete = roleRepository.getOne(command.id)
+            //FIXME
+            delete.scrumUser.one.tasks.removeAll()
+//            roleRepository.saveAndFlush(delete.scrumUser.one)
             delete.scrumUser.remove(delete.scrumUser.one)
             delete.project.remove(delete.project.one)
             roleRepository.delete(command.id)

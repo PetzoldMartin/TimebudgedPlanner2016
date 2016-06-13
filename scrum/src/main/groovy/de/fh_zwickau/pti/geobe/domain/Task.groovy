@@ -13,6 +13,7 @@ import javax.persistence.*
  */
 
 @Entity
+//TODO check InheritanceType.SINGLE_TABLE
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Task {
     @Id

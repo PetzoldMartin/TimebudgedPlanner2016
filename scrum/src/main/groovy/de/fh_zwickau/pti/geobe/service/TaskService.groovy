@@ -151,7 +151,7 @@ class TaskService {
                 createOrUpdate(TCS);
             }
         }
-        makeQFull(userstoryRepository.saveAndFlush(task))
+        makeQFull(taskRepository.saveAndFlush(task))
     }
 
     public TaskDto.QNode taskTree(Task t, boolean notCompleted = false) {
@@ -235,6 +235,10 @@ class TaskService {
     }
 
     public deleteTasks(TaskDto.CDelete command) {
+        Task delete = taskRepository.findOne(command.id)
+        if (delete) {
+            delete.developers.removeAll()
+        }
         taskRepository.delete(command.id)
     }
 }
