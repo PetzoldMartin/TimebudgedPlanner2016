@@ -158,15 +158,8 @@ class UserService {
     }
 
 
-    public  UserDto.QList getUsersInProjectofTask(Long command) {
-        Task task=taskRepository.getOne(command)
-        if(taskService.getRootTask(task).userstory){
-        def x= taskService.getRootTask(task).userstory.one.project.one.id
-        return getUsersInProject(x)}else{
-            return new UserDto.QList();
-        }
 
-    }
+
 
 
 

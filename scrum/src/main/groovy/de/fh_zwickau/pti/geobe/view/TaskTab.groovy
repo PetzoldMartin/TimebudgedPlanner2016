@@ -307,8 +307,15 @@ class TaskTab extends TabBase
     @Override
     protected void setFieldValues() {
         //FIXME getRootTask detach?
-        project.value = taskService.getRootTask(currentDto.id).userstory.project.name
-        userstory.value = taskService.getRootTask(currentDto.id).userstory.name
+        if(currentDto.rootTaskId){
+            TaskDto.QFull tempDto =taskService.getTaskDetails(currentDto.rootTaskId)
+            project.value =tempDto.userstory.project.name
+            userstory.value = tempDto.userstory.name
+        }else{
+            project.value =currentDto.userstory.project.name
+            userstory.value = currentDto.userstory.name
+        }
+
 
         tag.value = currentDto.tag
         stask.value = currentDto.supertask.firstId.toString()
@@ -323,7 +330,7 @@ class TaskTab extends TabBase
         if (currentItemId) {
             x.all.each { k, v ->
                 developers.addItem(k)
-                RoleDto.QFull r = roleService.getRoleofProjectAndUserByTaskAndUser((Long) currentItemId['id'], v.id)
+                RoleDto.QFull r = roleService.getRoleofProjectAndUser((Long) currentTopItemId['id'], v.id)
                 developers.setItemCaption(k, v.nick + " (" + r.userRole + ")")
                 select += k
             }
@@ -334,7 +341,7 @@ class TaskTab extends TabBase
     private void setAvailableList() {
         if (currentItemId) {
             developers.removeAllItems()
-            userService.getUsersInProjectofTask((Long) currentItemId['id']).all.each {
+            userService.getUsersInProject(currentTopItemId['id']).all.each {
                 makeAvailableList(it.value)
             }
         }
@@ -342,7 +349,7 @@ class TaskTab extends TabBase
 
     private makeAvailableList(UserDto.QNode userNode) {
         developers.addItem(userNode.id)
-        RoleDto.QFull r = roleService.getRoleofProjectAndUserByTaskAndUser((Long) currentItemId['id'], userNode.id)
+        RoleDto.QFull r = roleService.getRoleofProjectAndUser((Long) currentTopItemId['id'], userNode.id)
         developers.setItemCaption(userNode.id, userNode.nick + " (" + r.userRole + ")")
     }
     /**

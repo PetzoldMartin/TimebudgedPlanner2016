@@ -17,6 +17,7 @@ class TaskDto {
     }
 
     public static class QFull {
+        Long rootTaskId
         Long id
         String classname
         String tag

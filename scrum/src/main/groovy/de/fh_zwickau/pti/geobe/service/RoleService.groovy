@@ -58,15 +58,8 @@ class RoleService {
         makeQFull(p)
     }
 
-    public  RoleDto.QFull getRoleofProjectAndUserByTaskAndUser(Long commandTask,long commandUser) {
-        Task task = taskRepository.getOne(commandTask)
-        if (taskService.getRootTask(task).userstory.one) {
-        def x = taskService.getRootTask(task).userstory.one.project.one.id
-        return makeQFull(roleRepository.findByProjectIdAndScrumUserId(x, commandUser))
-    }else{
-            return new RoleDto.QFull();
-        }
-
+    public  RoleDto.QFull getRoleofProjectAndUser(Long commandProject,long commandUser) {
+        makeQFull(roleRepository.findByProjectIdAndScrumUserId(commandProject, commandUser))
     }
 
     private makeQFull(Role p) {

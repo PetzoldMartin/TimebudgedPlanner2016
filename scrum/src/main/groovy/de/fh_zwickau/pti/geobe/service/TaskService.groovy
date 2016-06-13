@@ -164,6 +164,9 @@ class TaskService {
                     id       : t.id, tag: t.tag, description: t.description,
                     estimate : t.estimate, spent: t.spent,
                     completed: t.completed])
+            if(t.supertask.one) {
+                qFull.rootTaskId=getRootTask(t).id
+            }
             qFull.classname = t.class.canonicalName.replaceAll(/.*\./, '')
             qFull.userstory = new UserstoryDto.QFull()
             qFull.supertask = new TaskDto.QList()
@@ -185,7 +188,7 @@ class TaskService {
             t.supertask.all.each { qFull.supertask.all[it.id] = it.tag }
             t.sprint.all.sort { it.start }.each { qFull.sprints.all[it.id] = it.name }
             qFull.subtasks = taskSubtree(t)
-            qFull
+           return qFull
         } else {
             new TaskDto.QFull()
         }
@@ -220,11 +223,9 @@ class TaskService {
         subtree
     }
 
-    public TaskDto.QFull getRootTask(Long taskId) {
-        makeQFull(getRootTask(taskRepository.getOne(taskId)))
-    }
 
-    public Task getRootTask(Task task) {
+    @Transactional
+    private Task getRootTask(Task task) {
 
         if (task.supertask.one) {
             getRootTask(task.supertask.one)
