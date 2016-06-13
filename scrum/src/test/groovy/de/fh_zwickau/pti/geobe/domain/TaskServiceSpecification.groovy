@@ -9,6 +9,7 @@ import de.fh_zwickau.pti.geobe.service.TaskService
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationConfiguration
+import spock.lang.Ignore
 import spock.lang.Specification
 
 import javax.transaction.Transactional
@@ -21,6 +22,7 @@ import javax.transaction.Transactional
 
 @Slf4j
 @SpringApplicationConfiguration(classes = GroovaaApplication)
+@Ignore
 class TaskServiceSpecification extends Specification {
 
     @Autowired

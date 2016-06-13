@@ -70,6 +70,7 @@ class QuerySpecification extends Specification {
         assert taskRepository.findByProjectIdAndIdNotIn(pid, [t0.id, t1.id]).contains(t2)
     }
 
+    @Ignore
     def 'a compound task native query'() {
         when:
         def ct = taskRepository.findAllCompoundTask()

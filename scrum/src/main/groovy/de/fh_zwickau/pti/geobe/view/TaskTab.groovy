@@ -85,9 +85,9 @@ class TaskTab extends TabBase
             "$F.text"('Schätzung', [uikey: ESTIMATE])
             "$F.text"('aktueller Verbrauch', [uikey: SPENT])
             "$F.textarea"('Beschreibung', [uikey: DESCRIPTION])
-            "$F.twincol"('Developers', [uikey             : 'developers', rows: 8, width: '100%',
-                                     leftColumnCaption : 'available', enabled: false,
-                                     rightColumnCaption: 'selected', gridPosition: [0, 2, 1, 2]])
+            "$F.twincol"('Developers', [uikey             : 'developers', rows: 8, width: '600',
+                                        leftColumnCaption : 'available', enabled: false,
+                                        rightColumnCaption: 'selected', gridPosition: [0, 2, 1, 2]])
             "$C.hlayout"([uikey       : 'buttonfield', spacing: true,
                           gridPosition: [0, 3, 1, 3]]) {
                 "$F.button"('New',
@@ -182,7 +182,7 @@ class TaskTab extends TabBase
     /** prepare INIT state */
     @Override
     protected initmode() {
-        [tag, userstory, project, estimate, spent, description, completed, supertask,developers, stask,
+        [tag, userstory, project, estimate, spent, description, completed, supertask, developers, stask,
          saveButton, cancelButton, subtaskButton, editButton, deleteButton, newButton].each { it.enabled = false }
     }
     /** prepare EMPTY state */
@@ -190,7 +190,7 @@ class TaskTab extends TabBase
     protected emptymode() {
         clearFields()
         currentDto = null
-        [tag, userstory, project, estimate, spent, description, completed, supertask,developers, stask,
+        [tag, userstory, project, estimate, spent, description, completed, supertask, developers, stask,
          saveButton, cancelButton, editButton, deleteButton, subtaskButton].each {
             it.enabled = false
         }
@@ -200,7 +200,7 @@ class TaskTab extends TabBase
     /** prepare SHOW state */
     @Override
     protected showmode() {
-        [tag, userstory, project, estimate, spent, description, completed, supertask,developers, stask, saveButton, cancelButton].each {
+        [tag, userstory, project, estimate, spent, description, completed, supertask, developers, stask, saveButton, cancelButton].each {
             it.enabled = false
         }
         [editButton, deleteButton, newButton, subtaskButton].each { it.enabled = true }
@@ -214,7 +214,7 @@ class TaskTab extends TabBase
     @Override
     protected createmode() {
         projectTree.onEditItem()
-        [tag, userstory, project, estimate, spent, description, supertask,developers, stask, completed, saveButton, cancelButton].
+        [tag, userstory, project, estimate, spent, description, supertask, developers, stask, completed, saveButton, cancelButton].
                 each { it.enabled = true }
         [editButton, deleteButton, newButton, subtaskButton].each { it.enabled = false }
 //        saveButton.setClickShortcut(ShortcutAction.KeyCode.ENTER)
@@ -226,7 +226,7 @@ class TaskTab extends TabBase
         if (currentDto.classname == 'Subtask') {
             completed.enabled = true
         }
-        [tag, estimate, spent, description,developers, saveButton, cancelButton].each { it.enabled = true }
+        [tag, estimate, spent, description, developers, saveButton, cancelButton].each { it.enabled = true }
         [editButton, deleteButton, newButton, subtaskButton].each { it.enabled = false }
 //        saveButton.setClickShortcut(ShortcutAction.KeyCode.ENTER)
     }
@@ -251,7 +251,7 @@ class TaskTab extends TabBase
             if (qNode.children.size() > 0) {
                 int taskCount = 0
                 qNode.children.each { taskCount += countTasks(it) }
-                return taskCount+1
+                return taskCount + 1
             } else return 1
         } else return 0
     }
@@ -306,10 +306,11 @@ class TaskTab extends TabBase
      */
     @Override
     protected void setFieldValues() {
+        project.value = taskService.getRootTask(currentDto.id).userstory.project.name
+        userstory.value = taskService.getRootTask(currentDto.id).userstory.name
+
         tag.value = currentDto.tag
-        userstory.value = currentDto.userstory.name
         stask.value = currentDto.supertask.firstId.toString()
-        project.value = currentDto.userstory.project.name
         estimate.value = currentDto.estimate.toString()
         spent.value = currentDto.spent.toString()
         description.value = currentDto.description
@@ -317,12 +318,12 @@ class TaskTab extends TabBase
         supertask.value = currentDto.classname == 'CompoundTask'
         setAvailableList()
         def select = []
-        def x=currentDto.developers
-        if(currentItemId) {
+        def x = currentDto.developers
+        if (currentItemId) {
             x.all.each { k, v ->
                 developers.addItem(k)
-                RoleDto.QFull r=roleService.getRoleofProjectAndUserByTaskAndUser((Long) currentItemId['id'],v.id)
-                developers.setItemCaption(k, v.nick+" ("+r.userRole+")")
+                RoleDto.QFull r = roleService.getRoleofProjectAndUserByTaskAndUser((Long) currentItemId['id'], v.id)
+                developers.setItemCaption(k, v.nick + " (" + r.userRole + ")")
                 select += k
             }
         }
@@ -330,17 +331,18 @@ class TaskTab extends TabBase
     }
 
     private void setAvailableList() {
-        if(currentItemId) {
+        if (currentItemId) {
             developers.removeAllItems()
             userService.getUsersInProjectofTask((Long) currentItemId['id']).all.each {
                 makeAvailableList(it.value)
             }
         }
     }
+
     private makeAvailableList(UserDto.QNode userNode) {
         developers.addItem(userNode.id)
-        RoleDto.QFull r=roleService.getRoleofProjectAndUserByTaskAndUser((Long) currentItemId['id'],userNode.id)
-        developers.setItemCaption(userNode.id,  userNode.nick+" ("+r.userRole+")")
+        RoleDto.QFull r = roleService.getRoleofProjectAndUserByTaskAndUser((Long) currentItemId['id'], userNode.id)
+        developers.setItemCaption(userNode.id, userNode.nick + " (" + r.userRole + ")")
     }
     /**
      * create or update a domain object from the current field values and
@@ -374,12 +376,11 @@ class TaskTab extends TabBase
             v << it
         }
         command.developersIds = v
-        currentDto = taskService.createOrUpdate(command)
-        //TODO make functional TaskService.getSubtaskIDs double Save for better debu
-        //Fixme compoundtask bug can not read subtasks
 
-        command.subtaskIds=taskService.getSubtaskIDs(id)
+        //TODO enable recursive User assignment
+        //        command.subtaskIds=taskService.getSubtaskIDs(id)
         currentDto = taskService.createOrUpdate(command)
+        setFieldValues()
     }
 
     def createSubtask() {

@@ -1,10 +1,6 @@
 package de.fh_zwickau.pti.geobe.service
 
-import de.fh_zwickau.pti.geobe.domain.CompoundTask
-import de.fh_zwickau.pti.geobe.domain.Project
-import de.fh_zwickau.pti.geobe.domain.Subtask
-import de.fh_zwickau.pti.geobe.domain.Task
-import de.fh_zwickau.pti.geobe.domain.User
+import de.fh_zwickau.pti.geobe.domain.*
 import de.fh_zwickau.pti.geobe.dto.SprintDto
 import de.fh_zwickau.pti.geobe.dto.TaskDto
 import de.fh_zwickau.pti.geobe.dto.TaskDto.CSet
@@ -115,45 +111,47 @@ class TaskService {
                     return new TaskDto.QFull()
                 }
             }
-            if(cmd.developersIds) {
-                cmd.developersIds.each {
-                    User d = userRepository.findOne(it)
-                    if (d) {
-                        task.developers.add(d)
-                    } else {
-                        log.error("no user found for $cmd.developersIds")
-                        return new TaskDto.QFull()
-                    }
-                }
-            }
 
 
         } else {
             log.error("no project or supertask defined for new task")
             return new TaskDto.QFull()
         }
+
+        task.developers.removeAll() //fix: first remove all old devs before add new
+        if (cmd.developersIds) {
+            cmd.developersIds.each {
+                User d = userRepository.findOne(it)
+                if (d) {
+                    task.developers.add(d)
+                } else {
+                    log.error("no user found for $cmd.developersIds")
+                    return new TaskDto.QFull()
+                }
+            }
+        }
+
         if (cmd.subtaskIds)
             taskRepository.findAllByOrderByTagAsc(cmd.subtaskIds).forEach { task.subtask.add(it) }
         if (cmd.supertaskId)
             task.supertask.add(taskRepository.findOne(cmd.supertaskId))
         if (cmd.sprintIds)
             sprintRepository.findAll(cmd.sprintIds).forEach { task.sprint.add(it) }
-        if(cmd.developersIds) {
+        if (cmd.developersIds) {
             userRepository.findAll(cmd.developersIds).forEach {
                 task.developers.add(it)
             }
         }
-        //TODO Make functional TaskService.getSubtaskIDs
-        //Fixme compoundtask bug can not read subtasks
+        //TODO redo recursive assignment of devs
 
-        if(cmd.subtaskIds){
+        if (!cmd.subtaskIds.empty) {
             cmd.subtaskIds.each {
-                Task sT=taskRepository.getOne(it)
-                CSet TCS = new CSet(id: sT.id,subtaskIds: getSubtaskIDs(sT.id), developersIds: cmd.developersIds)
+                Task sT = taskRepository.getOne(it)
+                CSet TCS = new CSet(id: sT.id, subtaskIds: getSubtaskIDs(sT.id), developersIds: cmd.developersIds)
                 createOrUpdate(TCS);
             }
         }
-        makeQFull(sprintRepository.saveAndFlush(task))
+        makeQFull(userstoryRepository.saveAndFlush(task))
     }
 
     public TaskDto.QNode taskTree(Task t, boolean notCompleted = false) {
@@ -170,11 +168,11 @@ class TaskService {
             qFull.userstory = new UserstoryDto.QFull()
             qFull.supertask = new TaskDto.QList()
             qFull.sprints = new SprintDto.QList()
-            qFull.developers=new UserDto.QList()
+            qFull.developers = new UserDto.QList()
 
-            if(t.developers.all){
-                t.developers.all.each {User u->
-                    qFull.developers.all[u.id] = new UserDto.QFull(id: u.id,nick:u.nick )
+            if (t.developers.all) {
+                t.developers.all.each { User u ->
+                    qFull.developers.all[u.id] = new UserDto.QFull(id: u.id, nick: u.nick)
                 }
             }
             if (t.userstory.one) {
@@ -193,15 +191,14 @@ class TaskService {
         }
     }
 
-    public List<Long>  getSubtaskIDs(Long Id){
-        //TODO Debug cast Problem
-        //Fixme compoundtask bug can not read subtasks
-        Task sT=taskRepository.getOne(Id)
-        def subtaskIds=[]
-        TaskDto.QFull q=makeQFull(sT);
+    public List<Long> getSubtaskIDs(Long Id) {
+        Task sT = taskRepository.getOne(Id)
+        def subtaskIds = []
 
-        //Why Compundtask is no Compoundtask whwn it comes from repository
-        if (sT instanceof CompoundTask) {
+        TaskDto.QFull q = makeQFull(sT);
+
+        //Why CompundTask is no CompoundTask when it comes from repository
+        if (sT.class == CompoundTask | sT instanceof CompoundTask) { //FIXME instance of not functionally
             sT.subtask.all.each {
                 subtaskIds.add(it.id)
             }
@@ -223,13 +220,19 @@ class TaskService {
         subtree
     }
 
-    public Task getRootTask(Task task){
-        if(task.supertask.one){
+    public TaskDto.QFull getRootTask(Long taskId) {
+        makeQFull(getRootTask(taskRepository.getOne(taskId)))
+    }
+
+    public Task getRootTask(Task task) {
+
+        if (task.supertask.one) {
             getRootTask(task.supertask.one)
-        }else{
+        } else {
             return task
         }
     }
+
     public deleteTasks(TaskDto.CDelete command) {
         taskRepository.delete(command.id)
     }

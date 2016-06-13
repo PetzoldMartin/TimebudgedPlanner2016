@@ -56,7 +56,7 @@ class UserstoryTab extends TabBase
             "$F.text"('Priorität', [uikey: 'priority', enabled: false])
             "$F.textarea"('Beschreibung', [uikey: 'description', enabled: false])
             "$F.twincol"('Backlog', [uikey             : 'backlog', rows: 8, width: '100%',
-                                     leftColumnCaption : 'available', enabled: false,
+                                     leftColumnCaption : 'available', enabled: false, visible: false,
                                      rightColumnCaption: 'selected', gridPosition: [0, 2, 1, 2]])
             "$C.hlayout"([uikey: 'buttonfield', spacing: true, gridPosition: [0, 3, 1, 3]]) {
                 "$F.button"('New', [uikey        : 'newbutton', disableOnClick: true,

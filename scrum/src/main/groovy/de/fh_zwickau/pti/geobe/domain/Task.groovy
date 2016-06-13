@@ -81,5 +81,5 @@ public abstract class Task {
             { User o -> o.tasks } as IGetOther
     )
 
-    public IToAny<Task> getDevelopers() { toDeveloper }
+    public IToAny<User> getDevelopers() { toDeveloper }
 }
