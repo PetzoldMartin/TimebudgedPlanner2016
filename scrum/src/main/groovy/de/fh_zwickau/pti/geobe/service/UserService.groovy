@@ -91,14 +91,21 @@ class UserService {
         }
     }
 
-    //FIXME remove tasks assignment truly
     public deleteUser(UserDto.CDelete command) {
-        def user = userRepository.getOne(command.id)
-        user.roles.all.each { Role role ->
-            userRoleService.deleteRole(new RoleDto.CDelete(id: role.id))
+        if (userRepository.exists(command.id)) {
+            User user = userRepository.getOne(command.id)
+            user.roles.all.each { Role role ->
+                userRoleService.deleteRole(new RoleDto.CDelete(id: role.id))
+            }
+//            user.tasks.removeAll()
+//            user.roles.all.each {
+//                it.scrumUser.one.tasks.removeAll()
+//                it.scrumUser.remove(it.scrumUser.one)
+//                it.project.remove(it.project.one)
+//                roleRepository.delete(it)
+//            }
+            userRepository.delete(command.id)
         }
-        user.tasks.removeAll()
-        userRepository.delete(command.id)
     }
 
     public createOrUpdateUser(UserDto.CSet command) {
