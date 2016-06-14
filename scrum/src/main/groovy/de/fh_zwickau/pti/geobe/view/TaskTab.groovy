@@ -291,6 +291,7 @@ class TaskTab extends TabBase
     @Override
     protected clearFields() {
         [tag, userstory, project, estimate, spent, description, completed, supertask].each { it.clear() }
+        setAvailableList()
     }
     /**
      * for the given persistent object id, fetch the full dto and save it in field currentDto
