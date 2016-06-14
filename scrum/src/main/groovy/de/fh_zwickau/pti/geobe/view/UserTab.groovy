@@ -170,6 +170,7 @@ class UserTab extends TabBase
         deleteDialog.id.value = currentDto.id.toString()
         deleteDialog.nick.value = currentDto.nick
         deleteDialog.taskCount.value = currentDto.tasks.all.size().toString()
+        deleteDialog.projectCount.value = currentDto.roles.all.size().toString()
         [deleteDialog.acceptButton, deleteDialog.cancelButton].each { it.enabled = true }
         UI.getCurrent().addWindow(deleteDialog.window)
     }
@@ -228,7 +229,7 @@ class UserTab extends TabBase
     }
 
     private class DeleteDialog {
-        TextField nick, id, taskCount
+        TextField nick, id, taskCount, projectCount
         Button acceptButton, cancelButton
         Window window
 
@@ -244,6 +245,7 @@ class UserTab extends TabBase
                     "$F.text"('id', [uikey: 'id'])
                     "$F.text"('Nick', [uikey: 'nick'])
                     "$F.text"('Anzahl der verwalteten Tasks', [uikey: 'taskCount'])
+                    "$F.text"('Anzahl der zugeortneten Projekte', [uikey: 'projectCount'])
                     "$C.hlayout"([uikey: 'buttonfield', spacing: true]) {
                         "$F.button"('Accept',
                                 [uikey         : 'acceptButton',
@@ -262,6 +264,7 @@ class UserTab extends TabBase
             id = dialogComponents."${keyPrefix}id"
             nick = dialogComponents."${keyPrefix}nick"
             taskCount = dialogComponents."${keyPrefix}taskCount"
+            projectCount = dialogComponents."${keyPrefix}projectCount"
             acceptButton = dialogComponents."${keyPrefix}acceptButton"
             cancelButton = dialogComponents."${keyPrefix}cancelbutton"
             window.center()
