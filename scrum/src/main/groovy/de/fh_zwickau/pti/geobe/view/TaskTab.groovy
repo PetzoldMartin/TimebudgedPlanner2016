@@ -237,24 +237,11 @@ class TaskTab extends TabBase
         projectTree.onEditItem()
         deleteDialog.id.value = currentDto.id.toString()
         deleteDialog.name.value = currentDto.tag
-        int tasksCount = 0
-        deleteDialog.taskCount.value = currentDto.developers.all.size().toString()
-        currentDto.subtasks.each { tasksCount += countTasks(it) }
-        deleteDialog.taskCount.value = tasksCount.toString()
+        deleteDialog.taskCount.value = currentDto.taskCount.toString()
         [deleteDialog.acceptButton, deleteDialog.cancelButton].each { it.enabled = true }
         ui.addWindow(deleteDialog.window)
     }
 
-
-    int countTasks(TaskDto.QNode qNode) {
-        if (qNode) {
-            if (qNode.children.size() > 0) {
-                int taskCount = 0
-                qNode.children.each { taskCount += countTasks(it) }
-                return taskCount + 1
-            } else return 1
-        } else return 0
-    }
 
     @Override
     protected cancelDelete() {

@@ -1,5 +1,6 @@
 package de.fh_zwickau.pti.geobe.service
 
+import de.fh_zwickau.pti.geobe.domain.CompoundTask
 import de.fh_zwickau.pti.geobe.domain.Project
 import de.fh_zwickau.pti.geobe.domain.Task
 import de.fh_zwickau.pti.geobe.domain.Userstory
@@ -90,10 +91,9 @@ class UserstoryService {
                     new UserstoryDto.QFull(id: us.id, name: us.name, description: us.description, priority: us.priority)
             Project p = us.project.one
             qFull.project = new ProjectDto.QNode(name: p.name)
-            def assigned = []
             us.task.all.forEach { Task t ->
                 qFull.backlog.all[t.id] = t.tag
-                assigned.add(t.id)
+                qFull.taskCount+=taskService.countTasks(t)
             }
             // findByProjectIdAndIdNotIn does not work with an empty list of ids, so add an invalid id 0
 //            taskRepository.findByProjectIdAndIdNotIn(sp.project.one.id, assigned ?: [0L]).each { Task t ->

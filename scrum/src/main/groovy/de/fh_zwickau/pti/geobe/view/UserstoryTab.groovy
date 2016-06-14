@@ -198,7 +198,7 @@ class UserstoryTab extends TabBase
         projectTree.onEditItem()
         deleteDialog.id.value = currentDto.id.toString()
         deleteDialog.name.value = currentDto.name
-        deleteDialog.taskCount.value = currentDto.backlog.all.size().toString()
+        deleteDialog.taskCount.value = currentDto.taskCount.toString()
         [deleteDialog.acceptButton, deleteDialog.cancelButton].each { it.enabled = true }
         UI.getCurrent().addWindow(deleteDialog.window)
     }

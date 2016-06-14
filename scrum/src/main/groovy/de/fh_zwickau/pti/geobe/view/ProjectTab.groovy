@@ -358,7 +358,7 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
                     "$F.text"('Name', [uikey: 'name'])
                     "$F.text"('Anzahl der abhängigen Userstorys', [uikey: 'storyCount'])
                     "$F.text"('Anzahl der abhängigen Sprints', [uikey: 'sprintCount'])
-                    "$F.text"('Anzahl der abhängigen Tasks', [uikey: 'taskCount'])
+                    "$F.text"('Anzahl der abhängigen Tasks', [uikey: 'taskCount', visible: false])
                     "$C.hlayout"([uikey: 'buttonfield', spacing: true]) {
                         "$F.button"('Accept',
                                 [uikey         : 'acceptButton',

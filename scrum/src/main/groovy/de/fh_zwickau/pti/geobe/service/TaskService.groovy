@@ -187,10 +187,23 @@ class TaskService {
             t.supertask.all.each { qFull.supertask.all[it.id] = it.tag }
             t.sprint.all.sort { it.start }.each { qFull.sprints.all[it.id] = it.name }
             qFull.subtasks = taskSubtree(t)
+            qFull.taskCount = countTasks(t)-1
            return qFull
         } else {
             new TaskDto.QFull()
         }
+    }
+
+    public int countTasks(Task task) {
+        if (task) {
+            if (task instanceof CompoundTask) {
+                int taskCount = 0
+                task.subtask.all.each {Task it ->
+                    taskCount += countTasks(it)
+                }
+                return taskCount + 1
+            } else return 1
+        } else return 0
     }
 
     public List<Long> getSubtaskIDs(Long Id) {

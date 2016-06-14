@@ -25,6 +25,7 @@ class TaskDto {
         Long estimate
         Long summedEstimate
         Long spent
+        Integer taskCount = 0
         Boolean completed
         UserstoryDto.QFull userstory = new UserstoryDto.QFull()
         SprintDto.QList sprints = new SprintDto.QList()
