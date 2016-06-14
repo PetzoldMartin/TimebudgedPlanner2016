@@ -254,6 +254,7 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
     @Override
     protected clearFields() {
         [pname, pbudget].each { it.clear() }
+        setAssignedList(0l)
     }
 
     /**
@@ -275,17 +276,17 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
         pid.value = currentDto.id.toString()
         pname.value = currentDto.name
         pbudget.value = currentDto.budget.toString()
-        setAssignedList()
+        setAssignedList(currentDto.id)
     }
     //TODO refresh with right id when in creation mode
-    private void setAssignedList() {
+    private void setAssignedList(Long pid) {
         availableList.removeAllItems() //availableList side
-        userService.getUsersNotInProject(currentDto.id).all.each { id, userNode ->
+        userService.getUsersNotInProject(pid).all.each { id, userNode ->
             availableList.addItem(new RoleDto.QNode(user: userNode))
         }
         assignedList.removeAllItems() // assignedList side
 //        currentDto.developers.all.each { id, roleNode ->
-        roleService.getRolesInProject(currentDto.id).all.each { id, roleNode ->
+        roleService.getRolesInProject(pid).all.each { id, roleNode ->
             assignedList.addItem(roleNode)
         }
     }
