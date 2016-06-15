@@ -248,12 +248,14 @@ class UserstoryTab extends TabBase
         command.projectId = (Long) currentProjectItemId['id']
         command.name = name.getValue()
         command.description = description.getValue()
+        command.priority = new BigDecimal(longFrom(priority.getValue()))
         def v = []
         backlog.value.each {
             v << it
         }
         command.taskIds = v
         currentDto = userstoryService.createOrUpdateUserstory(command)
+        projectTree.onEditItemDone(currentItemId, currentCaption, true)
     }
 
     private class DeleteDialog {
