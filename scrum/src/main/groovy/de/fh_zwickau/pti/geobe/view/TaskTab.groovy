@@ -72,12 +72,12 @@ class TaskTab extends TabBase
     Component build() {
         topComponent = vaadin."$C.vlayout"('Tasks',
                 [spacing: true, margin: true]) {
-            "$C.hlayout"('Status', [spacing: true, margin: false]) {
-                "$F.text"('Aufgabe', [uikey: TAG])
-                "$F.text"('Userstory', [uikey: USERSTORY, visible: false])
-                "$F.text"('Project', [uikey: PROJECT, visible: false])
-                "$F.text"('Supertask', [uikey: 'sTask', visible: false])
+            "$C.hlayout"('Debug', [spacing: true, margin: false, visible: false]) {
+                "$F.text"('Userstory', [uikey: USERSTORY, ])
+                "$F.text"('Project', [uikey: PROJECT, ])
+                "$F.text"('Supertask', [uikey: 'sTask', ])
             }
+            "$F.text"('Aufgabe', [uikey: TAG])
             "$C.hlayout"('Status', [spacing: true, margin: false]) {
                 "$F.checkbox"('übergeordnet', [uikey: IS_SUPERTASK])
                 "$F.checkbox"('abgeschlossen', [uikey: IS_COMPLETED])

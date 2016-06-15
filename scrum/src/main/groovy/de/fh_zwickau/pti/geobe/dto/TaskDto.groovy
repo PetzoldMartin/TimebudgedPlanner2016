@@ -17,17 +17,17 @@ class TaskDto {
     }
 
     public static class QFull {
-        Long rootTaskId
-        Long id
-        String classname
-        String tag
-        String description
-        Long estimate
-        Long summedEstimate
-        Long spent
+        Long rootTaskId = 0
+        Long id = 0
+        String classname = ''
+        String tag = ''
+        String description = ''
+        Long estimate = 0
+        Long summedEstimate = 0
+        Long spent = 0
         Integer taskCount = 0
-        Boolean completed
-        UserStoryDto.QFull userstory = new UserStoryDto.QFull()
+        Boolean completed = false
+        UserstoryDto.QFull userstory = new UserstoryDto.QFull()
         SprintDto.QList sprints = new SprintDto.QList()
         QList supertask = new QList()
         List<QNode> subtasks = []
