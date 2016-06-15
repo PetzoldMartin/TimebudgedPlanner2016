@@ -32,7 +32,7 @@ public class Role {
 
 
     // references
-    @ManyToOne(optional = true,cascade = [CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH,CascadeType.REFRESH])
+    @ManyToOne(optional = true)//,cascade = [CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH,CascadeType.REFRESH])
     @JoinColumn(name = "project_id")
     //, referencedColumnName = "project_id",insertable=false, updatable=false)
     private Project project;
@@ -46,7 +46,7 @@ public class Role {
 
     public IToAny<Project> getProject() { return toProject; }
 
-    @ManyToOne(optional = true,cascade = [CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH,CascadeType.REFRESH])
+    @ManyToOne(optional = true)//,cascade = [CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH,CascadeType.REFRESH])
     @JoinColumn(name = "scrumUser_id")
     //, referencedColumnName = "scrumUser_id",insertable=false, updatable=false)
     private User scrumUser;

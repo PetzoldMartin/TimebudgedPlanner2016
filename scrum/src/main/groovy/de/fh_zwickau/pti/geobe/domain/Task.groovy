@@ -71,7 +71,7 @@ public abstract class Task {
         return toSupertask;
     }
 
-    @ManyToMany(mappedBy = 'tasks',cascade = [CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST]) //Owner
+    @ManyToMany(mappedBy = 'tasks')//,cascade = [CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST]) //Owner
 //    @JoinTable(name = 'join_task_developer',
 //            joinColumns = @JoinColumn(name = 'task_id'),
 //            inverseJoinColumns = @JoinColumn(name = 'developer_id'))

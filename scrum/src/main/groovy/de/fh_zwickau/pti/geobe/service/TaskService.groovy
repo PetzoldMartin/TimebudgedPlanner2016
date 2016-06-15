@@ -248,6 +248,9 @@ class TaskService {
 
     public deleteTasks(TaskDto.CDelete command) {
         Task delete = taskRepository.findOne(command.id)
+       taskSubtree(delete).each {
+           taskRepository.findOne(it.id).developers.removeAll()
+        }
         if (delete) {
             delete.developers.removeAll()
         }

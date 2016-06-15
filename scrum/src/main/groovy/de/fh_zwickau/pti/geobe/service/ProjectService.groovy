@@ -9,6 +9,7 @@ import de.fh_zwickau.pti.geobe.dto.ProjectDto.CDelete
 import de.fh_zwickau.pti.geobe.dto.ProjectDto.CSet
 import de.fh_zwickau.pti.geobe.dto.RoleDto
 import de.fh_zwickau.pti.geobe.dto.SprintDto
+import de.fh_zwickau.pti.geobe.dto.TaskDto
 import de.fh_zwickau.pti.geobe.dto.UserstoryDto
 import de.fh_zwickau.pti.geobe.repository.ProjectRepository
 import de.fh_zwickau.pti.geobe.repository.SprintRepository
@@ -105,6 +106,12 @@ class ProjectService {
         Project delete = projectRepository.findOne(command.id)
         if (delete) {
             delete.sprint.all.each {it.backlog.removeAll()}
+            //delete.roles.removeAll()
+            delete.userstorys.all.each {
+                it.task.all.each {
+                    taskService.deleteTasks(new TaskDto.CDelete(id: it.id))
+                }
+            }
         }
         projectRepository.delete(command.id)
 //        Project project

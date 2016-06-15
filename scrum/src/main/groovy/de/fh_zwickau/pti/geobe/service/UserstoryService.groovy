@@ -106,6 +106,10 @@ class UserstoryService {
     }
 
     public deleteUserstory(UserstoryDto.CDelete command) {
+        Userstory userstory=userstoryRepository.getOne(command.id)
+        userstory.task.all.each {
+            taskService.deleteTasks(new TaskDto.CDelete(id: it.id))
+        }
         userstoryRepository.delete(command.id)
     }
 }
