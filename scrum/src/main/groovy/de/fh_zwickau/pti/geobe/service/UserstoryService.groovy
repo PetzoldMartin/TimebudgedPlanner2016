@@ -5,7 +5,7 @@ import de.fh_zwickau.pti.geobe.domain.Task
 import de.fh_zwickau.pti.geobe.domain.Userstory
 import de.fh_zwickau.pti.geobe.dto.ProjectDto
 import de.fh_zwickau.pti.geobe.dto.TaskDto
-import de.fh_zwickau.pti.geobe.dto.UserStoryDto
+import de.fh_zwickau.pti.geobe.dto.UserstoryDto
 import de.fh_zwickau.pti.geobe.repository.ProjectRepository
 import de.fh_zwickau.pti.geobe.repository.TaskRepository
 import de.fh_zwickau.pti.geobe.repository.UserstoryRepository
@@ -32,25 +32,25 @@ class UserstoryService {
     @Autowired
     private TaskService taskService
 
-    public UserStoryDto.QFull getUserstoryDetails(Long pid) {
+    public UserstoryDto.QFull getUserstoryDetails(Long pid) {
         Userstory us = userstoryRepository.findOne(pid)
         makeQFull(us)
     }
 
-    public UserStoryDto.QFull createOrUpdateUserstory(UserStoryDto.CSet command) {
+    public UserstoryDto.QFull createOrUpdateUserstory(UserstoryDto.CSet command) {
         Userstory us
         if (command.id) {
             us = userstoryRepository.findOne(command.id)
             if (!us) {
                 log.error("cannot find sprint for id $command.id")
-                return new UserStoryDto.QFull()
+                return new UserstoryDto.QFull()
             }
         } else {
             us = new Userstory()
             Project p = projectRepository.findOne(command.projectId)
             if (!p) {
                 log.error("cannot find project for id $command.projectId")
-                return new UserStoryDto.QFull()
+                return new UserstoryDto.QFull()
             }
             us.project.add(p)
         }
@@ -86,8 +86,8 @@ class UserstoryService {
 
     private makeQFull(Userstory us) {
         if (us) {
-            UserStoryDto.QFull qFull =
-                    new UserStoryDto.QFull(id: us.id, name: us.name, description: us.description, priority: us.priority)
+            UserstoryDto.QFull qFull =
+                    new UserstoryDto.QFull(id: us.id, name: us.name, description: us.description, priority: us.priority)
             Project p = us.project.one
             qFull.project = new ProjectDto.QNode(name: p.name)
             us.task.all.forEach { Task t ->
@@ -100,11 +100,11 @@ class UserstoryService {
 //            }
             qFull
         } else {
-            new UserStoryDto.QFull()
+            new UserstoryDto.QFull()
         }
     }
 
-    public deleteUserstory(UserStoryDto.CDelete command) {
+    public deleteUserstory(UserstoryDto.CDelete command) {
         Userstory userstory=userstoryRepository.getOne(command.id)
         userstory.task.all.each {
             taskService.deleteTasks(new TaskDto.CDelete(id: it.id))
@@ -112,10 +112,10 @@ class UserstoryService {
         userstoryRepository.delete(command.id)
     }
 
-    public UserStoryDto.QList getUserstorys(){
-        UserStoryDto.QList qList = new UserStoryDto.QList()
+    public UserstoryDto.QList getUserstorys(){
+        UserstoryDto.QList qList = new UserstoryDto.QList()
         userstoryRepository.findAll().sort { it.name.toLowerCase() }.each {
-                def node = new UserStoryDto.QNode([id: it.id,name: it.name])
+                def node = new UserstoryDto.QNode([id: it.id, name: it.name])
                 qList.all[it.id] = node
         }
         qList

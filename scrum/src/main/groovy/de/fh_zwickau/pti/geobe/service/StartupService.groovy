@@ -6,7 +6,7 @@ import de.fh_zwickau.pti.geobe.dto.RoleDto
 import de.fh_zwickau.pti.geobe.dto.SprintDto
 import de.fh_zwickau.pti.geobe.dto.TaskDto
 import de.fh_zwickau.pti.geobe.dto.UserDto
-import de.fh_zwickau.pti.geobe.dto.UserStoryDto
+import de.fh_zwickau.pti.geobe.dto.UserstoryDto
 import de.fh_zwickau.pti.geobe.repository.*
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
@@ -55,37 +55,37 @@ class StartupService implements IStartupService {
     void initApplicationData() {
         projectService.createOrUpdateProject(new ProjectDto.CSet(name: 'Project_one', budget: 200))
         projectService.createOrUpdateProject(new ProjectDto.CSet(name: 'Project_two', budget: 300))
-        def userIds=[]
-        userIds+=userService.createOrUpdateUser(new UserDto.CSet(birthdate: new Date(),firstName: 'Marown_one',lastName: 'Kastanie',nick: 'OneMhKay',password: '123')).id
-        userIds+=userService.createOrUpdateUser(new UserDto.CSet(birthdate: new Date(),firstName: 'Marown_two',lastName: 'Kastanie',nick: 'TwoMhKay',password: '123')).id
-        userService.createOrUpdateUser(new UserDto.CSet(birthdate: new Date(),firstName: 'Marown_three',lastName: 'Kastanie',nick: 'ThreeMhKay',password: '123'))
+        def userIds = []
+        userIds += userService.createOrUpdateUser(new UserDto.CSet(birthdate: new Date(), firstName: 'Marown_one', lastName: 'Kastanie', nick: 'OneMhKay', password: '123')).id
+        userIds += userService.createOrUpdateUser(new UserDto.CSet(birthdate: new Date(), firstName: 'Marown_two', lastName: 'Kastanie', nick: 'TwoMhKay', password: '123')).id
+        userService.createOrUpdateUser(new UserDto.CSet(birthdate: new Date(), firstName: 'Marown_three', lastName: 'Kastanie', nick: 'ThreeMhKay', password: '123'))
         projectService.getProjects().all.each {
-            userstoryService.createOrUpdateUserstory(new UserStoryDto.CSet(name: 'Story_one', description: 'describesth', priority: 3l, projectId: it.value.id))
-            userstoryService.createOrUpdateUserstory(new UserStoryDto.CSet(name: 'Story_two', description: 'describesth', priority: 3l, projectId: it.value.id))
-            sprintService.createOrUpdateSprint(new SprintDto.CSet(name: 'SP_one',projectId: it.value.id,start: new Date(),end: new Date()))
-            sprintService.createOrUpdateSprint(new SprintDto.CSet(name: 'SP_two',projectId: it.value.id,start: new Date(),end: new Date()))
-            userService.getUsers().all.each {it2->
-                userRoleService.createOrUpdateRole(new RoleDto.CSet(userRole: ROLETYPE.Developer,userId: it2.value.id,projectId: it.value.id))
+            userstoryService.createOrUpdateUserstory(new UserstoryDto.CSet(name: 'Story_one', description: 'describesth', priority: 3l, projectId: it.value.id))
+            userstoryService.createOrUpdateUserstory(new UserstoryDto.CSet(name: 'Story_two', description: 'describesth', priority: 3l, projectId: it.value.id))
+            sprintService.createOrUpdateSprint(new SprintDto.CSet(name: 'SP_one', projectId: it.value.id, start: new Date(), end: new Date()))
+            sprintService.createOrUpdateSprint(new SprintDto.CSet(name: 'SP_two', projectId: it.value.id, start: new Date(), end: new Date()))
+            userService.getUsers().all.each { it2 ->
+                userRoleService.createOrUpdateRole(new RoleDto.CSet(userRole: ROLETYPE.Developer, userId: it2.value.id, projectId: it.value.id))
             }
         }
-        List<TaskDto.QFull> tlist=[]
+        List<TaskDto.QFull> tlist = []
         Long i
         userstoryService.getUserstorys().all.each {
-            tlist+=taskService.createOrUpdate(new TaskDto.CSet(classname: 'CompoundTask',tag: 'machen_one',description: 'arbeiten',estimate: 20,spent: 10,userstoryId: it.value.id))
-            tlist+=taskService.createOrUpdate(new TaskDto.CSet(classname: 'CompoundTask',tag: 'machen_two',description: 'arbeiten',estimate: 20,spent: 10,userstoryId: it.value.id))
-            tlist+=taskService.createOrUpdate(new TaskDto.CSet(classname: 'CompoundTask',tag: 'machen_three',description: 'arbeiten',estimate: 20,spent: 10,userstoryId: it.value.id))
-            tlist+=taskService.createOrUpdate(new TaskDto.CSet(classname: 'CompoundTask',tag: 'machen_four',description: 'arbeiten',estimate: 20,spent: 10,supertaskId: tlist.get(tlist.size()-2).id))
-            tlist+taskService.createOrUpdate(new TaskDto.CSet(classname: 'Subtask',tag: 'machen_five',description: 'arbeiten',estimate: 20,spent: 10,supertaskId: tlist.get(tlist.size()-3).id))
-            tlist+taskService.createOrUpdate(new TaskDto.CSet(classname: 'Subtask',tag: 'machen_six',description: 'arbeiten',estimate: 20,spent: 10,supertaskId: tlist.get(tlist.size()-2).id))
-            tlist+taskService.createOrUpdate(new TaskDto.CSet(classname: 'Subtask',tag: 'machen_seven',description: 'arbeiten',estimate: 20,spent: 10,supertaskId: tlist.get(tlist.size()-1).id))
+            tlist += taskService.createOrUpdate(new TaskDto.CSet(classname: 'CompoundTask', tag: 'machen_one', description: 'arbeiten', estimate: 20, spent: 10, userstoryId: it.value.id))
+            tlist += taskService.createOrUpdate(new TaskDto.CSet(classname: 'CompoundTask', tag: 'machen_two', description: 'arbeiten', estimate: 20, spent: 10, userstoryId: it.value.id))
+            tlist += taskService.createOrUpdate(new TaskDto.CSet(classname: 'CompoundTask', tag: 'machen_three', description: 'arbeiten', estimate: 20, spent: 10, userstoryId: it.value.id))
+            tlist += taskService.createOrUpdate(new TaskDto.CSet(classname: 'CompoundTask', tag: 'machen_four', description: 'arbeiten', estimate: 20, spent: 10, supertaskId: tlist.get(tlist.size() - 2).id))
+            tlist += taskService.createOrUpdate(new TaskDto.CSet(classname: 'Subtask', tag: 'machen_five', description: 'arbeiten', estimate: 20, spent: 10, supertaskId: tlist.get(tlist.size() - 2).id))
+            tlist += taskService.createOrUpdate(new TaskDto.CSet(classname: 'Subtask', tag: 'machen_six', description: 'arbeiten', estimate: 20, spent: 10, supertaskId: tlist.get(tlist.size() - 2).id))
+            tlist += taskService.createOrUpdate(new TaskDto.CSet(classname: 'Subtask', tag: 'machen_seven', description: 'arbeiten', estimate: 20, spent: 10, supertaskId: tlist.get(tlist.size() - 3).id))
         }
         tlist.eachWithIndex { TaskDto.QFull entry, int i2 ->
-            if(i2.mod(2)==0){
-                taskService.createOrUpdate(new TaskDto.CSet(classname: entry.classname,tag: entry.tag,description: entry.description,estimate: entry.estimate,spent: entry.spent,userstoryId: entry.userstory.id,developersIds: userIds))
-            }else{
+            if (i2.mod(2) == 0) {
+                taskService.createOrUpdate(new TaskDto.CSet(id: entry.id, classname: entry.classname, tag: entry.tag, description: entry.description, estimate: entry.estimate, spent: entry.spent, userstoryId: entry.userstory.id, developersIds: userIds, completed: false))
+            } else {
                 sprintService.getSprints().all.each {
-                    def x=new SprintDto.CSet(name: it.value.name)
-                    x.taskIds+=entry.id
+                    def x = new SprintDto.CSet(name: it.value.name)
+                    x.taskIds += entry.id
                     sprintService.createOrUpdateSprint(x)
 
                 }
@@ -97,7 +97,6 @@ class StartupService implements IStartupService {
 
 
     @Override
-    @Transactional
     void cleanupAll() {
 
         if (!roleRepository.findAll().empty) {
@@ -105,9 +104,15 @@ class StartupService implements IStartupService {
                 roleService.deleteRole(new RoleDto.CDelete(id: it.id))
             }
         }
+        if (!projectService.findAll().empty) {
+            projectRepository.findAll().each {
+                projectService.deleteProject(new ProjectDto.CDelete(id: it.id))
+            }
+        }
+
         if (!userstoryRepository.findAll().empty) {
             userstoryRepository.findAll().each {
-                userstoryService.deleteUserstory(new UserStoryDto.CDelete(id: it.id))
+                userstoryService.deleteUserstory(new UserstoryDto.CDelete(id: it.id))
             }
         }
         if (!sprintRepository.findAll().empty) {
@@ -115,11 +120,7 @@ class StartupService implements IStartupService {
                 sprintService.deleteSprint(new SprintDto.CDelete(id: it.id))
             }
         }
-        if (!projectRepository.findAll().empty) {
-            projectRepository.findAll().each {
-                projectService.deleteProject(new ProjectDto.CDelete(id: it.id))
-            }
-        }
+
 
         if (!userRepository.findAll().empty) {
             userRepository.findAll().each {
@@ -128,11 +129,24 @@ class StartupService implements IStartupService {
         }
         if (!taskRepository.findAll().empty) {
             taskRepository.findAll().each {
-                taskService.deleteTasks(new TaskDto.CDelete(id: it.id))
+                if (it.userstory) {
+                    if (it.userstory.one) {
+                        taskService.deleteTasks(new TaskDto.CDelete(id: it.id))
+                    }
+                }
             }
         }
 
 
+        projectRepository.deleteAll()
+        sprintRepository.deleteAll()
+        taskRepository.findAll().each {
+            if(taskRepository.findOne(it.id)) {
+                taskRepository.delete(it.id)
+            }
+        }
+        userRepository.deleteAll()
+        roleRepository.deleteAll()
         assert projectRepository.findAll().empty
         assert userstoryRepository.findAll().empty
         assert sprintRepository.findAll().empty

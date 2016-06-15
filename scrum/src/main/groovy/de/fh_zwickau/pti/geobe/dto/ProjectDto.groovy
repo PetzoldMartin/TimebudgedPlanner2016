@@ -38,6 +38,7 @@ class ProjectDto {
     }
 
     public static class QNode {
+        Long id = 0
         String name
         List<SprintDto.QNode> sprint = []
         List<UserstoryDto.QNode> userstory = []

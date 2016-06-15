@@ -5,7 +5,7 @@ import de.fh_zwickau.pti.geobe.dto.SprintDto
 import de.fh_zwickau.pti.geobe.dto.TaskDto
 import de.fh_zwickau.pti.geobe.dto.TaskDto.CSet
 import de.fh_zwickau.pti.geobe.dto.UserDto
-import de.fh_zwickau.pti.geobe.dto.UserStoryDto
+import de.fh_zwickau.pti.geobe.dto.UserstoryDto
 import de.fh_zwickau.pti.geobe.repository.SprintRepository
 import de.fh_zwickau.pti.geobe.repository.TaskRepository
 import de.fh_zwickau.pti.geobe.repository.UserRepository
@@ -163,11 +163,11 @@ class TaskService {
                     id       : t.id, tag: t.tag, description: t.description,
                     estimate : t.estimate, spent: t.spent,
                     completed: t.completed])
-            if(t.supertask.one) {
-                qFull.rootTaskId=getRootTask(t).id
+            if (t.supertask.one) {
+                qFull.rootTaskId = getRootTask(t).id
             }
             qFull.classname = t.class.canonicalName.replaceAll(/.*\./, '')
-            qFull.userstory = new UserStoryDto.QFull()
+            qFull.userstory = new UserstoryDto.QFull()
             qFull.supertask = new TaskDto.QList()
             qFull.sprints = new SprintDto.QList()
             qFull.developers = new UserDto.QList()
@@ -187,8 +187,8 @@ class TaskService {
             t.supertask.all.each { qFull.supertask.all[it.id] = it.tag }
             t.sprint.all.sort { it.start }.each { qFull.sprints.all[it.id] = it.name }
             qFull.subtasks = taskSubtree(t)
-            qFull.taskCount = countTasks(t)-1
-           return qFull
+            qFull.taskCount = countTasks(t) - 1
+            return qFull
         } else {
             new TaskDto.QFull()
         }
@@ -198,7 +198,7 @@ class TaskService {
         if (task) {
             if (task instanceof CompoundTask) {
                 int taskCount = 0
-                task.subtask.all.each {Task it ->
+                task.subtask.all.each { Task it ->
                     taskCount += countTasks(it)
                 }
                 return taskCount + 1
@@ -247,17 +247,35 @@ class TaskService {
     }
 
     public deleteTasks(TaskDto.CDelete command) {
-        if(command.id) {
-            Task delete = taskRepository.findOne(command.id)
-            taskSubtree(delete).each {
-                taskRepository.findOne(it.id).developers.removeAll()
+        Task delete = taskRepository.findOne(command.id)
+        clearSubTask(delete)
+        taskRepository.delete(command.id)
+    }
+
+    private void clearSubTask(Task task) {
+        if (task) {
+
+            if (task instanceof CompoundTask) {
+                task.subtask.all.each { clearSubTask(it) }
             }
-            if (delete) {
-                delete.developers.removeAll()
-            }
-            if(taskRepository.findOne(command.id)) taskRepository.delete(command.id)
+            task.developers.removeAll()
         }
     }
+
+//    public deleteTasks(TaskDto.CDelete command) {
+//        if(command.id) {
+//            Task delete = taskRepository.findOne(command.id)
+//            def x=taskSubtree(delete)
+//            taskSubtree(delete).each {
+//                taskRepository.findOne(it.id).developers.removeAll()
+//
+//            }
+//            if (delete) {
+//                delete.developers.removeAll()
+//            }
+//            if(taskRepository.findOne(command.id)) taskRepository.delete(command.id)
+//        }
+//    }
 }
 
 

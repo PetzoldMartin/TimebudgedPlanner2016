@@ -9,7 +9,7 @@ import de.fh_zwickau.pti.geobe.dto.ProjectDto.CDelete
 import de.fh_zwickau.pti.geobe.dto.ProjectDto.CSet
 import de.fh_zwickau.pti.geobe.dto.SprintDto
 import de.fh_zwickau.pti.geobe.dto.TaskDto
-import de.fh_zwickau.pti.geobe.dto.UserStoryDto
+import de.fh_zwickau.pti.geobe.dto.UserstoryDto
 import de.fh_zwickau.pti.geobe.repository.ProjectRepository
 import de.fh_zwickau.pti.geobe.repository.SprintRepository
 import de.fh_zwickau.pti.geobe.repository.TaskRepository
@@ -45,7 +45,7 @@ class ProjectService {
         projectRepository.findAll().sort { it.name.toLowerCase() }.each { Project p ->
             def node = new ProjectDto.QNode([id: p.id,name: p.name])
             p.userstorys.all.sort { it.priority }.each { Userstory us ->
-                UserStoryDto.QNode usDto = new UserStoryDto.QNode([id: us.id, name: us.name])
+                UserstoryDto.QNode usDto = new UserstoryDto.QNode([id: us.id, name: us.name])
                 node.userstory.add(usDto)
                 us.task.all.sort { it.tag.toLowerCase() }.each { Task t ->
                     usDto.backlog.add(taskService.taskTree(t))
@@ -121,7 +121,7 @@ class ProjectService {
     private makeQFull(Project p) {
         if (p) {
             ProjectDto.QFull qFull = new ProjectDto.QFull(id: p.id, name: p.name, budget: p.budget)
-            qFull.userstorys = new UserStoryDto.QList()
+            qFull.userstorys = new UserstoryDto.QList()
             qFull.sprints = new SprintDto.QList()
             p.userstorys.all.sort { it.priority }.forEach { Userstory userstory ->
                 qFull.userstorys.all[userstory.id] = userstory.name
