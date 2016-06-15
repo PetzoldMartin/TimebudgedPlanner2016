@@ -64,7 +64,7 @@ class UserService {
         makeQFull(p)
     }
 
-    private makeQFull(User user) {
+    private UserDto.QFull makeQFull(User user) {
         if (user) {
             UserDto.QFull qFull = new UserDto.QFull()
             qFull.roles = new RoleDto.QList()
@@ -87,7 +87,7 @@ class UserService {
             qFull.nick = user.nick
             qFull
         } else {
-            new RoleDto.QFull()
+            new UserDto.QFull()
         }
     }
 

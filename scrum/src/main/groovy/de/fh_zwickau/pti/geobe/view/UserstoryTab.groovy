@@ -51,7 +51,7 @@ class UserstoryTab extends TabBase
                  margin : new MarginInfo(false, false, false, true),
                  spacing: true]) {
             "$F.text"('<b>Userstory</b>', [uikey: 'name', captionAsHtml: true, enabled: false])
-            "$F.text"('Projekt', [uikey: 'project', enabled: false])
+            "$F.text"('Projekt', [uikey: 'project', enabled: false, visible: false])
             "$F.text"('Priorität', [uikey: 'priority', enabled: false])
             "$F.textarea"('Beschreibung', [uikey: 'description', enabled: false])
             "$F.twincol"('Backlog', [uikey             : 'backlog', rows: 8, width: '100%',

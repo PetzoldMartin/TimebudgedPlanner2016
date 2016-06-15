@@ -53,7 +53,7 @@ class SprintTab extends TabBase
                  margin : new MarginInfo(false, false, false, true),
                  spacing: true]) {
             "$F.text"('<b>Sprint</b>', [uikey: 'name', captionAsHtml: true, enabled: false])
-            "$F.text"('Project', [uikey: 'project', enabled: false])
+            "$F.text"('Project', [uikey: 'project', enabled: false, visible: false])
             "$F.date"('Start', [uikey: 'start', enabled: false, gridPosition: [0, 1]])
             "$F.date"('End', [uikey: 'end', enabled: false, gridPosition: [1, 1]])
             "$F.twincol"('Backlog', [uikey             : 'backlog', rows: 8, width: '100%',

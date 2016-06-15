@@ -4,6 +4,7 @@ import com.vaadin.data.Property
 import com.vaadin.spring.annotation.SpringComponent
 import com.vaadin.spring.annotation.UIScope
 import com.vaadin.ui.Component
+import com.vaadin.ui.Notification
 import com.vaadin.ui.Tree
 import de.fh_zwickau.pti.geobe.service.ProjectService
 import de.fh_zwickau.pti.geobe.service.StartupService
@@ -98,6 +99,9 @@ class ProjectTree extends SubTree
             }
             if (selectId instanceof Map) {
                 selectionModel.notifyChange(selectId)
+            } else {
+                Notification.show("not implemented: " + selectId)
+//                selectionModel.notifyChange( [type: ((String)selectId).split(':')[0], id: 0])
             }
         }
     }
@@ -112,7 +116,7 @@ class ProjectTree extends SubTree
         projects.all.each { projId, projNode ->
             def projectId = treeHelper.addNode([type: PROJECT_TYPE, id: projId],
                     null, projNode.name, true)
-            def userstoryTagId = treeHelper.addNode('userstory:' + projId, projectId,
+            def userstoryTagId = treeHelper.addNode([type: USERSTORY_TYPE, id: 0, pid: projectId], projectId,
                     'Userstorys', !projNode.userstory.isEmpty())
             if (projNode.userstory) {
                 projNode.userstory.each { userstoryNode ->
@@ -128,7 +132,7 @@ class ProjectTree extends SubTree
                 }
             }
 
-            def sprintsTagId = treeHelper.addNode('sprints:' + projId, projectId,
+            def sprintsTagId = treeHelper.addNode([type: SPRINT_TYPE, id: 0, pid: projectId], projectId,
                     'Sprints', !projNode.sprint.isEmpty())
             if (projNode.sprint) {
                 projNode.sprint.each { sprintNode ->
@@ -139,7 +143,7 @@ class ProjectTree extends SubTree
 
         }
         def users = userService.getUsers()
-        def userstoryTagId = treeHelper.addNode('UserTag', null, 'User', true)
+        def userstoryTagId = treeHelper.addNode([type: USER_TYPE, id: 0], null, 'User', true)
         users.all.each { userId, userNode ->
             treeHelper.addNode([type: USER_TYPE, id: userNode.id], userstoryTagId, userNode.nick, false)
         }

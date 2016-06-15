@@ -3,12 +3,7 @@ package de.fh_zwickau.pti.geobe.view
 import com.vaadin.annotations.Theme
 import com.vaadin.server.VaadinRequest
 import com.vaadin.spring.annotation.SpringUI
-import com.vaadin.ui.Component
-import com.vaadin.ui.Notification
-import com.vaadin.ui.TabSheet
-import com.vaadin.ui.TextArea
-import com.vaadin.ui.TextField
-import com.vaadin.ui.UI
+import com.vaadin.ui.*
 import de.fh_zwickau.pti.geobe.util.view.VaadinSelectionListener
 import de.geobe.util.vaadin.VaadinBuilder
 import org.springframework.beans.factory.annotation.Autowired
@@ -103,7 +98,9 @@ class ScrumView extends UI implements VaadinSelectionListener {
         if (SecurityExceptionUtils.isAccessDeniedException(event.getThrowable())) {
             Notification.show("Sorry, you don't have access to do that.");
         } else {
-            Notification.show("Something went wrong: $event");
+            Exception e = event.getThrowable()
+            e.printStackTrace()
+            Notification.show("Something went wrong: $event.");
         }
 
     }

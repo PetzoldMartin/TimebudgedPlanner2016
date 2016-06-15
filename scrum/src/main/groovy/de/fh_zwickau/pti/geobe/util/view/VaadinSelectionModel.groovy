@@ -1,5 +1,7 @@
 package de.fh_zwickau.pti.geobe.util.view
 
+import de.fh_zwickau.pti.geobe.view.ProjectTree
+
 /**
  * Default implementation and delegate for VaadinSelectionModels Listeners.<br>
  *     Supports different kinds of objects within one selection component, e.g. a Tree.
@@ -48,6 +50,7 @@ class VaadinSelectionModel {
     }
 
     public void notifyRootChange(Map<String, Serializable> rawEvent) {
+        if (rawEvent['type'] == ProjectTree.PROJECT_TYPE) //calls only if Project selected
         rootChangeListeners.each { it.onRootChanged(rawEvent) }
     }
 }
