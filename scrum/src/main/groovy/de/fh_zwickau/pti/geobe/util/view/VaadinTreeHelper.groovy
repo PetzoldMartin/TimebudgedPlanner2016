@@ -56,7 +56,7 @@ class VaadinTreeHelper {
      */
     public descend(Object node, Object parentId, String idPrefix, String idField,
                    String captionField, String childrenField) {
-        def nodeId = [type: idPrefix, id: node."$idField"]
+        def nodeId = [type: idPrefix, id: node."$idField", parenttype:parentId['type'], parentId: parentId['id']]
         addNode(nodeId, parentId, node."$captionField", !node."$childrenField".isEmpty())
         node."$childrenField".each { subnode ->
             descend(subnode, nodeId, idPrefix, idField, captionField, childrenField)

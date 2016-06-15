@@ -184,8 +184,6 @@ class UserTab extends TabBase
     @Override
     protected deleteItem() {
         userService.deleteUser(new UserDto.CDelete(id: currentDto.id))
-//        //TODO try to remove second delete call
-//        userService.deleteUser(new UserDto.CDelete(id: currentDto.id))
         deleteDialog.window.close()
     }
 

@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 /**
  * Created by aisma on 09.05.2016.
  */
-//TODO Build Repository with more funktions
 interface UserstoryRepository extends JpaRepository<Userstory, Long> {
 //    List<Userstory> findByUserStoryId(Long id);
 //    List<Userstory> findByProjectId(Long pid);

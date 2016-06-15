@@ -278,7 +278,7 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
         pbudget.value = currentDto.budget.toString()
         setAssignedList(currentDto.id)
     }
-    //TODO refresh with right id when in creation mode
+
     private void setAssignedList(Long pid) {
         availableList.removeAllItems() //availableList side
         userService.getUsersNotInProject(pid).all.each { id, userNode ->

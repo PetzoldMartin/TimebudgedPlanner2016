@@ -43,7 +43,6 @@ class UserstoryTab extends TabBase
     @Autowired
     private ProjectService projectService
 
-    //TODO make create Task from scrap avaiable
     @Override
     Component build() {
         Component c = vaadin."$C.gridlayout"('Userstorys',
@@ -248,7 +247,7 @@ class UserstoryTab extends TabBase
         command.projectId = (Long) currentProjectItemId['id']
         command.name = name.getValue()
         command.description = description.getValue()
-        command.priority = new BigDecimal(longFrom(priority.getValue()))
+        command.priority = new Integer(priority.getValue()? priority.getValue() :0)
         def v = []
         backlog.value.each {
             v << it

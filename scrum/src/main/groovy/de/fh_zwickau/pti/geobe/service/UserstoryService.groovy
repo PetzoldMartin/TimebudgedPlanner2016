@@ -61,7 +61,7 @@ class UserstoryService {
         taskRepository.findAll(command.taskIds)
                 .sort { it.tag.toLowerCase() }.each { Task t -> us.task.add(t) }
         // findByUserstoryIdAndIdNotIn does not work with an empty list of ids, so add an invalid id 0
-        taskRepository.findByUserstoryIdAndIdNotIn(us.id, command.taskIds ?: [0L]) //TODO Beierei
+        taskRepository.findByUserstoryIdAndIdNotIn(us.id, command.taskIds ?: [0L])
                 .sort { it.tag.toLowerCase() }.each { Task t ->
             us.task.remove(t)
         }

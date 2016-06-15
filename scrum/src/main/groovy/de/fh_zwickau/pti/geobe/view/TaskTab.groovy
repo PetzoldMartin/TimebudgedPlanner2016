@@ -294,12 +294,12 @@ class TaskTab extends TabBase
      */
     @Override
     protected void setFieldValues() {
-        if(currentDto.rootTaskId){
-            TaskDto.QFull tempDto =taskService.getTaskDetails(currentDto.rootTaskId)
-            project.value =tempDto.userstory.project.name
+        if (currentDto.rootTaskId) {
+            TaskDto.QFull tempDto = taskService.getTaskDetails(currentDto.rootTaskId)
+            project.value = tempDto.userstory.project.name
             userstory.value = tempDto.userstory.name
-        }else{
-            project.value =currentDto.userstory.project.name
+        } else {
+            project.value = currentDto.userstory.project.name
             userstory.value = currentDto.userstory.name
         }
 
@@ -358,13 +358,18 @@ class TaskTab extends TabBase
         command.classname = supertask.value ? 'CompoundTask' : 'Subtask'
         // determine level for a new item
         if (id == 0) {
-            if (!currentDto || currentDto.userstory.id) {
-                // we are on top level of tasks
-                command.userstoryId = (Long) currentDto.userstory.id
+            if (currentItemId['parenttype'] == 'Userstory') {
+                command.userstoryId = (Long) currentItemId['parentId']
             } else {
-                // we are on a lower level
-                command.supertaskId = currentDto.supertask.firstId
+                command.supertaskId = (Long) currentItemId['parentId']
             }
+//            if (!currentDto || currentDto.userstory.id) {
+//                // we are on top level of tasks
+//                command.userstoryId = (Long) currentDto.userstory.id
+//            } else {
+//                // we are on a lower level
+//                command.supertaskId = currentDto.supertask.firstId
+//            }
         }
         def v = []
         developers.value.each {

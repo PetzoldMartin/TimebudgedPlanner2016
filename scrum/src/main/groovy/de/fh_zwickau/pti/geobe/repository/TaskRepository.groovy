@@ -10,8 +10,6 @@ import org.springframework.data.jpa.repository.Query
  *
  * @author georg beier
  */
-//TODO Build Repository with more funktions
-
 public interface TaskRepository extends JpaRepository<Task, Long> {
     //List<Task> findByProjectId(Long id); //did not worked because new domain stucture
     //List<Task> findByProjectIdAndIdNotIn(Long pid, Collection<Long> taskIds);

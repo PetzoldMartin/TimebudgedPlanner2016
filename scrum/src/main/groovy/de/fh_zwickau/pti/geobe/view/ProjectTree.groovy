@@ -121,13 +121,15 @@ class ProjectTree extends SubTree
             if (projNode.userstory) {
                 projNode.userstory.each { userstoryNode ->
                     def userstory = treeHelper.addNode([type: USERSTORY_TYPE, id: userstoryNode.id],
-                            userstoryTagId, userstoryNode.name, !userstoryNode.backlog.isEmpty())
+                            userstoryTagId, userstoryNode.name, true)
                     // build a subtree for every backlog task
                     if (userstoryNode.backlog) {
                         userstoryNode.backlog.each { taskNode ->
                             treeHelper.descend(taskNode, userstory, TASK_TYPE, 'id',
                                     'tag', 'children')
                         }
+                    } else {
+                        def newTask = treeHelper.addNode([type: TASK_TYPE, id: 0, parenttype:USERSTORY_TYPE, parentId: userstoryNode.id], userstory, '>>Neuen Task', false)
                     }
                 }
             }
