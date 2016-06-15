@@ -63,7 +63,7 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
         // Caption shows on the tab
         def c = vaadin."$C.vlayout"('Projekt',
                 [spacing: true, margin: true]) {
-            "$F.text"('id', [uikey: PID, enabled: false])
+            "$F.text"('id', [uikey: PID, enabled: false, visible: false])
             "$F.text"('Name', [uikey: PNAME])
             "$F.text"('Budget', [uikey: PBUDGET])
             "$C.hlayout"([uikey: 'assignedField', spacing: true]) {
