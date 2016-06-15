@@ -247,7 +247,7 @@ class UserstoryTab extends TabBase
         command.projectId = (Long) currentProjectItemId['id']
         command.name = name.getValue()
         command.description = description.getValue()
-        command.priority = new Integer(priority.getValue()? priority.getValue() :0)
+        command.priority = new Integer(priority.getValue() ? priority.getValue() : 0)
         def v = []
         backlog.value.each {
             v << it

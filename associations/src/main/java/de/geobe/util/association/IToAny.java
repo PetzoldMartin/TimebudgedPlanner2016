@@ -4,8 +4,8 @@ import java.util.Collection;
 
 /**
  * @author georg beier
- * <p>
- * Interface zur Implementierung von zu-N und zu-1 Assoziationen
+ *         <p>
+ *         Interface zur Implementierung von zu-N und zu-1 Assoziationen
  */
 public interface IToAny<THERE> {
     /**

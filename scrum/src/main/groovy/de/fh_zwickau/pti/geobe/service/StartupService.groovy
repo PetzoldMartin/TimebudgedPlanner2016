@@ -136,7 +136,7 @@ class StartupService implements IStartupService {
 //            projectRepository.delete(p.id)
             //roles init
             userRepository.findAll().each {
-                userRoleService.createOrUpdateRole(new RoleDto.CSet(userId: it.id,projectId: p.id,userRole: ROLETYPE.Developer))
+                userRoleService.createOrUpdateRole(new RoleDto.CSet(userId: it.id, projectId: p.id, userRole: ROLETYPE.Developer))
 
             }
         }
@@ -235,7 +235,7 @@ class StartupService implements IStartupService {
         projectRepository.deleteAll()
         sprintRepository.deleteAll()
         taskRepository.findAll().each {
-            if(taskRepository.findOne(it.id)) {
+            if (taskRepository.findOne(it.id)) {
                 taskRepository.delete(it.id)
             }
         }

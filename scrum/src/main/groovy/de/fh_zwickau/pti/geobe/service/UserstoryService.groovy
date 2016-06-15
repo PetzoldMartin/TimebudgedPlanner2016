@@ -56,7 +56,7 @@ class UserstoryService {
         }
         us.name = command.name
         us.description = command.description
-        us.priority=command.priority
+        us.priority = command.priority
         taskRepository.findAll(command.taskIds)
                 .sort { it.tag.toLowerCase() }.each { Task t -> us.task.add(t) }
         // findByUserstoryIdAndIdNotIn does not work with an empty list of ids, so add an invalid id 0
@@ -92,7 +92,7 @@ class UserstoryService {
             qFull.project = new ProjectDto.QNode(name: p.name)
             us.task.all.forEach { Task t ->
                 qFull.backlog.all[t.id] = t.tag
-                qFull.taskCount+=taskService.countTasks(t)
+                qFull.taskCount += taskService.countTasks(t)
             }
             // findByProjectIdAndIdNotIn does not work with an empty list of ids, so add an invalid id 0
 //            taskRepository.findByProjectIdAndIdNotIn(sp.project.one.id, assigned ?: [0L]).each { Task t ->
@@ -105,18 +105,18 @@ class UserstoryService {
     }
 
     public deleteUserstory(UserstoryDto.CDelete command) {
-        Userstory userstory=userstoryRepository.getOne(command.id)
+        Userstory userstory = userstoryRepository.getOne(command.id)
         userstory.task.all.each {
             taskService.deleteTasks(new TaskDto.CDelete(id: it.id))
         }
         userstoryRepository.delete(command.id)
     }
 
-    public UserstoryDto.QList getUserstorys(){
+    public UserstoryDto.QList getUserstorys() {
         UserstoryDto.QList qList = new UserstoryDto.QList()
         userstoryRepository.findAll().sort { it.name.toLowerCase() }.each {
-                def node = new UserstoryDto.QNode([id: it.id, name: it.name])
-                qList.all[it.id] = node
+            def node = new UserstoryDto.QNode([id: it.id, name: it.name])
+            qList.all[it.id] = node
         }
         qList
 

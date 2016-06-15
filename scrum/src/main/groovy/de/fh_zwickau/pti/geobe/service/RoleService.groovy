@@ -2,7 +2,6 @@ package de.fh_zwickau.pti.geobe.service
 
 import de.fh_zwickau.pti.geobe.domain.Project
 import de.fh_zwickau.pti.geobe.domain.Role
-import de.fh_zwickau.pti.geobe.domain.Task
 import de.fh_zwickau.pti.geobe.domain.User
 import de.fh_zwickau.pti.geobe.dto.ProjectDto
 import de.fh_zwickau.pti.geobe.dto.RoleDto
@@ -35,7 +34,7 @@ class RoleService {
     @Autowired
     private UserService userService
     @Autowired
-    private  TaskRepository taskRepository
+    private TaskRepository taskRepository
     @Autowired
     private TaskService taskService
 
@@ -58,7 +57,7 @@ class RoleService {
         makeQFull(p)
     }
 
-    public  RoleDto.QFull getRoleofProjectAndUser(Long commandProject,long commandUser) {
+    public RoleDto.QFull getRoleofProjectAndUser(Long commandProject, long commandUser) {
         makeQFull(roleRepository.findByProjectIdAndScrumUserId(commandProject, commandUser))
     }
 
@@ -78,7 +77,7 @@ class RoleService {
     public deleteRole(RoleDto.CDelete command) {
         if (command.id) {
             Role delete = roleRepository.getOne(command.id)
-            if(delete.scrumUser.one) delete.scrumUser.one.tasks.removeAll()
+            if (delete.scrumUser.one) delete.scrumUser.one.tasks.removeAll()
             delete.scrumUser.remove(delete.scrumUser.one)
             delete.project.remove(delete.project.one)
             roleRepository.delete(command.id)
@@ -87,8 +86,7 @@ class RoleService {
 
     public createOrUpdateRole(RoleDto.CSet command) {
         if (!command.userId | !command.projectId | !command.userRole) return new RoleDto.QFull()
-        else
-         {
+        else {
             Role sr
             if (command.id) {
                 sr = roleRepository.getOne(command.id).each {
@@ -121,7 +119,7 @@ class RoleService {
 
     }
 
-    public getRolesNotInProject(Long command){
+    public getRolesNotInProject(Long command) {
         RoleDto.QList qList = new RoleDto.QList()
         roleRepository.findByProjectIdNotLike(command).each { Role sp ->
             def node = new RoleDto.QNode(userRole: sp.userRole,

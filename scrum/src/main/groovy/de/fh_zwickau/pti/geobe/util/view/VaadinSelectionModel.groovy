@@ -51,6 +51,6 @@ class VaadinSelectionModel {
 
     public void notifyRootChange(Map<String, Serializable> rawEvent) {
         if (rawEvent['type'] == ProjectTree.PROJECT_TYPE) //calls only if Project selected
-        rootChangeListeners.each { it.onRootChanged(rawEvent) }
+            rootChangeListeners.each { it.onRootChanged(rawEvent) }
     }
 }

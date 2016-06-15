@@ -3,7 +3,10 @@ package de.fh_zwickau.pti.geobe.view
 import com.vaadin.annotations.Theme
 import com.vaadin.server.VaadinRequest
 import com.vaadin.spring.annotation.SpringUI
-import com.vaadin.ui.*
+import com.vaadin.ui.Component
+import com.vaadin.ui.Notification
+import com.vaadin.ui.TabSheet
+import com.vaadin.ui.UI
 import de.fh_zwickau.pti.geobe.util.view.VaadinSelectionListener
 import de.geobe.util.vaadin.VaadinBuilder
 import org.springframework.beans.factory.annotation.Autowired

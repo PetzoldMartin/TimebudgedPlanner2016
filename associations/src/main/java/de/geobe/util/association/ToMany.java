@@ -8,6 +8,7 @@ import java.util.HashSet;
  * Implementiert den Zugriff auf die Assoziation und stellt sicher, dass bidirektionale
  * Assoziationen in beiden Richtungen konsistent gehalten werden
  * <p>
+ *
  * @author georg beier
  */
 public class ToMany<HERE, THERE> implements IToAny<THERE> {
@@ -18,12 +19,9 @@ public class ToMany<HERE, THERE> implements IToAny<THERE> {
     /**
      * Erzeuge Zugriffsobjekt für zu-N Assoziation
      *
-     * @param ownSide
-     *         Zugriff auf die Collection der eigenen Seite der Assoziation(Lambda-Ausdruck)
-     * @param self
-     *         das Objekt, dem das Assoziationsende gehört
-     * @param otherSide
-     *         Zugriffsfunktion auf anderes Ende der Assoziation (Lambda-Ausdruck)
+     * @param ownSide   Zugriff auf die Collection der eigenen Seite der Assoziation(Lambda-Ausdruck)
+     * @param self      das Objekt, dem das Assoziationsende gehört
+     * @param otherSide Zugriffsfunktion auf anderes Ende der Assoziation (Lambda-Ausdruck)
      */
     public ToMany(IGet<Collection<THERE>> ownSide, HERE self, IGetOther<HERE, THERE> otherSide) {
         this.ownSide = ownSide;
@@ -90,7 +88,7 @@ public class ToMany<HERE, THERE> implements IToAny<THERE> {
     public void removeAll() {
         Collection<THERE> others = new HashSet<>(ownSide.get());
         ownSide.get().clear();
-        if(otherSide != null) {
+        if (otherSide != null) {
             for (THERE other : others) {
                 otherSide.get(other).remove(self);
             }

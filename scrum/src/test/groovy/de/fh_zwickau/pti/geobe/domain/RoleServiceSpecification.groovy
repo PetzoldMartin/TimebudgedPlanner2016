@@ -31,8 +31,8 @@ class RoleServiceSpecification extends Specification {
     @Autowired
     private RoleService userRoleService
 
-    Project project,project2
-    User user,user2
+    Project project, project2
+    User user, user2
     Role role, role2
 
     public setup() {
@@ -40,8 +40,8 @@ class RoleServiceSpecification extends Specification {
         project.name = "ein Projekt"
         project2 = new Project()
         project2.name = "auch ein Projekt"
-        user =new User(firstName: "heinz",lastName: "karl")
-        user2 =new User(firstName: "heinz",lastName: "karl2")
+        user = new User(firstName: "heinz", lastName: "karl")
+        user2 = new User(firstName: "heinz", lastName: "karl2")
 
         role = new Role(userRole: ROLETYPE.Developer)
         role2 = new Role(userRole: ROLETYPE.ProjectOwner)
@@ -57,7 +57,6 @@ class RoleServiceSpecification extends Specification {
     }
 
 
-
     def "Fill Role"() {
         setup:
         cleanup()
@@ -70,8 +69,8 @@ class RoleServiceSpecification extends Specification {
         role2.getScrumUser().add(user)
 
         then:
-        assert role.getProject().one==project
-        assert role.getScrumUser().one==user
+        assert role.getProject().one == project
+        assert role.getScrumUser().one == user
         assert true
     }
 
@@ -92,7 +91,7 @@ class RoleServiceSpecification extends Specification {
         cleanup()
 
         when:
-        userRoleService.createOrUpdateRole(new RoleDto.CSet(userId: 0,projectId: 0,userRole: ROLETYPE.Developer))
+        userRoleService.createOrUpdateRole(new RoleDto.CSet(userId: 0, projectId: 0, userRole: ROLETYPE.Developer))
         then:
         assert roleRepository.findAll().empty
     }
@@ -110,11 +109,11 @@ class RoleServiceSpecification extends Specification {
         role.getScrumUser().add(user)
 
         and: 'save'
-        userRoleService.createOrUpdateRole(new RoleDto.CSet(userId: user.id,projectId: project.id,userRole: ROLETYPE.Developer))
+        userRoleService.createOrUpdateRole(new RoleDto.CSet(userId: user.id, projectId: project.id, userRole: ROLETYPE.Developer))
         then:
         assert roleRepository.findAll()
-        assert roleRepository.findOne(role.id).project.one==project
-        assert roleRepository.findOne(role.id).scrumUser.one==user
+        assert roleRepository.findOne(role.id).project.one == project
+        assert roleRepository.findOne(role.id).scrumUser.one == user
 
     }
 
@@ -130,12 +129,12 @@ class RoleServiceSpecification extends Specification {
         userRepository.saveAndFlush(user)
         role.getScrumUser().add(user)
         and: 'save'
-        userRoleService.createOrUpdateRole(new RoleDto.CSet(userId: user.id,projectId: project.id,userRole: ROLETYPE.Developer))
+        userRoleService.createOrUpdateRole(new RoleDto.CSet(userId: user.id, projectId: project.id, userRole: ROLETYPE.Developer))
         role.getScrumUser().add(user2)
         then:
         assert roleRepository.findAll()
-        assert roleRepository.findOne(role.id).project.one==project
-        assert roleRepository.findOne(role.id).scrumUser.one==user2
+        assert roleRepository.findOne(role.id).project.one == project
+        assert roleRepository.findOne(role.id).scrumUser.one == user2
     }
 
     @Transactional
@@ -178,6 +177,7 @@ class RoleServiceSpecification extends Specification {
         assert qFull.userRole == role.userRole
 
     }
+
     @Transactional
     def "delete from "() {
         setup:
@@ -216,7 +216,7 @@ class RoleServiceSpecification extends Specification {
         role.getScrumUser().add(user)
 
         and: 'save'
-        userRoleService.createOrUpdateRole(new RoleDto.CSet(userId: user.id,projectId: project.id,userRole: ROLETYPE.Developer))
+        userRoleService.createOrUpdateRole(new RoleDto.CSet(userId: user.id, projectId: project.id, userRole: ROLETYPE.Developer))
         then:
         assert userRoleService.getRolesInProject(project.id)
 
@@ -238,7 +238,7 @@ class RoleServiceSpecification extends Specification {
         role.getScrumUser().add(user)
 
         and: 'save'
-        userRoleService.createOrUpdateRole(new RoleDto.CSet(userId: user.id,projectId: project.id,userRole: ROLETYPE.Developer))
+        userRoleService.createOrUpdateRole(new RoleDto.CSet(userId: user.id, projectId: project.id, userRole: ROLETYPE.Developer))
         then:
         assert userRoleService.getRolesNotInProject(project2.id)
 

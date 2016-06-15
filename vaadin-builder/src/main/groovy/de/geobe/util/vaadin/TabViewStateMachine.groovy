@@ -154,7 +154,7 @@ class TabViewStateMachine {
         addTransition(State.DIALOG, State.SHOW, Event.Cancel)
         // new states
         addTransition(State.SHOW, State.DELETE, Event.Delete)
-        addTransition(State.DELETE,State.SHOW, Event.Cancel)
-        addTransition(State.DELETE,State.EMPTY, Event.Root)
+        addTransition(State.DELETE, State.SHOW, Event.Cancel)
+        addTransition(State.DELETE, State.EMPTY, Event.Root)
     }
 }

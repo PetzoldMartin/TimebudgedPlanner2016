@@ -73,9 +73,9 @@ class TaskTab extends TabBase
         topComponent = vaadin."$C.vlayout"('Tasks',
                 [spacing: true, margin: true]) {
             "$C.hlayout"('Debug', [spacing: true, margin: false, visible: false]) {
-                "$F.text"('Userstory', [uikey: USERSTORY, ])
-                "$F.text"('Project', [uikey: PROJECT, ])
-                "$F.text"('Supertask', [uikey: 'sTask', ])
+                "$F.text"('Userstory', [uikey: USERSTORY,])
+                "$F.text"('Project', [uikey: PROJECT,])
+                "$F.text"('Supertask', [uikey: 'sTask',])
             }
             "$F.text"('Aufgabe', [uikey: TAG])
             "$C.hlayout"('Status', [spacing: true, margin: false]) {

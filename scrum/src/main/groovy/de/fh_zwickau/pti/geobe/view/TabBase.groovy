@@ -118,9 +118,10 @@ abstract class TabBase extends SubTree {
     protected abstract clearFields()
 
     protected abstract deletemode()
-    protected abstract cancelDelete()
-    protected abstract deleteItem()
 
+    protected abstract cancelDelete()
+
+    protected abstract deleteItem()
 
     /**
      * for the given persistent object id, fetch the full dto and save it in field currentDto

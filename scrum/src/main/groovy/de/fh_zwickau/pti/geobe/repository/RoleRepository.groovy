@@ -8,7 +8,10 @@ import org.springframework.data.jpa.repository.JpaRepository
  */
 public interface RoleRepository extends JpaRepository<Role, Long> {
     List<Role> findAllByOrderByIdDesc();
+
     List<Role> findByProjectId(Long pid);
+
     List<Role> findByProjectIdNotLike(Long pid);
+
     List<Role> findByProjectIdAndScrumUserId(Long pid, Long uid);
 }

@@ -1,7 +1,7 @@
 // svg
 plugins {
     id 'groovy'
-	id 'idea'
+    id 'idea'
 }
 
 allprojects {

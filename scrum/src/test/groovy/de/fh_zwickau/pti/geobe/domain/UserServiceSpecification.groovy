@@ -7,8 +7,8 @@ import de.fh_zwickau.pti.geobe.repository.ProjectRepository
 import de.fh_zwickau.pti.geobe.repository.RoleRepository
 import de.fh_zwickau.pti.geobe.repository.TaskRepository
 import de.fh_zwickau.pti.geobe.repository.UserRepository
-import de.fh_zwickau.pti.geobe.service.StartupService
 import de.fh_zwickau.pti.geobe.service.RoleService
+import de.fh_zwickau.pti.geobe.service.StartupService
 import de.fh_zwickau.pti.geobe.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationConfiguration
@@ -39,8 +39,8 @@ class UserServiceSpecification extends Specification {
     private TaskRepository taskRepository
 
 
-    Project project,project2
-    User user,user2
+    Project project, project2
+    User user, user2
     Role role, role2
     Task task
 
@@ -49,8 +49,8 @@ class UserServiceSpecification extends Specification {
         project.name = "ein Projekt"
         project2 = new Project()
         project2.name = "auch ein Projekt"
-        user =new User(firstName: "heinz",lastName: "karl")
-        user2 =new User(firstName: "heinz",lastName: "karl2")
+        user = new User(firstName: "heinz", lastName: "karl")
+        user2 = new User(firstName: "heinz", lastName: "karl2")
 
         role = new Role(userRole: ROLETYPE.Developer)
         role2 = new Role(userRole: ROLETYPE.ProjectOwner)
@@ -64,8 +64,6 @@ class UserServiceSpecification extends Specification {
         //TODO Fix CleanupALL for test when role is assignedList
         startupService.cleanupAll()
     }
-
-
 
 
     @Transactional
@@ -87,6 +85,7 @@ class UserServiceSpecification extends Specification {
 
 
     }
+
     @Transactional
     def "delete from "() {
         setup:
@@ -106,6 +105,7 @@ class UserServiceSpecification extends Specification {
         assert projectRepository.findAll().isEmpty()
 
     }
+
     @Transactional
     def "save and update "() {
         setup:
@@ -118,8 +118,8 @@ class UserServiceSpecification extends Specification {
         role.getScrumUser().add(user)
         taskRepository.saveAndFlush(task)
         task.getDevelopers().add(user)
-        List<Long> taskIds=[]
-        List<Long> roleIds=[]
+        List<Long> taskIds = []
+        List<Long> roleIds = []
         user.tasks.all.each {
             taskIds.add(it.id)
         }
@@ -127,8 +127,8 @@ class UserServiceSpecification extends Specification {
             roleIds.add(it.id)
         }
         userService.createOrUpdateUser(new UserDto.CSet(
-                nick: user.nick,firstName: user.firstName,lastName: user.lastName,
-                roleIds: roleIds,taskIds: taskIds
+                nick: user.nick, firstName: user.firstName, lastName: user.lastName,
+                roleIds: roleIds, taskIds: taskIds
         ))
 
         then:
@@ -157,11 +157,11 @@ class UserServiceSpecification extends Specification {
         userRepository.saveAndFlush(user2)
         role.getScrumUser().add(user)
         and: 'save'
-        userRoleService.createOrUpdateRole(new RoleDto.CSet(userId: user.id,projectId: project.id,userRole: ROLETYPE.Developer))
-        UserDto.QList q=userService.getUsersNotInProject(project2.id)
-        UserDto.QList q2=userService.getUsersInProject(project.id)
-        UserDto.QList q3=userService.getUsersNotInProject(project.id)
-        UserDto.QList q4=userService.getUsersInProject(project2.id)
+        userRoleService.createOrUpdateRole(new RoleDto.CSet(userId: user.id, projectId: project.id, userRole: ROLETYPE.Developer))
+        UserDto.QList q = userService.getUsersNotInProject(project2.id)
+        UserDto.QList q2 = userService.getUsersInProject(project.id)
+        UserDto.QList q3 = userService.getUsersNotInProject(project.id)
+        UserDto.QList q4 = userService.getUsersInProject(project2.id)
 
         then:
         assert q.all.keySet().contains(user.id);
@@ -173,11 +173,7 @@ class UserServiceSpecification extends Specification {
         assert q4.all.keySet().isEmpty()
 
 
-
     }
-
-
-
 
 
 }

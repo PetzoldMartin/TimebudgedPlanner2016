@@ -21,9 +21,9 @@ abstract class SubTree {
     /**
      * set component prefix in builder, delegate building subtree to subclass
      * and reset prefix afterwards.
-     * @param builder   VaadinBuilder instance that builds the whole GUI
-     * @param componentPrefix   name prefix for components in this subtree
-     * @return  topmost component (i.e. root) of this subtree
+     * @param builder VaadinBuilder instance that builds the whole GUI
+     * @param componentPrefix name prefix for components in this subtree
+     * @return topmost component (i.e. root) of this subtree
      */
     Component buildSubtree(VaadinBuilder builder, String componentPrefix) {
         this.vaadin = builder
@@ -37,7 +37,7 @@ abstract class SubTree {
 
     /**
      * build component subtree.
-     * @return  topmost component (i.e. root) of subtree
+     * @return topmost component (i.e. root) of subtree
      */
     abstract Component build()
 
@@ -58,7 +58,7 @@ abstract class SubTree {
 
     protected UI getVaadinUi(Component c) {
         Component parent = c?.parent
-        if(parent instanceof UI) {
+        if (parent instanceof UI) {
             parent
         } else {
             getVaadinUi(parent)
@@ -68,7 +68,7 @@ abstract class SubTree {
     protected Long longFrom(String val) {
         try {
             new Long(val)
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             0L
         }
     }

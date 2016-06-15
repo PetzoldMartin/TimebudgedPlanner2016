@@ -18,24 +18,24 @@ class UserDto {
 
     public static class QFull {
         Long id = 0
-        String nick=''
-        String password=''
-        String firstName=''
-        String lastName=''
-        Date birthdate=new Date()
+        String nick = ''
+        String password = ''
+        String firstName = ''
+        String lastName = ''
+        Date birthdate = new Date()
         RoleDto.QList roles = new RoleDto.QList();
-        TaskDto.QList tasks= new TaskDto.QList();
+        TaskDto.QList tasks = new TaskDto.QList();
     }
 
     public static class CSet {
         Long id = 0
-        String nick=''
-        String password=''
-        String firstName=''
-        String lastName=''
-        Date birthdate=new Date()
-        List<Long> taskIds=[]
-        List<Long> roleIds=[]
+        String nick = ''
+        String password = ''
+        String firstName = ''
+        String lastName = ''
+        Date birthdate = new Date()
+        List<Long> taskIds = []
+        List<Long> roleIds = []
 
     }
 
@@ -43,15 +43,17 @@ class UserDto {
     public static class QNode {
         Long id
         String nick
-        String firstName=''
-        String lastName=''
+        String firstName = ''
+        String lastName = ''
         List<RoleDto.QNode> roles = []
         List<TaskDto.QNode> tasks = []
+
         @Override
         String toString() {
-            this.@nick+'('+this.@firstName+' '+this.@lastName+')'
+            this.@nick + '(' + this.@firstName + ' ' + this.@lastName + ')'
         }
     }
+
     public static class CDelete {
         Long id
     }

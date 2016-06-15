@@ -205,8 +205,6 @@ class SprintTab extends TabBase
         deleteDialog.window.close()
     }
 
-
-
     /**
      * for the given persistent object id, fetch the full dto and save it in field currentDto
      * @param itemId object id

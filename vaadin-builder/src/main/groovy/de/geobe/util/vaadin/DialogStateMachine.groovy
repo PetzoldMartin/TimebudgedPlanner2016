@@ -11,7 +11,7 @@ import groovy.util.logging.Slf4j
 @Slf4j
 class DialogStateMachine<S extends Enum, E extends Enum> {
     /** map for actions, indexed by combination of currentState and event */
-    private Map<Integer,Closure> stateMachine = new HashMap<>()
+    private Map<Integer, Closure> stateMachine = new HashMap<>()
     /** map for next states, indexed by combination of currentState and event */
     private Map<Integer, S> nextState = new HashMap<>()
     /** store current state */
@@ -44,7 +44,7 @@ class DialogStateMachine<S extends Enum, E extends Enum> {
     void addTransition(S fromState, S toState, E event, Closure action) {
         Integer index = trix(fromState, event)
         stateMachine[index] = action
-        if(toState)
+        if (toState)
             nextState[index] = toState
     }
 

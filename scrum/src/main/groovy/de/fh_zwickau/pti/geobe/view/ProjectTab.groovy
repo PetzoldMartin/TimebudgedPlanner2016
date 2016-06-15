@@ -246,7 +246,9 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
     @Override
     protected editmode() {
         projectTree.onEditItem()
-        [pname, pbudget, saveButton, cancelButton, assignedList, availableList, addButton, removeButton, roleTypeSelect].each { it.enabled = true }
+        [pname, pbudget, saveButton, cancelButton, assignedList, availableList, addButton, removeButton, roleTypeSelect].each {
+            it.enabled = true
+        }
         [editButton, newButton, deleteButton].each { it.enabled = false }
     }
 

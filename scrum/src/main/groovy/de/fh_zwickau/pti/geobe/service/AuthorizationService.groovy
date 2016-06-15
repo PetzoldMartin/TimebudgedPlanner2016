@@ -1,6 +1,5 @@
 package de.fh_zwickau.pti.geobe.service
 
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
@@ -10,10 +9,11 @@ import org.springframework.stereotype.Service
  */
 @Service
 class AuthorizationService implements IAuthorizationService {
-    boolean test=false
+    boolean test = false
+
     @Override
     boolean hasRole(String role) {
-        if(test)return true else {
+        if (test) return true else {
             Collection authorities = SecurityContextHolder.context.authentication.authorities
             authorities.any { GrantedAuthority au ->
                 au.authority == role
@@ -23,7 +23,7 @@ class AuthorizationService implements IAuthorizationService {
 
     @Override
     List getRoles() {
-        if(test)return true else {
+        if (test) return true else {
             def roles = SecurityContextHolder.context.authentication.authorities*.authority
             return roles
         }
@@ -31,7 +31,7 @@ class AuthorizationService implements IAuthorizationService {
 
     @Override
     def getUser() {
-        if(test)return true else {
+        if (test) return true else {
             return SecurityContextHolder.context.authentication.principal
         }
     }

@@ -43,7 +43,7 @@ class ProjectService {
     public ProjectDto.QList getProjects() {
         ProjectDto.QList qList = new ProjectDto.QList()
         projectRepository.findAll().sort { it.name.toLowerCase() }.each { Project p ->
-            def node = new ProjectDto.QNode([id: p.id,name: p.name])
+            def node = new ProjectDto.QNode([id: p.id, name: p.name])
             p.userstorys.all.sort { it.priority }.each { Userstory us ->
                 UserstoryDto.QNode usDto = new UserstoryDto.QNode([id: us.id, name: us.name])
                 node.userstory.add(usDto)
@@ -101,7 +101,7 @@ class ProjectService {
     public deleteProject(CDelete command) {
         Project delete = projectRepository.findOne(command.id)
         if (delete) {
-            delete.sprint.all.each {it.backlog.removeAll()}
+            delete.sprint.all.each { it.backlog.removeAll() }
             //delete.roles.removeAll()
             delete.userstorys.all.each {
                 it.task.all.each {

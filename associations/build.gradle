@@ -1,7 +1,7 @@
 // associations
 plugins {
     id 'java'
-	id 'idea'
+    id 'idea'
 }
 
 dependencies {

@@ -6,6 +6,7 @@ import java.util.Collection;
 /**
  * Implementiert den Zugriff auf die Assoziation und stellt sicher, dass bidirektionale
  * Assoziationen in beiden Richtungen konsistent gehalten werden
+ *
  * @author georg beier
  */
 public class ToOne<HERE, THERE> implements IToAny<THERE> {
@@ -17,14 +18,10 @@ public class ToOne<HERE, THERE> implements IToAny<THERE> {
     /**
      * Erzeuge Zugriffsobjekt für zu-1 Assoziation
      *
-     * @param getOwn
-     *         lesender Zugriff auf die eigene Seite der Assoziation(Lambda-Ausdruck)
-     * @param setOwn
-     *         schreibender Zugriff auf die eigene Seite der Assoziation(Lambda-Ausdruck)
-     * @param self
-     *         das Objekt, dem das Assoziationsende gehört
-     * @param otherSide
-     *         Zugriffsfunktion auf anderes Ende der Assoziation (Lambda-Ausdruck)
+     * @param getOwn    lesender Zugriff auf die eigene Seite der Assoziation(Lambda-Ausdruck)
+     * @param setOwn    schreibender Zugriff auf die eigene Seite der Assoziation(Lambda-Ausdruck)
+     * @param self      das Objekt, dem das Assoziationsende gehört
+     * @param otherSide Zugriffsfunktion auf anderes Ende der Assoziation (Lambda-Ausdruck)
      */
     public ToOne(IGet<THERE> getOwn, ISet<THERE> setOwn, HERE self, IGetOther<HERE, THERE> otherSide) {
         this.getOwn = getOwn;
@@ -36,8 +33,7 @@ public class ToOne<HERE, THERE> implements IToAny<THERE> {
     /**
      * füge Element zur Assoziation hinzu
      *
-     * @param other
-     *         neues Element
+     * @param other neues Element
      */
     @Override
     public void add(THERE other) {
@@ -49,7 +45,7 @@ public class ToOne<HERE, THERE> implements IToAny<THERE> {
             if (oldref != null) {
                 otherSide.get(oldref).remove(self);
             }
-            if(other != null) {
+            if (other != null) {
                 otherSide.get(other).add(self);
             }
         } else {
@@ -60,8 +56,7 @@ public class ToOne<HERE, THERE> implements IToAny<THERE> {
     /**
      * Entferne Element aus Assoziation
      *
-     * @param other
-     *         vorhandenes Element
+     * @param other vorhandenes Element
      */
     @Override
     public void remove(THERE other) {
@@ -91,7 +86,7 @@ public class ToOne<HERE, THERE> implements IToAny<THERE> {
     @Override
     public Collection<THERE> getAll() {
         ArrayList<THERE> ret = new ArrayList<>(1);
-        if(getOne() != null) {
+        if (getOne() != null) {
             ret.add(getOne());
         }
         return ret;
@@ -102,7 +97,7 @@ public class ToOne<HERE, THERE> implements IToAny<THERE> {
      */
     @Override
     public void removeAll() {
-        if(otherSide != null && getOwn.get() != null) {
+        if (otherSide != null && getOwn.get() != null) {
             otherSide.get(getOwn.get()).remove(self);
         } else {
             setOwn.set(null);

@@ -1,8 +1,6 @@
 package de.fh_zwickau.pti.geobe.dto
 
-import com.vaadin.data.util.BeanItem
 import de.fh_zwickau.pti.geobe.domain.ROLETYPE
-import org.springframework.context.annotation.Bean
 
 /**
  * Created by aisma on 24.05.2016.
@@ -21,30 +19,32 @@ class RoleDto {
     }
 
     public static class QFull {
-        Long id=0
+        Long id = 0
         ROLETYPE userRole
         ProjectDto.QFull project = new ProjectDto.QFull()
         UserDto.QFull user = new UserDto.QFull()
     }
 
     public static class CSet {
-        Long id=0
+        Long id = 0
         ROLETYPE userRole
         Long projectId
         Long userId
 
     }
+
     public static class QNode {
-        Long id=0
+        Long id = 0
         ROLETYPE userRole
         ProjectDto.QNode project
         UserDto.QNode user
 
         @Override
         String toString() {
-           this.@user.nick + (userRole!=null? ' ('+this.@userRole+')' :'')
+            this.@user.nick + (userRole != null ? ' (' + this.@userRole + ')' : '')
         }
     }
+
     public static class CDelete {
         Long id
     }

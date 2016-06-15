@@ -64,8 +64,8 @@ class VaadinBuilder extends BuilderSupport {
     /**
      * add a custom field component to the builder
      *
-     * @param name  identifies the custom component
-     * @param fqn   fully qualified class name of the component
+     * @param name identifies the custom component
+     * @param fqn fully qualified class name of the component
      */
     def void addCustomField(String name, String fqn) {
         fields[name] = fqn
@@ -74,8 +74,8 @@ class VaadinBuilder extends BuilderSupport {
     /**
      * add a custom container component to the builder
      *
-     * @param name  identifies the custom component
-     * @param fqn   fully qualified class name of the component
+     * @param name identifies the custom component
+     * @param fqn fully qualified class name of the component
      */
     def void addCustomContainer(String name, String fqn) {
         containers[name] = fqn
