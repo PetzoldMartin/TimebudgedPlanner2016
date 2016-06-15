@@ -6,6 +6,8 @@ package de.fh_zwickau.pti.geobe.service
  * @author georg beier
  */
 interface IAuthorizationService {
+    boolean test
+
     boolean hasRole(String role)
 
     List getRoles()

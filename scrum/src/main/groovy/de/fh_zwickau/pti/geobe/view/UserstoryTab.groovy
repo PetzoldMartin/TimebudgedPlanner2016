@@ -6,7 +6,7 @@ import com.vaadin.spring.annotation.UIScope
 import com.vaadin.ui.*
 import com.vaadin.ui.themes.Reindeer
 import de.fh_zwickau.pti.geobe.dto.TaskDto.QNode
-import de.fh_zwickau.pti.geobe.dto.UserstoryDto
+import de.fh_zwickau.pti.geobe.dto.UserStoryDto
 import de.fh_zwickau.pti.geobe.service.ProjectService
 import de.fh_zwickau.pti.geobe.service.UserstoryService
 import de.fh_zwickau.pti.geobe.util.view.VaadinSelectionListener
@@ -34,7 +34,7 @@ class UserstoryTab extends TabBase
     private Button newButton, editButton, saveButton, cancelButton, deleteButton
     private Map<String, Serializable> currentUserstoryItemId
     private Map<String, Serializable> currentProjectItemId
-    private UserstoryDto.QFull currentDto
+    private UserStoryDto.QFull currentDto
 
     private DeleteDialog deleteDialog = new DeleteDialog()
 
@@ -171,7 +171,7 @@ class UserstoryTab extends TabBase
 
     private void setAvailableList() {
         backlog.removeAllItems()
-        userstoryService.getProjectBacklog((Long) currentProjectItemId['id']).each {
+        userstoryService.getUserStoryTasks((Long) currentProjectItemId['id']).each {
             makeAvailableList(it)
         }
     }
@@ -210,7 +210,7 @@ class UserstoryTab extends TabBase
 
     @Override
     protected deleteItem() {
-        userstoryService.deleteUserstory(new UserstoryDto.CDelete(id: currentDto.id))
+        userstoryService.deleteUserstory(new UserStoryDto.CDelete(id: currentDto.id))
         deleteDialog.window.close()
     }
 
@@ -242,7 +242,7 @@ class UserstoryTab extends TabBase
      */
     @Override
     protected saveItem(Long id) {
-        UserstoryDto.CSet command = new UserstoryDto.CSet()
+        UserStoryDto.CSet command = new UserStoryDto.CSet()
         command.id = id
         command.projectId = (Long) currentProjectItemId['id']
         command.name = name.getValue()

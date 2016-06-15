@@ -27,7 +27,7 @@ class TaskDto {
         Long spent
         Integer taskCount = 0
         Boolean completed
-        UserstoryDto.QFull userstory = new UserstoryDto.QFull()
+        UserStoryDto.QFull userstory = new UserStoryDto.QFull()
         SprintDto.QList sprints = new SprintDto.QList()
         QList supertask = new QList()
         List<QNode> subtasks = []

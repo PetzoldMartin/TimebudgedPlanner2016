@@ -75,6 +75,7 @@ class UserServiceSpecification extends Specification {
         when: 'a project with a task is in the database'
         role.getProject().add(project)
         role.getScrumUser().add(user)
+        userRepository.save(user)
         projectRepository.saveAndFlush(project)
         and: 'we ask for query dtos'
         UserDto.QList qList = userService.getUsers()
@@ -91,9 +92,10 @@ class UserServiceSpecification extends Specification {
         setup:
         cleanup()
         when: 'a project with a task is in the database'
+        projectRepository.saveAndFlush(project)
+        userRepository.save(user)
         role.getProject().add(project)
         role.getScrumUser().add(user)
-        projectRepository.saveAndFlush(project)
         and: 'we ask for query dtos'
 
         userService.deleteUser(new UserDto.CDelete(id: user.id))
@@ -109,6 +111,8 @@ class UserServiceSpecification extends Specification {
         setup:
         cleanup()
         when: 'a project with a task is in the database'
+        projectRepository.saveAndFlush(project)
+        userRepository.save(user)
         role.getProject().add(project)
         roleRepository.saveAndFlush(role)
         role.getScrumUser().add(user)

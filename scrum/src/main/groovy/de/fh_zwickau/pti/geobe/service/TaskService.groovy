@@ -5,7 +5,7 @@ import de.fh_zwickau.pti.geobe.dto.SprintDto
 import de.fh_zwickau.pti.geobe.dto.TaskDto
 import de.fh_zwickau.pti.geobe.dto.TaskDto.CSet
 import de.fh_zwickau.pti.geobe.dto.UserDto
-import de.fh_zwickau.pti.geobe.dto.UserstoryDto
+import de.fh_zwickau.pti.geobe.dto.UserStoryDto
 import de.fh_zwickau.pti.geobe.repository.SprintRepository
 import de.fh_zwickau.pti.geobe.repository.TaskRepository
 import de.fh_zwickau.pti.geobe.repository.UserRepository
@@ -167,7 +167,7 @@ class TaskService {
                 qFull.rootTaskId=getRootTask(t).id
             }
             qFull.classname = t.class.canonicalName.replaceAll(/.*\./, '')
-            qFull.userstory = new UserstoryDto.QFull()
+            qFull.userstory = new UserStoryDto.QFull()
             qFull.supertask = new TaskDto.QList()
             qFull.sprints = new SprintDto.QList()
             qFull.developers = new UserDto.QList()
@@ -247,14 +247,16 @@ class TaskService {
     }
 
     public deleteTasks(TaskDto.CDelete command) {
-        Task delete = taskRepository.findOne(command.id)
-       taskSubtree(delete).each {
-           taskRepository.findOne(it.id).developers.removeAll()
+        if(command.id) {
+            Task delete = taskRepository.findOne(command.id)
+            taskSubtree(delete).each {
+                taskRepository.findOne(it.id).developers.removeAll()
+            }
+            if (delete) {
+                delete.developers.removeAll()
+            }
+            if(taskRepository.findOne(command.id)) taskRepository.delete(command.id)
         }
-        if (delete) {
-            delete.developers.removeAll()
-        }
-        taskRepository.delete(command.id)
     }
 }
 

@@ -51,8 +51,8 @@ class UserstoryServiceSpec extends Specification {
 
         when:
         setup()
-        def tasks1 = userstoryService.getProjectBacklog(project.id)
-        def tasks2 = userstoryService.getProjectBacklog(project2.id)
+        def tasks1 = userstoryService.getUserStoryTasks(project.id)
+        def tasks2 = userstoryService.getUserStoryTasks(project2.id)
         then:
         tasks1.size() == 3
         tasks2.size() == 0

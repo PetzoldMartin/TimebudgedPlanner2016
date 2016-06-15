@@ -145,7 +145,8 @@ class RoleServiceSpecification extends Specification {
         role2.getProject().add(project2)
         role2.getScrumUser().add(user2)
         when:
-        roleRepository.saveAndFlush(role2)
+        userRepository.save(user2)
+        projectRepository.saveAndFlush(project2)
         then:
         assert roleRepository.findAll()
         assert projectRepository.getOne(role2.getProject().one.getId())
@@ -157,9 +158,13 @@ class RoleServiceSpecification extends Specification {
         setup:
         cleanup()
         when: 'a project with a task is in the database'
+        userRepository.save(user)
+        projectRepository.saveAndFlush(project)
         role.getProject().add(project)
         role.getScrumUser().add(user)
-        projectRepository.saveAndFlush(project)
+        roleRepository.saveAndFlush(role)
+
+
         and: 'we ask for query dtos'
         RoleDto.QList qList = userRoleService.getRoles()
         RoleDto.QFull qFull = userRoleService.getRoleDetails(role.id)
@@ -178,9 +183,11 @@ class RoleServiceSpecification extends Specification {
         setup:
         cleanup()
         when: 'a project with a task is in the database'
+        userRepository.save(user)
+        projectRepository.saveAndFlush(project)
         role.getProject().add(project)
         role.getScrumUser().add(user)
-        projectRepository.saveAndFlush(project)
+        roleRepository.saveAndFlush(role)
         and: 'we ask for query dtos'
         RoleDto.QList qList = userRoleService.getRoles()
         RoleDto.QFull qFull = userRoleService.getRoleDetails(role.id)
