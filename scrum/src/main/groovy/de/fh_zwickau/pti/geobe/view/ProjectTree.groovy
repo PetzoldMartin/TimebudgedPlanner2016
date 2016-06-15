@@ -113,35 +113,40 @@ class ProjectTree extends SubTree
     private void buildTree(Tree projectTree) {
         def projects = projectService.projects //getProjects
         //loop over all projects
-        projects.all.each { projId, projNode ->
-            def projectId = treeHelper.addNode([type: PROJECT_TYPE, id: projId],
-                    null, projNode.name, true)
-            def userstoryTagId = treeHelper.addNode([type: USERSTORY_TYPE, id: 0, pid: projectId], projectId,
-                    'Userstorys', !projNode.userstory.isEmpty())
-            if (projNode.userstory) {
-                projNode.userstory.each { userstoryNode ->
-                    def userstory = treeHelper.addNode([type: USERSTORY_TYPE, id: userstoryNode.id],
-                            userstoryTagId, userstoryNode.name, true)
-                    // build a subtree for every backlog task
-                    if (userstoryNode.backlog) {
-                        userstoryNode.backlog.each { taskNode ->
-                            treeHelper.descend(taskNode, userstory, TASK_TYPE, 'id',
-                                    'tag', 'children')
+        if (!projects.all.isEmpty()) {
+            projects.all.each { projId, projNode ->
+                def projectId = treeHelper.addNode([type: PROJECT_TYPE, id: projId],
+                        null, projNode.name, true)
+                def userstoryTagId = treeHelper.addNode([type: USERSTORY_TYPE, id: 0, pid: projectId], projectId,
+                        'Userstorys', !projNode.userstory.isEmpty())
+                if (projNode.userstory) {
+                    projNode.userstory.each { userstoryNode ->
+                        def userstory = treeHelper.addNode([type: USERSTORY_TYPE, id: userstoryNode.id],
+                                userstoryTagId, userstoryNode.name, true)
+                        // build a subtree for every backlog task
+                        if (userstoryNode.backlog) {
+                            userstoryNode.backlog.each { taskNode ->
+                                treeHelper.descend(taskNode, userstory, TASK_TYPE, 'id',
+                                        'tag', 'children')
+                            }
+                        } else {
+                            def newTask = treeHelper.addNode([type: TASK_TYPE, id: 0, parenttype: USERSTORY_TYPE, parentId: userstoryNode.id], userstory, '+Neuer Task', false)
                         }
-                    } else {
-                        def newTask = treeHelper.addNode([type: TASK_TYPE, id: 0, parenttype: USERSTORY_TYPE, parentId: userstoryNode.id], userstory, '+Neuer Task', false)
+                    }
+                }
+
+                def sprintsTagId = treeHelper.addNode([type: SPRINT_TYPE, id: 0, pid: projectId], projectId,
+                        'Sprints', !projNode.sprint.isEmpty())
+                if (projNode.sprint) {
+                    projNode.sprint.each { sprintNode ->
+                        treeHelper.addNode([type: SPRINT_TYPE, id: sprintNode.id],
+                                sprintsTagId, sprintNode.name, false)
                     }
                 }
             }
-
-            def sprintsTagId = treeHelper.addNode([type: SPRINT_TYPE, id: 0, pid: projectId], projectId,
-                    'Sprints', !projNode.sprint.isEmpty())
-            if (projNode.sprint) {
-                projNode.sprint.each { sprintNode ->
-                    treeHelper.addNode([type: SPRINT_TYPE, id: sprintNode.id],
-                            sprintsTagId, sprintNode.name, false)
-                }
-            }
+        } else {
+            def projectId = treeHelper.addNode([type: PROJECT_TYPE, id: 0],
+                    null, '+Neues Projekt', false)
         }
         def users = userService.getUsers()
         def userstoryTagId = treeHelper.addNode([type: USER_TYPE, id: 0], null, 'User', true)

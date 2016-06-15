@@ -338,7 +338,7 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
             roleService.deleteRole(new RoleDto.CDelete(id: it.id))
         }
         assignedList.getItemIds().toArray().each { RoleDto.QNode it ->
-            roleService.createOrUpdateRole(new RoleDto.CSet(id: it.id, userRole: it.userRole, projectId: id, userId: it.user.id))
+            roleService.createOrUpdateRole(new RoleDto.CSet(id: it.id, userRole: it.userRole, projectId: currentDto.id, userId: it.user.id))
         }
     }
 
