@@ -46,13 +46,10 @@ class StartupService implements IStartupService {
 
     private oldInit() {
         // users
-        if (!userRepository.findAll()) {
             userRepository.saveAndFlush(new User(nick: 'Dau', firstName: 'Dieter', lastName: 'Glubsch', birthdate: new Date(System.currentTimeMillis())))
             userRepository.saveAndFlush(new User(nick: 'Hanswurst', firstName: 'Hans', lastName: 'Wurst', birthdate: new Date(System.currentTimeMillis())))
-        }
 
         // project structure
-        if (!projectRepository.findAll() && !taskRepository.findAll() && !sprintRepository.findAll()) {
             def tasksforUserStory = []
             int cpl = 0
             log.info("initializing data at ${LocalDateTime.now()}")
@@ -139,13 +136,11 @@ class StartupService implements IStartupService {
                 userRoleService.createOrUpdateRole(new RoleDto.CSet(userId: it.id, projectId: p.id, userRole: ROLETYPE.Developer))
 
             }
-        }
+//        }
     }
 
     @Override
     void initApplicationData() {
-
-        oldInit()
 
         projectService.createOrUpdateProject(new ProjectDto.CSet(name: 'Project_one', budget: 200))
         projectService.createOrUpdateProject(new ProjectDto.CSet(name: 'Project_two', budget: 300))
@@ -186,6 +181,7 @@ class StartupService implements IStartupService {
             }
         }
 
+        oldInit()
 
     }
 

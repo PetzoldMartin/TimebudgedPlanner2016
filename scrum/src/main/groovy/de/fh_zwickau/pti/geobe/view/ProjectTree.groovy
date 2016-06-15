@@ -129,7 +129,7 @@ class ProjectTree extends SubTree
                                     'tag', 'children')
                         }
                     } else {
-                        def newTask = treeHelper.addNode([type: TASK_TYPE, id: 0, parenttype: USERSTORY_TYPE, parentId: userstoryNode.id], userstory, '>>Neuer Task', false)
+                        def newTask = treeHelper.addNode([type: TASK_TYPE, id: 0, parenttype: USERSTORY_TYPE, parentId: userstoryNode.id], userstory, '+Neuer Task', false)
                     }
                 }
             }
