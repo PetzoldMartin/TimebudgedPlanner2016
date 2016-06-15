@@ -16,7 +16,6 @@ class VaadinTreeHelper {
      */
     public VaadinTreeHelper(Tree aTree) {
         tree = aTree
-        tree.captionAsHtml=true
     }
 
     /**
