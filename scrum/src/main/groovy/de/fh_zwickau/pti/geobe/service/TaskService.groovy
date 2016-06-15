@@ -93,20 +93,20 @@ class TaskService {
                 task.estimate = cmd.estimate ?: 0
             }
             if (cmd.userstoryId) {
-                Project p = userstoryRepository.findOne(cmd.userstoryId)
-                if (p) {
-                    task.userstory.add(p)
+                Userstory userstory = userstoryRepository.findOne(cmd.userstoryId)
+                if (userstory) {
+                    task.userstory.add(userstory)
                 } else {
-                    log.error("no project found for $cmd.userstoryId")
+                    log.error("no userstory found for $cmd.userstoryId")
                     return new TaskDto.QFull()
                 }
             }
             if (cmd.sprintIds) {
-                Project p = sprintRepository.findOne(cmd.sprintIds)
+                Sprint sprint = sprintRepository.findOne(cmd.sprintIds)
                 if (p) {
-                    task.sprint.add(p)
+                    task.sprint.add(sprint)
                 } else {
-                    log.error("no project found for $cmd.sprintIds")
+                    log.error("no sprint found for $cmd.sprintIds")
                     return new TaskDto.QFull()
                 }
             }
