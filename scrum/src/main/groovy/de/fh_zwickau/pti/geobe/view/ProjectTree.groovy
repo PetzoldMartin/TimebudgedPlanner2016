@@ -142,7 +142,6 @@ class ProjectTree extends SubTree
                             sprintsTagId, sprintNode.name, false)
                 }
             }
-
         }
         def users = userService.getUsers()
         def userstoryTagId = treeHelper.addNode([type: USER_TYPE, id: 0], null, 'User', true)

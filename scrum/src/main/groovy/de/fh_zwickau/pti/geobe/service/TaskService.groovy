@@ -254,28 +254,10 @@ class TaskService {
 
     private void clearSubTask(Task task) {
         if (task) {
-
             if (task instanceof CompoundTask) {
                 task.subtask.all.each { clearSubTask(it) }
             }
             task.developers.removeAll()
         }
     }
-
-//    public deleteTasks(TaskDto.CDelete command) {
-//        if(command.id) {
-//            Task delete = taskRepository.findOne(command.id)
-//            def x=taskSubtree(delete)
-//            taskSubtree(delete).each {
-//                taskRepository.findOne(it.id).developers.removeAll()
-//
-//            }
-//            if (delete) {
-//                delete.developers.removeAll()
-//            }
-//            if(taskRepository.findOne(command.id)) taskRepository.delete(command.id)
-//        }
-//    }
 }
-
-

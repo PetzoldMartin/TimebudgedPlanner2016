@@ -1,18 +1,13 @@
 package de.fh_zwickau.pti.geobe.service
 
-import de.fh_zwickau.pti.geobe.domain.ROLETYPE
-import de.fh_zwickau.pti.geobe.dto.ProjectDto
-import de.fh_zwickau.pti.geobe.dto.RoleDto
-import de.fh_zwickau.pti.geobe.dto.SprintDto
-import de.fh_zwickau.pti.geobe.dto.TaskDto
-import de.fh_zwickau.pti.geobe.dto.UserDto
-import de.fh_zwickau.pti.geobe.dto.UserstoryDto
+import de.fh_zwickau.pti.geobe.domain.*
+import de.fh_zwickau.pti.geobe.dto.*
 import de.fh_zwickau.pti.geobe.repository.*
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
-import javax.transaction.Transactional
+import java.time.LocalDateTime
 
 /**
  *
@@ -21,8 +16,6 @@ import javax.transaction.Transactional
 @Service
 @Slf4j
 class StartupService implements IStartupService {
-    private boolean isInitialized = false
-
     @Autowired
     private ProjectRepository projectRepository
     @Autowired
@@ -51,8 +44,109 @@ class StartupService implements IStartupService {
     private RoleService roleService
 
 
+    private oldInit() {
+        // users
+        if (!userRepository.findAll()) {
+            userRepository.saveAndFlush(new User(nick: 'Dau', firstName: 'Dieter', lastName: 'Glubsch', birthdate: new Date(System.currentTimeMillis())))
+            userRepository.saveAndFlush(new User(nick: 'Hanswurst', firstName: 'Hans', lastName: 'Wurst', birthdate: new Date(System.currentTimeMillis())))
+        }
+
+        // project structure
+        if (!projectRepository.findAll() && !taskRepository.findAll() && !sprintRepository.findAll()) {
+            def tasksforUserStory = []
+            int cpl = 0
+            log.info("initializing data at ${LocalDateTime.now()}")
+            Project p = new Project([name: 'Projekt Küche', budget: 1000])
+            Sprint s = new Sprint([name: 'erster Sprint'])
+            Userstory us = new Userstory(name: 'Sauber machen', description: 'alles muss sauber sein', priority: 1)
+            Userstory us2 = new Userstory(name: 'mache nix', description: 'nichts!', priority: 0)
+
+            p.sprint.add(s)
+
+            p.userstorys.add(us)
+            p.userstorys.add(us2)
+
+            Task t = new Subtask(tag: 'Tee kochen', description: 'Kanne zum Wasser!', estimate: 42)
+            s.backlog.add(t)
+
+            //tasksforUserStory << t
+
+            CompoundTask hausarbeit = new CompoundTask(tag: 'Hausarbeit', description: 'Immer viel zu tun', estimate: 4711)
+            hausarbeit.sprint.add(s)
+            s.backlog.add(hausarbeit)
+
+            tasksforUserStory << hausarbeit
+
+            ['backen', 'kochen', 'abwaschen'].forEach {
+                t = new CompoundTask([description: "Wir sollen $it", tag: it])
+                t.supertask.add(hausarbeit)
+//                t.project.add(p)
+                cpl++
+                //tasksforUserStory << t
+                ['dies', 'das', 'etwas anderes', 'nichts davon'].each { tag ->
+                    def sub = new Subtask([description: "und dann noch $tag",
+                                           tag        : tag, estimate: 250,
+                                           completed  : (cpl % 2 == 0)])
+                    t.subtask.add(sub)
+
+                    //  tasksforUserStory << sub
+
+                }
+            }
+            ['früh', 'mittag', 'abend'].each {
+                new Sprint([name: it]).project.add(p)
+            }
+            // add to one userstory
+            tasksforUserStory.forEach({ us.task.add(it) })
+
+            // finally persist project
+            projectRepository.saveAndFlush(p)
+
+//            userstoryRepository.delete(us.id)
+
+            // new project
+            p = new Project([name: 'Projekt Garten', budget: 2000])
+            us = new Userstory([name: 'Garten pflegen', description: 'alles muss schön sein'])
+            p.userstorys.add(us)
+
+
+            def tl = []
+            ['umgraben', 'Rasen mähen', 'Äpfel pflücken', 'ernten'].forEach {
+                t = new CompoundTask([description: "Wir sollen $it", tag: it])
+                //t.project.add(p)
+                tl << t
+            }
+
+            int i = 0
+            ['Frühling', 'Sommer', 'Herbst', 'Winter'].each {
+                s = new Sprint([name: it])
+                s.project.add(p)
+                s.backlog.add(tl[(++i) % tl.size()])
+                s.backlog.add(tl[(++i) % tl.size()])
+            }
+            // add to userstory
+            tl.forEach({ us.task.add(it) })
+
+            //persist
+            projectRepository.saveAndFlush(p)
+
+            def tasks = taskRepository.findAll()
+            tasks.forEach({ log.info("task (${it.id}): $it.description") })
+            userstoryRepository.findAll().forEach({ log.info("userstory (${it.id}): $it.description") })
+//            projectRepository.delete(p.id)
+            //roles init
+            userRepository.findAll().each {
+                userRoleService.createOrUpdateRole(new RoleDto.CSet(userId: it.id,projectId: p.id,userRole: ROLETYPE.Developer))
+
+            }
+        }
+    }
+
     @Override
     void initApplicationData() {
+
+        oldInit()
+
         projectService.createOrUpdateProject(new ProjectDto.CSet(name: 'Project_one', budget: 200))
         projectService.createOrUpdateProject(new ProjectDto.CSet(name: 'Project_two', budget: 300))
         def userIds = []
