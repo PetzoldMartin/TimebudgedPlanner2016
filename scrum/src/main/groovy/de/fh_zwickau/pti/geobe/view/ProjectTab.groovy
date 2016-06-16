@@ -1,6 +1,5 @@
 package de.fh_zwickau.pti.geobe.view
 
-import com.vaadin.data.Property
 import com.vaadin.event.ShortcutAction
 import com.vaadin.spring.annotation.SpringComponent
 import com.vaadin.spring.annotation.UIScope
@@ -144,14 +143,6 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
         sm = new TabViewStateMachine(TabViewStateMachine.State.TOPTAB, 'PrjTab')
         configureSm()
         sm.execute(Event.Init)
-        roleTypeSelect.addValueChangeListener(new Property.ValueChangeListener() {
-            @Override
-            void valueChange(Property.ValueChangeEvent event) {
-//                Notification.show("Value changed:",
-//                        String.valueOf(event.property.value,
-//                        Notification.Type.TRAY_NOTIFICATION))
-            }
-        })
     }
 
     @Override
@@ -287,7 +278,6 @@ class ProjectTab extends TabBase implements VaadinSelectionListener,
             availableList.addItem(new RoleDto.QNode(user: userNode))
         }
         assignedList.removeAllItems() // assignedList side
-//        currentDto.developers.all.each { id, roleNode ->
         roleService.getRolesInProject(pid).all.each { id, roleNode ->
             assignedList.addItem(roleNode)
         }
