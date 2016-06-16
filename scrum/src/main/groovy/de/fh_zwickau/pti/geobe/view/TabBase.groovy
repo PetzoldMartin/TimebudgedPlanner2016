@@ -22,7 +22,11 @@ abstract class TabBase extends SubTree {
             emptymode()
         }
         sm.onEntry[TabViewStateMachine.State.SHOW] = {
-            showmode()
+            if (currentItemId['id'] == 0) {
+                sm.execute(TabViewStateMachine.Event.Root)
+            } else {
+                showmode()
+            }
         }
         sm.onEntry[TabViewStateMachine.State.CREATEEMPTY] = {
             createemptymode()
