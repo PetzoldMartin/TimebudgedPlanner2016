@@ -94,7 +94,7 @@ class UserService {
     public deleteUser(UserDto.CDelete command) {
         if (userRepository.exists(command.id)) {
             User user = userRepository.getOne(command.id)
-            user.roles.all.each { Role role ->
+            user.roles.all.toArray().each { Role role ->
                 userRoleService.deleteRole(new RoleDto.CDelete(id: role.id))
             }
 //            user.tasks.removeAll()
